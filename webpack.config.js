@@ -30,6 +30,18 @@ const config = {
                 test: /\.js$/,
                 exclude: "/node_modules"
             },
+            //use to import file .png .jpg ... to js file.
+            {
+                test: /\.(png|jp(e*)g|svg)$/,
+                use: [{
+                    loader: 'url-loader',
+                    options: {
+                        limit: 8000, // Convert images < 8kb to base64 strings
+                        name: 'images/[hash]-[name].[ext]'
+                    }
+                }]
+            }
+            ,
             {
                 //use: ["style-loader", "css-loader"],
                 use: [MiniCssExtractPlugin.loader, "css-loader"],
@@ -49,13 +61,13 @@ const config = {
         splitChunks: {
             cacheGroups: {
                 defaultVendors: {
-                test: /vendor/,
-                priority: -10
+                    test: /vendor/,
+                    priority: -10
                 },
                 default: {
-                minChunks: 2,
-                priority: -20,
-                reuseExistingChunk: true
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true
                 }
             }
         }
