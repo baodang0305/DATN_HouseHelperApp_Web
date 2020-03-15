@@ -5,7 +5,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const vendorLibs = [
     "react",
-    "react-dom"
+    "react-dom",
+    "antd",
+    "react-redux",
+    "react-router-dom",
+    "redux",
+    "redux-devtools-extension"
 ]
 
 const devServer = {
@@ -29,6 +34,17 @@ const config = {
                 use: "babel-loader",
                 test: /\.js$/,
                 exclude: "/node_modules"
+            },
+            //use to import file .png .jpg ... to js file.
+            {
+                test: /\.(png|jp(e*)g|svg)$/,
+                use: [{
+                    loader: 'url-loader',
+                    options: {
+                        limit: 8000, // Convert images < 8kb to base64 strings
+                        name: 'images/[hash]-[name].[ext]'
+                    }
+                }]
             },
             {
                 //use: ["style-loader", "css-loader"],
