@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Login from './login/login';
-import Register from './register/register';
-import Home from './home/home';
-import Landing from './landing/landing';
+import Dashboard from './Dashboard/Dashboard';
+import Login from './Login/Login';
+import Register from './Register/Register';
+import Home from './Home/Home';
 
 export default class Root extends Component {
   render() {
@@ -16,12 +16,12 @@ export default class Root extends Component {
           <Route path="/create-family">
             <Register />
           </Route>
-          <Route path="/onboard">
-            <Home />
+          <Route path="/dashboard">
+            <Dashboard />
           </Route>
           <Route exact path="/">
-            {/* <Home /> */}
-            <Landing />
+            <Home />
+            {/* <Dashboard /> */}
           </Route>
         </Switch>
       </Router>

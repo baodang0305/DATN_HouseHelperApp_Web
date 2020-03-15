@@ -1,5 +1,4 @@
-import LoginReducer from './login/login.reducer';
-
+import LoginReducer from './Login.Reducer';
 
 import { combineReducers } from 'redux';
 

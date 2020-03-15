@@ -1,4 +1,4 @@
-import { LOGIN } from './login.actions'
+import { LOGIN } from '../actions/Login.Actions'
 
 const initialState = {
     idUser: '',

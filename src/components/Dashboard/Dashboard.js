@@ -8,9 +8,9 @@ import {
     ShoppingCartOutlined,
     FileOutlined
 } from '@ant-design/icons';
-import Task from '../task/task';
-import Family from '../family/family';
-import './landing.css';
+import Task from '../Task/Task';
+import Family from '../Family/Family';
+import './Dashboard.css';
 import familyImg from '../../assets/dashboard.png';
 
 const { Sider } = Layout;

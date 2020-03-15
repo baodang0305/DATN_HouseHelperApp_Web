@@ -15,7 +15,8 @@ const vendorLibs = [
 
 const devServer = {
     port: 3000,
-    open: true
+    open: true,
+    historyApiFallback: true,
 }
 
 const config = {
