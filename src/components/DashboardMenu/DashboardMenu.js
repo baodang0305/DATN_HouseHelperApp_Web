@@ -10,7 +10,7 @@ import {
     FileOutlined
 } from '@ant-design/icons';
 import './DashboardMenu.css';
-import familyImgDefault from '../../assets/familyImgDefault.png';
+import familyImgDefault from '../../assets/family-img.png';
 
 const { Sider } = Layout;
 
@@ -31,37 +31,34 @@ class DashboardMenu extends React.Component {
         const {collapsed} = this.state;
         const {menuItem} = this.props;
         return (
-            <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
-                <div className="center">
+            <Sider className="container-dashboard-menu" trigger={null} collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
+                <div className="container-infor-family">
                     <div>
-                        <Avatar shape="circle" style={{backgroundColor: "#ffffff"}} size={100} src={familyImgDefault}/>
-                        <div className="family-name">Family Name</div>
+                        <img className="container-img-family" src={familyImgDefault}/>
                     </div>
+                    <div className="name-family">Family Name</div>
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={menuItem} mode="inline">
                     <Menu.Item key="1" >
-                        <HomeOutlined />
+                        <HomeOutlined className="size-icon"/>
                         <Link to="/family">Family</Link>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <CalendarOutlined />
+                        <CalendarOutlined className="size-icon"/>
                         <Link to="#">Calendar</Link>
                     </Menu.Item>
                     <Menu.Item key="3">
-                        <CheckOutlined />
+                        <CheckOutlined className="size-icon"/>
                         <Link to="/tasks">Tasks</Link>
                     </Menu.Item>
                     <Menu.Item key="4">
-                        <GiftOutlined />
+                        <GiftOutlined className="size-icon"/>
                         <Link to="#">Rewards</Link>
                     </Menu.Item>
                     <Menu.Item key="5">
-                        <ShoppingCartOutlined />
+                        <ShoppingCartOutlined className="size-icon"/>
                         <Link to="#">Groceries</Link>
-                    </Menu.Item>
-                    <Menu.Item key="6">
-                        <FileOutlined />
-                    </Menu.Item>
+                    </Menu.Item>    
                 </Menu>
             </Sider>
         );
