@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu, Avatar} from 'antd';
+import { Layout, Menu, Avatar } from 'antd';
 import {
     HomeOutlined,
     CalendarOutlined,
@@ -27,7 +27,7 @@ class Landing extends React.Component {
     onCollapse = collapsed => {
         this.setState({ collapsed });
     };
-    
+
     handleClick = e => {
         this.setState({
             keyItem: e.key
@@ -36,10 +36,10 @@ class Landing extends React.Component {
 
     render() {
 
-        const {collapsed, keyItem} = this.state;
+        const { collapsed, keyItem } = this.state;
 
         let content;
-        switch(keyItem) {
+        switch (keyItem) {
             case "1": {
                 content = <Family />;
                 break;
@@ -66,14 +66,14 @@ class Landing extends React.Component {
         }
 
         return (
-            <Layout style={{ minHeight: '100vh'}}>
+            <Layout style={{ minHeight: '100vh' }}>
                 <Sider collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
-                        <div className="center1">
-                            <div className="center2">
-                                <Avatar shape="circle" size={100} src={familyImg}/>
-                                <div>Family Name</div>
-                            </div>
+                    <div className="center1">
+                        <div className="center2">
+                            <Avatar shape="circle" size={100} src={familyImg} />
+                            <div>Family Name</div>
                         </div>
+                    </div>
                     <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" onClick={this.handleClick}>
                         <Menu.Item key="1">
                             <HomeOutlined />
