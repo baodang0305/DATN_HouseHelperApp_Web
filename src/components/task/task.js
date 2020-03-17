@@ -1,11 +1,7 @@
 import React from "react";
-<<<<<<< HEAD
+
 import './Task.css';
-=======
-import {Layout, Breadcrumb, Row, Col} from "antd";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
-const { Header, Content, Footer } = Layout; 
->>>>>>> eb2ec93e36acdaa474d530710cc142904ceb3716
 
 import TaskList from './TaskList/TaskList'
 import { Layout, Breadcrumb, Row, Col, Input, Button, Tabs, Collapse, Modal } from "antd";
@@ -47,83 +43,65 @@ class Task extends React.Component {
         });
     };
     render() {
-<<<<<<< HEAD
+
         const { hiddenInputSearch } = this.state;
         return (
-            <Layout className="site-layout">
-                <Header className="site-layout-background header-tasks">
-                    {/* <div><SearchOutlined className="icon-search" /></div> */}
-                    <Row style={{ width: '100%' }}>
-                        <Col span={10} className="header-part-left" >
-                            <Button style={{ marginRight: 10 }}><HomeOutlined style={{ fontSize: 19 }} /></Button>
-                            <Search className="search-task"
-                                placeholder="Input something"
-                                onSearch={value => console.log(value)}
-                                style={{ width: 200 }}
-                            />
-                        </Col>
-                        <Col span={4} className="header-title">Tasks</Col>
-
-
-                        <Col span={10} className="header-part-right">
-                            <Button style={{ marginRight: 10 }}><BellOutlined style={{ fontSize: 19 }} /></Button>
-                            <Button onClick={this.showFormCreateTask}><PlusOutlined style={{ fontSize: 19 }} /></Button>
-                        </Col>
-                    </Row>
-                </Header>
-                <Content style={{ margin: '20px 16px' }}>
-
-                    <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-
-                        <Collapse
-                            bordered={false}
-                            defaultActiveKey={['1']}
-                            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-                            className="site-collapse-custom-collapse"
-                        >
-                            <Panel header="To-do" key="1" className="site-collapse-custom-panel">
-                                <TaskList />
-                            </Panel>
-                            <Panel header="Completed" key="2" className="site-collapse-custom-panel">
-                                <TaskList />
-                            </Panel>
-                            <Panel header="Suggestions" key="3" className="site-collapse-custom-panel">
-                                <TaskList />
-                            </Panel>
-                        </Collapse>
-                    </div>
-                    <Modal title="Add task" style={{ maxWidth: 400, top: '10%' }}
-                        visible={this.state.visibleFormCreateTask}
-                        onOk={this.handleOk}
-                        onCancel={this.handleCancel}>
-                        <FormCreateTask />
-                    </Modal>
-                </Content>
-                <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-            </Layout >
-=======
-        return(
-            <Layout style={{ minHeight: '100vh'}}>
-                <DashboardMenu menuItem="3"/>
+            <Layout >
+                <DashboardMenu menuItem="3" />
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{ padding: 0 }}>
-                        <Row>
-                            <Col span={8}>Task</Col>
+                    <Header className="site-layout-background header-tasks">
+                        {/* <div><SearchOutlined className="icon-search" /></div> */}
+                        <Row style={{ width: '100%' }}>
+                            <Col span={10} className="header-part-left" >
+                                <Button style={{ marginRight: 10 }}><HomeOutlined style={{ fontSize: 19 }} /></Button>
+                                <Search className="search-task"
+                                    placeholder="Input something"
+                                    onSearch={value => console.log(value)}
+                                    style={{ width: 200 }}
+                                />
+                            </Col>
+                            <Col span={4} className="header-title">Tasks</Col>
+
+
+                            <Col span={10} className="header-part-right">
+                                <Button style={{ marginRight: 10 }}><BellOutlined style={{ fontSize: 19 }} /></Button>
+                                <Button onClick={this.showFormCreateTask}><PlusOutlined style={{ fontSize: 19 }} /></Button>
+                            </Col>
                         </Row>
                     </Header>
-                    <Content style={{ margin: '0 16px' }}>
-                        <Breadcrumb style={{ margin: '16px 0' }}>
-                        <Breadcrumb.Item>User</Breadcrumb.Item>
-                        <Breadcrumb.Item>Bill</Breadcrumb.Item>
-                        </Breadcrumb>
+                    <Content style={{ margin: '20px 16px' }}>
+
                         <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-                            Bill is a cat.
+
+                            <Collapse
+                                bordered={false}
+                                defaultActiveKey={['1']}
+                                expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                                className="site-collapse-custom-collapse"
+                            >
+                                <Panel header="To-do" key="1" className="site-collapse-custom-panel">
+                                    <TaskList />
+                                </Panel>
+                                <Panel header="Completed" key="2" className="site-collapse-custom-panel">
+                                    <TaskList />
+                                </Panel>
+                                <Panel header="Suggestions" key="3" className="site-collapse-custom-panel">
+                                    <TaskList />
+                                </Panel>
+                            </Collapse>
                         </div>
+                        <Modal title="Add task" style={{ maxWidth: 400, top: '10%' }}
+                            visible={this.state.visibleFormCreateTask}
+                            onOk={this.handleOk}
+                            onCancel={this.handleCancel}>
+                            <FormCreateTask />
+                        </Modal>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
                 </Layout>
-            </Layout>
->>>>>>> eb2ec93e36acdaa474d530710cc142904ceb3716
+
+            </Layout >
+
         );
     }
 }

@@ -64,7 +64,7 @@ const Login = () => {
 
         <Form.Item >
           <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost>
-            <Link to="/dashboard">Log in</Link>
+            <Link to="/family">Log in</Link>
           </Button>
 
         </Form.Item>
