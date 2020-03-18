@@ -27,7 +27,8 @@ const config = {
     },
     output: {
         filename: "[name].[chunkhash].js",
-        path: path.resolve(__dirname, "dist")
+        path: path.resolve(__dirname, "dist"),
+        publicPath: "http://localhost:3000/"
     },
     module: {
         rules: [

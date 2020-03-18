@@ -1,43 +1,285 @@
-.site-layout-background {
-    background-color: white;
-}
-
-.icon:hover{
-    transform: translateY(-3px);
-    box-shadow: 0px 5px 20px;
-    background-color: rgb(255, 255, 255);
+.modified-top-menu {
+    border-bottom: 2px solid transparent !important;
+    color: inherit !important;
+    padding-top: 8px;
+    font-weight: bolder;
 }
 
 .container-img-profile {
+    text-align: center;
     position: relative;
 }
-
 .profile-img {
-    width: 100px;
     height: auto;
     border-radius: 50%;
 }
 
 .badge {
     border-radius: 50%;
-    width: 30px ;
-    height: 30px ;
     background-color: red;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 30px;
     color: white;
     font-weight: bold;
-    font-size: 15px;
+    text-align: center;
+    vertical-align: middle;
     position: absolute;
-    top: 5px;
-    left: 80px;
 }
 
-.modified-top-menu {
-    border-bottom: 2px solid transparent !important;
-    color: inherit !important;
-    padding-top: 8px;
-    font-size: 18px;
-    font-weight: bolder;
+.row-modified {
+    background-color: white;
+    margin: 10px 0px;
+    padding: 15px 0px;
+}
+
+.divider-modified {
+    margin: 0px !important;
+    padding-bottom: 10px;
+    font-weight: bolder !important;
+}
+
+.list-modified {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+/* big tablets to 1200px */
+@media only screen and (min-width: 1450px) {
+    a,
+    .size-icon {
+        font-size: 18px !important;
+    }
+
+    .divider-modified {
+        font-size: 17px !important;
+    }
+
+    .container-img-profile {    
+        width: 100px;
+    }
+    
+    .profile-img {
+        width: 100px;
+    }
+
+    .size-member-name {
+        font-size: 15px;
+    }
+    
+    .badge {
+        width: 30px ;
+        height: 30px ;
+        font-size: 15px;
+        line-height: 27px;
+        top: 5px;
+        left: 70px;
+    }
+
+    .col-modified {
+        padding-left: 200px;
+    }
+
+    .activity-img {
+        width: 272px;
+    }
+}
+
+@media only screen and (min-width: 1222px) and (max-width: 1449px) {
+    a,
+    .size-icon {
+        font-size: 17px !important;
+    }
+
+    .divider-modified {
+        font-size: 16px !important;
+    }
+
+    .container-img-profile {    
+        width: 95px;
+    }
+    
+    .profile-img {
+        width: 95px;
+    }
+
+    .size-member-name {
+        font-size: 14px;
+    }
+    
+    .badge {
+        width: 28px ;
+        height: 28px ;
+        font-size: 14px;
+        line-height: 26px;
+        top: 5px;
+        left: 70px;
+    }
+
+    .col-modified {
+        padding-left: 160px;
+    }
+
+    .activity-img {
+        width: 230px;
+    }
+}
+
+@media only screen and (min-width: 995px) and (max-width: 1221px) {
+    a,
+    .size-icon {
+        font-size: 16px !important;
+    }
+
+    .divider-modified {
+        font-size: 15px !important;
+    }
+
+    .container-img-profile {    
+        width: 90px;
+    }
+    
+    .profile-img {
+        width: 90px;
+    }
+
+    .size-member-name {
+        font-size: 13px;
+    }
+    
+    .badge {
+        width: 26px ;
+        height: 26px ;
+        font-size: 13px;
+        line-height: 25px;
+        top: 5px;
+        left: 70px;
+    }
+
+    .col-modified {
+        padding-left: 120px;
+    }
+
+    .activity-img {
+        width: 200px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 994px) {
+    a,
+    .size-icon {
+        font-size: 15px !important;
+    }
+
+    .divider-modified {
+        font-size: 14px !important;
+    }
+
+    .container-img-profile {    
+        width: 85px;
+    }
+    
+    .profile-img {
+        width: 85px;
+    }
+
+    .size-member-name {
+        font-size: 12px;
+    }
+    
+    .badge {
+        width: 24px ;
+        height: 24px ;
+        font-size: 12px;
+        line-height: 24px;
+        top: 6px;
+        left: 65px;
+    }
+
+    .col-modified {
+        padding-left: 80px;
+    }
+
+    .activity-img {
+        width: 170px;
+    }
+}
+
+/* small phones to small tablets */
+@media only screen and (min-width: 480px) and ( max-width: 767px) {
+    a,
+    .size-icon {
+        font-size: 14px !important;
+    }
+
+    .divider-modified {
+        font-size: 13px !important;
+    }
+
+    .container-img-profile {    
+        width: 80px;
+    }
+    
+    .profile-img {
+        width: 80px;
+    }
+
+    .size-member-name {
+        font-size: 11px;
+    }
+    
+    .badge {
+        width: 22px ;
+        height: 22px ;
+        font-size: 11px;
+        line-height: 23px;
+        top: 7px;
+        left: 60px;
+    }
+
+    .col-modified {
+        padding-left: 70px;
+    }
+
+    .activity-img {
+        width: 140px;
+    }
+}
+
+/* small phones from 0 - 480px */
+@media only screen and (min-width: 0px) and (max-width: 479px) {
+    a,
+    .size-icon {
+        font-size: 13px !important;
+    }
+
+    .divider-modified {
+        font-size: 12px !important;
+    }
+
+    .container-img-profile {    
+        width: 75px;
+    }
+    
+    .profile-img {
+        width: 75px;
+    }
+
+    .size-member-name {
+        font-size: 10px;
+    }
+    
+    .badge {
+        width: 20px ;
+        height: 20px ;
+        font-size: 10px;
+        line-height: 22px;
+        top: 8px;
+        left: 55px;
+    }
+
+    .col-modified {
+        padding-left: 30px;
+    }
+
+    .activity-img {
+        width: 100px;
+    }
 }
