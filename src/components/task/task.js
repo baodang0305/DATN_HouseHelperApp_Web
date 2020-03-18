@@ -46,7 +46,7 @@ class Task extends React.Component {
 
         const { hiddenInputSearch } = this.state;
         return (
-            <Layout >
+            <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="3" />
                 <Layout className="site-layout">
                     <Header className="site-layout-background header-tasks">
@@ -90,7 +90,7 @@ class Task extends React.Component {
                                 </Panel>
                             </Collapse>
                         </div>
-                        <Modal title="Add task" style={{ maxWidth: 400, top: '10%' }}
+                        <Modal title="Add task" style={{ maxWidth: 600, top: '10px' }}
                             visible={this.state.visibleFormCreateTask}
                             onOk={this.handleOk}
                             onCancel={this.handleCancel}>
