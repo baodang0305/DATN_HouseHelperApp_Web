@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu} from 'antd';
+import { Layout, Menu, Card} from 'antd';
 import {Link} from 'react-router-dom';
 import {
     HomeOutlined,
@@ -8,6 +8,7 @@ import {
     GiftOutlined,
     ShoppingCartOutlined
 } from '@ant-design/icons';
+import familyImg from "../../assets/family-img.png";
 import './DashboardMenu.css';
 
 const { Sider } = Layout;
@@ -27,7 +28,7 @@ class DashboardMenu extends React.Component {
     render() {
 
         const {collapsed} = this.state;
-        const {menuItem, familyImg} = this.props;
+        const {menuItem} = this.props;
         return (
             <Sider className="container-dashboard-menu" trigger={null} collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
                 <div className="container-infor-family">

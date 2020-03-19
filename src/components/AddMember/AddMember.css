@@ -2,7 +2,7 @@
     background-color: white;
 }
 
-.content-container {
+.content-add-member-container {
     margin: 10px 0px;
 }
 
@@ -159,8 +159,8 @@ button.upload-container:hover, button.upload-container:hover::after {
     opacity: 0;
 }
 
-.back-icon {
-    margin: 10px 10px;
-    cursor: pointer;
+.fa-user, 
+.fa-envelope,
+.fa-birthday-cake {
+    color: #d7d7d7;
 }
-

@@ -1,0 +1,36 @@
+
+
+.panel-container {
+    background-color: white;
+    margin: 15px 40px;
+    border-radius: 2px;
+    height: 40px;
+    position: relative;
+    line-height: 40px;
+    cursor: pointer;
+}
+
+.panel-container:hover {
+    border-color: #add8ff;
+    border-style: ridge;
+    border-width: thin;
+}
+
+.panel-content {
+    position: absolute;
+    left: 10px;
+    font-size: 20px;
+}
+
+.caretright-icon {
+    float: right;
+    line-height: 45px;
+    padding-right: 15px;
+    font-size: 15px;
+    color: #d7d7d7;
+}
+
+.custom-icon {
+    color: #d7d7d7;
+    margin: 0px 10px;
+}

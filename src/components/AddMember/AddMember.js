@@ -1,5 +1,6 @@
 import React from "react";
 import { Layout, Form, Input, Button, Select, Row, Col, Radio, Upload } from 'antd';
+import { LeftOutlined } from "@ant-design/icons";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import familyImg from "../../assets/family-img.png";
 import cameraImg from "../../assets/camera-img.png";
@@ -80,11 +81,11 @@ class AddMember extends React.Component {
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0}}>
                         <Row>
-                            <Col flex="30px"> <i onClick={this.handleClickBack} className="fa fa-arrow-circle-o-left fa-3x back-icon" aria-hidden="true"></i></Col>
+                        <Col flex="30px"> <Button onClick={this.handleClickBack} className="button-back"> <LeftOutlined /> </Button> </Col>
                             <Col flex="auto"><h2 style={{textAlign: "center"}}>Create Profile</h2></Col>
                         </Row>
                     </Header>
-                    <Content className="site-layout-background content-container">
+                    <Content className="site-layout-background content-add-member-container">
                         <Row justify="center" align="middle" className="create-profile-container">
                             <Col md={6}>
                                 <Form
@@ -141,7 +142,7 @@ class AddMember extends React.Component {
                                         </Row>
                                     </Form.Item>
                                     <Form.Item>
-                                        <Button type="primary" htmlType="submit" className="login-form-button">
+                                        <Button type="primary" ghost htmlType="submit" className="login-form-button">
                                             Create
                                         </Button>
                                     </Form.Item>

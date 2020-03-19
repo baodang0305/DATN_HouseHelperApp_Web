@@ -1,8 +1,7 @@
 import React from "react";
 import { Layout, Input, Divider, Row, Col, Tag, Button, Modal, List, Avatar } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, LeftOutlined } from "@ant-design/icons";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
-import familyImg from "../../assets/family-img.png";
 import history from "../../helpers/history";
 import "./Message.css";
 
@@ -54,15 +53,15 @@ class Message extends React.Component {
 
         return (
             <Layout style={{ minHeight: '100vh'}}>
-                <DashboardMenu menuItem="1" familyImg={familyImg}/>
+                <DashboardMenu menuItem="1"/>
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0}}>
                         <Row>
-                            <Col flex="30px"> <i onClick={this.handleClickBack} className="fa fa-arrow-circle-o-left fa-3x back-icon" aria-hidden="true"></i> </Col>
+                            <Col flex="30px"> <Button onClick={this.handleClickBack} className="button-back"> <LeftOutlined /> </Button> </Col>
                             <Col flex="auto"><h2 style={{textAlign: "center"}}>Message</h2></Col>
                         </Row>
                     </Header>
-                    <Content className="site-layout-background content-container">
+                    <Content className="site-layout-background content-message-container">
                         <div className="textarea-container">
                             <TextArea rows={10} className="textarea" placeholder="Enter message"/>
                             <div className="tool-container">
@@ -74,7 +73,7 @@ class Message extends React.Component {
                         </div>
                         <Divider />
                         <Row justify="center" align="middle">
-                            <Col md={1} style={{fontSize: "18px"}}> To: </Col>
+                            <Col md={1} style={{fontSize: "18px", fontWeight: "bolder"}}> To: </Col>
                             <Col md={22}> 
                                 <div className="selector-container"> 
                                     <Tag className="tag-item" color="blue" closable> To all member</Tag>
@@ -105,9 +104,7 @@ class Message extends React.Component {
                             </Col>
                         </Row>
                         <Divider />
-                        
-                        <Button type="primary" className="send-button"> Send </Button>
-                        
+                        <Button className="send-button" type="primary" ghost>Send</Button>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
                 </Layout>

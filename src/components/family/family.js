@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Layout, Menu, Row, Col, Divider, List, Avatar} from "antd";
 import { Link } from "react-router-dom";
 import { 
@@ -9,23 +10,38 @@ import {
     LikeOutlined,
     MessageOutlined
 } from "@ant-design/icons";
+import { fetchMembers } from "../../actions/family";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
-import "./Family.css";
 import profileImg from "../../assets/profile-img.png";
-import familyImg from "../../assets/family-img.png";
+import "./Family.css";
 
 const { Header, Content, Footer } = Layout; 
 
 class Family extends React.Component {
+    constructor(props){
+        super(props);
+    }
+
+    UNSAFE_componentWillMount() {
+        const { dispatch } = this.props;
+        dispatch(fetchMembers());
+    }
 
     render() {
-        const ProfileImg = ({profileImg, point, nameMember}) => (
-            <div className="container-img-profile">
-                <img src={profileImg} className="profile-img"></img>
-                <div className="badge">{point}</div>
-                <div className="size-member-name">{nameMember}</div>
-            </div>
-        );
+        const { members } = this.props;
+        let listMembers;
+        if (members) {
+            listMembers = 
+            members.map((member, id) =>
+                <Col md={8} className="col-modified" key={id}>
+                    <div className="container-img-profile">
+                        <img src={member.mAvatar} className="profile-img"></img>
+                        <div className="badge">{member.mPoint}</div>
+                        <div className="size-member-name">{member.mName}</div>
+                    </div>
+                </Col>
+            );
+        }
 
         const listData = [];
         for (let i = 0; i < 23; i++) {
@@ -46,13 +62,13 @@ class Family extends React.Component {
 
         return(
             <Layout style={{ minHeight: '100vh'}}>
-                <DashboardMenu menuItem="1" familyImg={familyImg}/>
+                <DashboardMenu menuItem="1"/>
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0 }}>
                         <Menu onClick={this.handleClick} mode="horizontal" className="modified-top-menu">
                             <Menu.Item key="setting">
                                 <SettingOutlined className="size-icon"/>
-                                <Link to="/setting">Setting </Link>
+                                <Link to="/family/setting">Setting </Link>
                             </Menu.Item>
                             <Menu.Item key="message">
                                 <MailOutlined className="size-icon"/>
@@ -69,15 +85,7 @@ class Family extends React.Component {
                             <Divider orientation="left" className="divider-modified" style={{ color: '#333', fontWeight: 'normal' }}>
                                 All Member
                             </Divider>
-                            <Col md={8} className="col-modified">
-                                <ProfileImg profileImg={profileImg} point={3} nameMember="Name Member" />
-                            </Col>
-                            <Col md={8} className="col-modified">
-                                <ProfileImg profileImg={profileImg} point={3} nameMember="Name Member" />
-                            </Col>
-                            <Col md={8} className="col-modified">
-                                <ProfileImg profileImg={profileImg} point={3} nameMember="Name Member" />
-                            </Col>
+                            { listMembers }
                         </Row>
 
                         <Row className="row-modified">
@@ -128,4 +136,10 @@ class Family extends React.Component {
     }
 }
 
-export default Family;
+function mapStateToProps(state) {
+    return { 
+        members: state.family.members
+    }
+}
+
+export default connect(mapStateToProps)(Family);
