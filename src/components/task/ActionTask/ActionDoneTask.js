@@ -9,15 +9,18 @@ const { confirm } = Modal;
 
 
 
-function showDoneTaskForm(idTask) {
+function showDoneTaskForm(idTask, usersTask) {
     confirm({
-        title: 'Was this task complete by?',
+        title: 'Who did completed this task?',
         okText: 'Complete',
         icon: <CheckCircleOutlined style={{ color: '#9DCC80' }} />,
         content: <div className="form-done-task">
 
             <div className="avatar-member-done">
-                <Avatar style={{ width: 50, height: 50 }} className="icon-avatar" src={ImgAvatar} />
+                {usersTask.map(item =>
+                    <Avatar style={{ width: 50, height: 50 }} className="icon-avatar" src={item.mID.mAvatar} />)}
+
+
             </div>
 
         </div>,

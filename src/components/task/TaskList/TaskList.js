@@ -42,7 +42,7 @@ class TaskList extends React.Component {
                             <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
 
                                 <div className="list-action done-action"
-                                    onClick={() => showDoneTaskForm(item._id)}>
+                                    onClick={() => showDoneTaskForm(item._id, item.versions[0].assign.mAssigns)}>
                                     <div>
                                         <CheckOutlined style={{ color: '#9DCC80', fontSize: 18 }} />
                                     </div>
