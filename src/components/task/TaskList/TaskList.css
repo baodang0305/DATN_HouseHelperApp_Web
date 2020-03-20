@@ -1,75 +1,120 @@
-.actions {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
-	align-items: center;
+.detail-task {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
-.list-action {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	margin: 0 10px;
-}
-
-.content {
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-}
-div.infor-task {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
+.infor-task {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .name-task {
-	font-size: 16px;
-	font-weight: 500;
+  font-size: 17px;
+  font-weight: 500;
 }
 
+.note-task {
+  margin-top: 3px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
 .time-task {
-	font-size: 12px;
-	color: brown;
+  margin-top: 8px;
+  font-size: 12px;
+  color: brown;
 }
 
 .icon-assigned-point {
-	height: 100%;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .icon-assigned {
-	display: flex;
-	flex-direction: row;
+  display: flex;
+  flex-direction: row;
+}
+
+/* show text name when hover*/
+.container-icon-avatar {
+  position: relative;
+}
+.container-icon-avatar .icon-avatar-show-name {
+  visibility: hidden;
+  width: max-content;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 2px 4px;
+
+  /* Position the text name */
+  position: absolute;
+  top: -25px;
+  left: -5px;
+  z-index: 1;
+}
+.icon-avatar:hover {
+  border: 2px solid rgb(28, 221, 235);
+}
+
+.icon-avatar:active {
+  border: 2px solid rgb(57, 235, 41);
+  background: transparent;
 }
 
 .icon-avatar {
-	margin: 0 5px;
-	border: 1px solid rgb(50, 131, 223);
-	cursor: pointer;
+  margin: 0 5px;
+  cursor: pointer;
 }
-
-.icon-avatar:hover {
-	border: 2px solid rgb(44, 221, 88);
+.container-icon-avatar:hover .icon-avatar-show-name {
+  visibility: visible;
 }
 
 .icon-task-point {
-	font-size: 18px;
-	color: darkgoldenrod;
+  font-size: 18px;
+  color: darkgoldenrod;
 }
 .point,
 .task-point {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+  display: flex;
+  width: max-content;
+  flex-direction: row;
+  align-items: center;
 }
 .task-point {
-	margin-left: 20px;
+  margin-left: 20px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+.list-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.image-task {
+  max-height: 80px;
+  width: auto;
+  object-position: center;
+  object-fit: cover;
 }
