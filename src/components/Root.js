@@ -8,6 +8,7 @@ import Task from './Task/Task';
 import AddMember from './AddMember/AddMember';
 import Message from './Message/Message';
 import Setting from './Setting/Setting';
+import MyAccount from './MyAccount/MyAccount';
 import history from '../helpers/history';
 
 export default class Root extends Component {
@@ -17,30 +18,15 @@ export default class Root extends Component {
     return (
       <Router history={history}>
         <Switch>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/create-family">
-            <Register />
-          </Route>
-          <Route path="/tasks">
-            <Task />
-          </Route>
-          <Route path="/family/add-member">
-            <AddMember />
-          </Route>
-          <Route path="/family/message">
-            <Message />
-          </Route>
-          <Route path="/family/setting">
-            <Setting />
-          </Route>
-          <Route exact path="/family">
-            <Family/>
-          </Route>
-          <Route exact path="/">
-            <Home />
-          </Route>
+          <Route path="/login" component={Login} />
+          <Route path="/create-family" component={Register} />
+          <Route path="/tasks" component={Task} />
+          <Route path="/family/add-member" component={AddMember} />
+          <Route path="/family/message" component={Message} />
+          <Route path="/family/setting/my-account" component={MyAccount} />
+          <Route path="/family/setting" component={Setting} />
+          <Route path="/family" component={Family} />
+          <Route exact path="/" component={Home} />
         </Switch>
       </Router>
     );

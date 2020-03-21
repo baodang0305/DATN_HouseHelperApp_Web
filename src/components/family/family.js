@@ -82,14 +82,14 @@ class Family extends React.Component {
                     </Header>
                     <Content>
                         <Row className="row-modified">
-                            <Divider orientation="left" className="divider-modified" style={{ color: '#333', fontWeight: 'normal' }}>
+                            <Divider orientation="left" className="divider-modified">
                                 All Member
                             </Divider>
                             { listMembers }
                         </Row>
 
                         <Row className="row-modified">
-                            <Divider orientation="left" className="divider-modified" style={{ color: '#333', fontWeight: 'normal' }}>
+                            <Divider orientation="left" className="divider-modified">
                                 All Activities
                             </Divider>
                             <List
@@ -106,9 +106,9 @@ class Family extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         actions={[
-                                            <IconText icon={StarOutlined} text="156" key="list-vertical-star-o" />,
-                                            <IconText icon={LikeOutlined} text="156" key="list-vertical-like-o" />,
-                                            <IconText icon={MessageOutlined} text="2" key="list-vertical-message" />,
+                                            <IconText icon={StarOutlined} text="0" key="list-vertical-star-o" />,
+                                            <IconText icon={LikeOutlined} text="0" key="list-vertical-like-o" />,
+                                            <IconText icon={MessageOutlined} text="0" key="list-vertical-message" />,
                                         ]}
                                         extra={
                                             <img
@@ -119,7 +119,6 @@ class Family extends React.Component {
                                         }
                                     >
                                         <List.Item.Meta
-                                            // avatar={<Avatar src={item.avatar} />}
                                             avatar={<Avatar src={profileImg} />}
                                             title={<div>{item.title}</div>}
                                             description={item.description}

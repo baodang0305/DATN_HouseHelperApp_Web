@@ -10,7 +10,7 @@ function receivedMembers(json) {
 
 export function fetchMembers() {
     return dispatch => {
-        return fetch(`${apiUrlTypes.local}/users/get-all-members`)
+        return fetch(`${apiUrlTypes.local}users/get-all-members`)
             .then(response => response.json())
             .then(json => {
                 dispatch(receivedMembers(json));

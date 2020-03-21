@@ -1,110 +1,97 @@
 import React from "react";
-import { Layout, Input, Divider, Row, Col, Tag, Button, Modal, List, Avatar } from "antd";
-import { PlusOutlined, LeftOutlined } from "@ant-design/icons";
+import { Layout, Button, Row, Col, Input, Menu, Tooltip } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import history from "../../helpers/history";
+import profileImg from "../../assets/profile-img.png";
 import "./Message.css";
-
 const { Header, Content, Footer } = Layout;
-const { TextArea } = Input;
+const { Search } = Input;
 
 class Message extends React.Component {
-
-    constructor(props){
-        super(props);
-        this.state = {
-            visible: false
-        }
-    }
-
-    showModal = () => {
-        this.setState({
-          visible: true
-        });
-    };
-    
-    handleCancel = e => {
-        console.log(e);
-        this.setState({
-          visible: false,
-        });
-    };
 
     handleClickBack = () => {
         history.goBack();
     }
 
     render() {
-
-        const data = [
-            {
-              title: 'Bao Dang',
-            },
-            {
-              title: 'Nguyen Huong',
-            },
-            {
-              title: 'Nguyen Van',
-            },
-            {
-              title: 'Nguyen C',
-            },
-        ];
-
-        return (
-            <Layout style={{ minHeight: '100vh'}}>
+        return(
+            <Layout style={{minHeight: "100vh"}}>
                 <DashboardMenu menuItem="1"/>
                 <Layout className="site-layout">
                     <Header className="site-layout-background" style={{ padding: 0}}>
-                        <Row>
-                            <Col flex="30px"> <Button onClick={this.handleClickBack} className="button-back"> <LeftOutlined /> </Button> </Col>
-                            <Col flex="auto"><h2 style={{textAlign: "center"}}>Message</h2></Col>
-                        </Row>
+                        <Row style={{textAlign: "center"}}>
+                            <Col flex="30px"> 
+                                <Button onClick={this.handleClickBack} style={{marginLeft: "10px"}}> <LeftOutlined className="icon-back"/> </Button> 
+                            </Col>                         
+                            <Col flex="auto">
+                                <div className="title-header">Message</div>
+                            </Col>
+                       </Row>
                     </Header>
-                    <Content className="site-layout-background content-message-container">
-                        <div className="textarea-container">
-                            <TextArea rows={10} className="textarea" placeholder="Enter message"/>
-                            <div className="tool-container">
-                                <i className="fa fa-upload fa-lg" aria-hidden="true" style={{marginLeft: "20px", marginRight: "20px"}}></i>
-                                <i className="fa fa-link fa-lg" aria-hidden="true" style={{marginRight: "20px"}}></i>
-                                <i className="fa fa-video-camera fa-lg" aria-hidden="true" style={{marginRight: "20px"}}></i>
-                                <i className="fa fa-quote-right fa-lg" aria-hidden="true" style={{marginRight: "20px"}}></i>
-                            </div>
-                        </div>
-                        <Divider />
-                        <Row justify="center" align="middle">
-                            <Col md={1} style={{fontSize: "18px", fontWeight: "bolder"}}> To: </Col>
-                            <Col md={22}> 
-                                <div className="selector-container"> 
-                                    <Tag className="tag-item" color="blue" closable> To all member</Tag>
-                                    <span className="add-more">< PlusOutlined /> <span onClick={this.showModal} >Add More</span></span>
-                                    <Modal
-                                        title="All Member"
-                                        visible={this.state.visible}
-                                        footer={[
-                                            <Button key="back" onClick={this.handleCancel}>
-                                                Cancel
-                                            </Button>
-                                        ]}
-                                        >
-                                        <List
-                                            itemLayout="horizontal"
-                                            dataSource={data}
-                                            renderItem={item => (
-                                            <List.Item>
-                                                <List.Item.Meta
-                                                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                                title={<Button style={{width: "200px"}}>{item.title}</Button>}
-                                                />
-                                            </List.Item>
-                                            )}
-                                        />
-                                    </Modal>
-                                </div>
+                    <Content style={{margin: "15px"}}>
+                        <Row className="chat-container site-layout-background">
+                            <Col span={6} className="menu-chat-container">
+                                <Row className="header-menu-container" >
+                                    <img className="avatar-messenger" src={profileImg}/> &ensp; <span className="name-messenger"> Name </span>
+                                </Row>
+                                <Row className="search-menu-container">
+                                    <Search className="search-messenger" placeholder="search messenger" onSearch={value => console.log(value)} />
+                                </Row>
+                                <Row className="content-menu-container">
+                                    <Menu defaultSelectedKeys="Bao" mode="vertical" className="list-partner-container">
+                                        <Menu.Item key="Bao" className="partner-item-container">
+                                            <Row className="partner-container">
+                                                <img className="avatar-partner" src={profileImg}/> &ensp;
+                                                <Col >
+                                                    <div className="name-partner"> Name partner </div>
+                                                    <div className="content-message"> You: love you</div>
+                                                </Col>
+                                            </Row>
+                                        </Menu.Item>
+                                        <Menu.Item className="partner-item-container">
+                                            <Row className="partner-container">
+                                                <img className="avatar-partner" src={profileImg}/> &ensp;
+                                                <Col >
+                                                    <div className="name-partner"> Name partner </div>
+                                                    <div className="content-message"> You: love you</div>
+                                                </Col>
+                                            </Row>
+                                        </Menu.Item>
+                                    </Menu>
+                                </Row>
+                            </Col>
+                            <Col span={18} className="body-chat-container">
+                                <Row className="header-body-container">
+                                    <img className="avatar-partner" src={profileImg}/> &ensp;
+                                    <Col >
+                                        <div className="name-partner"> Name partner </div>
+                                        <div className="content-message"> Active 1h ago</div>
+                                    </Col>
+                                </Row>
+                                <Row className="content-body-container">
+                                    <Row>
+                                        content
+                                    </Row>
+                                    <Row className="toolbar-bottom"> 
+                                        <Col ><i className="fa fa-camera fa-lg icon-toolbar"></i> </Col> &emsp;
+                                        <Col > <i className="fa fa-microphone fa-lg icon-toolbar" ></i> </Col> &emsp;
+                                        <Col > <i className="fa fa-image fa-lg icon-toolbar"></i> </Col> &emsp;
+                                        <Col flex="auto"> 
+                                            <Input 
+                                                className="message-input"
+                                                placeholder="Type a message..."
+                                                suffix={
+                                                    <Tooltip title="choose an emoji">
+                                                        <i className="fa fa-smile-o fa-lg icon-smile"></i>
+                                                    </Tooltip>
+                                                }
+                                            />
+                                        </Col>
+                                    </Row>
+                                </Row>
                             </Col>
                         </Row>
-                        <Divider />
-                        <Button className="send-button" type="primary" ghost>Send</Button>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
                 </Layout>

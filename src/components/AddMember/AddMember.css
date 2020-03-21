@@ -60,7 +60,6 @@ button.upload-container:hover, button.upload-container:hover::after {
     width: 40px;
     height: 40px;
     border-radius: 50% !important;
-    border-style: ridge;
     position: relative;
 }
 .avatar::before {
@@ -163,4 +162,8 @@ button.upload-container:hover, button.upload-container:hover::after {
 .fa-envelope,
 .fa-birthday-cake {
     color: #d7d7d7;
+}
+
+.create-button {
+    width: 100%;
 }

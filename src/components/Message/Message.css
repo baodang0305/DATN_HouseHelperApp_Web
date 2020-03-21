@@ -1,59 +1,149 @@
-.content-message-container {
-    margin: 20px 0px;
+.chat-container {
+    height: 100%;
+    border: groove thin;
+    border-radius: 10px;
 }
 
-.textarea-container {
+.title-header{
+    font-weight: bolder;
+    margin-right: 55px;
+}
+
+.menu-chat-container {
+    border-right: groove thin;
+    padding: 15px;
+}
+
+.header-menu-container {
+    align-items: center;
+}
+
+.name-messenger {
+    font-size: 17px;
+    font-weight: bolder;
+}
+
+.avatar-messenger {
+    width: 50px;
+    height: auto;
+    border-radius: 50%;
+}
+
+.search-menu-container {
+    margin: 10px 0px;
+}
+
+.search-messenger {
+    border-radius: 15px;
+    height: 35px;
+    font-size: 20px;
+    align-items: center;
+}
+
+.body-menu-container {
+    margin: 5px 0px;
+}
+
+.list-partner-container {
+    width: 100%;
+    background-color: unset;
+    border-right: none;
+}
+
+.partner-item-container {
+    height: auto !important;
+    line-height: 25px !important;
+    margin: 10px 0px !important;
+    border-radius: 5px;
+}
+
+.partner-container {
+    align-items: center;
+    margin: 5px 0px;
+}
+
+.avatar-partner {
+    width: 40px;
+    height: auto;
+    border-radius: 50%;
+}
+
+.name-partner {
+    font-size: 15px;
+    line-height: 25px;
+    font-weight: bold;
+}
+
+.content-message {
+    font-size: 12px;
+    color: rgb(153, 153, 153);
+    line-height: 12px;
+}
+
+.header-body-container {
+    border-bottom: groove thin;
+    padding: 15px;
+}
+
+.content-body-container {
     position: relative;
-    height: 200px;
+    padding: 15px;
+    height: 86%;
 }
 
-.tool-container {
+.toolbar-bottom {
     position: absolute;
     bottom: 0px;
+    width: 100%;
+    align-items: center;
 }
 
-.textarea {
-    margin: auto;
-    border: none !important;
-    position: absolute;
+.message-input {
+    width: 80%;
+    border-radius: 10px;
 }
 
-.selector-container {
-    border-style: ridge;
-    height: 50px;
-    line-height: 50px;
-}
-
-.tag-item {
-    margin-left: 5px;
-    margin-right: 10px;
-    padding: 5px 0px;
-    font-size: 16px;
-}
-
-.send-button {
-    width: 200px;
-    margin-left: 20px;
-    font-size: 20px;
-    height: auto;
-}
-
-.add-more {
-    font-size: 15px;
+.icon-toolbar {
     cursor: pointer;
-    color: #0050b3;
-    position: relative;
 }
 
-.add-more:hover {
-    transform: translateY(-2px);
-    color: #0050b3;
-    position: absolute;
+/* big tablets to 1200px */
+@media only screen and (min-width: 1024px) {
+    .title-header{
+        font-size: 20px;
+    }
+    .icon-back {
+        font-size: 16px;
+    }
 }
 
-.button-back {
-    margin-left: 10px;
-    border-style: ridge;
-    height: 35px;
-    border-color: #add8ff;
+/* small tablets to big tablets from 768px to 1023px */
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+    .title-header{
+        font-size: 18px;
+    }
+    .icon-back {
+        font-size: 14px;
+    }
+}
+
+/* small phones to small tablets */
+@media only screen and (min-width: 480px) and ( max-width: 767px) {
+    .title-header{
+        font-size: 16px;
+    }
+    .icon-back {
+
+        font-size: 12px;
+    }
+}
+
+/* small phones from 0 - 480px */
+@media only screen and (min-width: 0px) and (max-width: 479px) {
+    .title-header{
+        font-size: 14px;
+    }
+    .icon-back {
+        font-size: 10px;
+    }
 }
