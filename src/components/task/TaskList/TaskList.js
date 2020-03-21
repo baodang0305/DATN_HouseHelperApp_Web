@@ -1,54 +1,51 @@
 import React from 'react'
-import { List, Avatar, Button, Skeleton } from 'antd';
+import { List, Avatar, Button, Skeleton, Col, Row } from 'antd';
 
-import AvatarImg from '../../../assets/avatar.jpg';
-import AvatarImg2 from '../../../assets/avatar2.jpg';
 import './TaskList.css'
 
-import { EditOutlined, CloseOutlined, DeleteOutlined, CheckOutlined, StopOutlined, AlertOutlined, StarOutlined } from '@ant-design/icons';
+import {
+    EditOutlined,
+    CloseOutlined,
+    DeleteOutlined,
+    CheckOutlined,
+    StopOutlined,
+    AlertOutlined,
+    StarOutlined,
+    SnippetsOutlined,
+
+} from '@ant-design/icons';
 import moment from 'moment';
+import showDoneTaskForm from '../ActionTask/ActionDoneTask';
 
-const count = 3;
-const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat&noinfo`;
-
-const dataTemp = [
-    { id: 1, taskName: 'Do the laundry', assignedMember: ['VB', 'GB'], points: 15, status: 'todo' },
-    { id: 2, taskName: 'Wash the dishes', assignedMember: ['VB', 'GB'], points: 10, status: 'todo' },
-    { id: 3, taskName: 'Tidy up the room', assignedMember: ['VB', 'GB'], points: 20, status: 'todo' },
-    { id: 5, taskName: 'Do the cooking for lunch', assignedMember: ['VB', 'GB'], points: 15, status: 'completed' },
-    { id: 6, taskName: 'Clean the house', assignedMember: ['VB', 'GB'], points: 15, status: 'todo' }
-]
 
 class TaskList extends React.Component {
     state = {
         initLoading: true,
         loading: false,
-        data: dataTemp,
-        list: dataTemp,
+
         hiddenActionsList: true,
         index: ''
     };
-
-
-
     render() {
-        const { list, hiddenActionsList, index } = this.state;
-        console.log(list);
+        const { hiddenActionsList, index } = this.state;
+        const { dataTasks } = this.props;
 
         return (
             <List
                 className="demo-loadmore-list"
-
                 itemLayout="horizontal"
-
-                dataSource={list}
+                dataSource={dataTasks}
                 renderItem={item => (
-                    <List.Item key={item.id} style={{ height: 75 }}
-                        onClick={(e) => this.setState({ hiddenActionsList: !hiddenActionsList, index: item.id })}
+                    <List.Item key={item._id} style={{ height: 90, paddingBottom: 5 }}
+                        onClick={(e) => this.setState({ hiddenActionsList: !hiddenActionsList, index: item._id })}
                         actions={[
-                            <div key={item.id} hidden={item.id === index ? hiddenActionsList : true} className="actions">
-                                <div className="list-action done-action">
-                                    <div><CheckOutlined style={{ color: '#9DCC80', fontSize: 18 }} /></div>
+                            <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
+
+                                <div className="list-action done-action"
+                                    onClick={() => showDoneTaskForm(item._id, item.versions[0].assign.mAssigns)}>
+                                    <div>
+                                        <CheckOutlined style={{ color: '#9DCC80', fontSize: 18 }} />
+                                    </div>
                                     <div>Finish</div>
                                 </div>
                                 <div className="list-action dismiss-action">
@@ -67,22 +64,40 @@ class TaskList extends React.Component {
                                     <div><DeleteOutlined style={{ color: '#EC6764', fontSize: 18 }} /></div>
                                     <div>Delete</div>
                                 </div>
+
                             </div>
                         ]}
                     >
                         <Skeleton avatar title={false} loading={item.loading} active>
-                            <div className="content">
-                                <div className="infor-task">
-                                    <div className="name-task">{item.taskName}</div>
-                                    <div className="time-task">{moment().format('MMMM Do YYYY, h:mm:ss a')}</div>
-                                </div>
+
+                            <div className="detail-task">
+                                <Row gutter={10} style={{ width: '100%' }}>
+                                    <Col span={10}>
+                                        <div className="infor-task">
+                                            <div className="name-task">{item.versions[0].name}</div>
+                                            <div className="note-task"><SnippetsOutlined style={{ fontSize: 16 }} />&nbsp;{item.versions[0].notes}</div>
+                                            <div className="time-task">{item.versions[0].date.lastDueDate === null ? `${'Did not create'}` : moment(`${item.versions[0].date.lastDueDate}`).format('MMMM Do YYYY, h:mm:ss a')}</div>
+                                        </div>
+                                    </Col>
+                                    <Col span={4}>
+                                        <img className="image-task" src="" alt="" />
+                                    </Col>
+                                </Row>
+
                                 <div className="icon-assigned-point">
                                     <div className="icon-assigned">
-                                        <Avatar className="icon-avatar" src={AvatarImg} />
-                                        <Avatar className="icon-avatar" src={AvatarImg2} />
+
+                                        {item.versions[0].assign.mAssigns.map(item =>
+                                            <div className="container-icon-avatar">
+                                                <Avatar className="icon-avatar" src={item.mID.mAvatar} />
+                                                <span className='icon-avatar-show-name'>{item.mID.mName}</span>
+                                            </div>)}
                                     </div>
 
-                                    <div className="task-point"><span><StarOutlined className="icon-task-point" /></span><span className="point">&nbsp;{item.points} points</span></div>
+                                    <div className="task-point">
+                                        <span><StarOutlined className="icon-task-point" /></span>
+                                        <span className="point">&nbsp;{item.versions[0].points} points</span>
+                                    </div>
                                 </div>
 
                             </div>

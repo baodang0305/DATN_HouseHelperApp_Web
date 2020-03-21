@@ -7,7 +7,7 @@ import profileImg from "../../assets/profile-img.png";
 import history from "../../helpers/history";
 import "./AddMember.css";
 
-const { Header, Footer, Content} = Layout;
+const { Header, Footer, Content } = Layout;
 
 class AddMember extends React.Component {
     constructor(props) {
@@ -30,29 +30,29 @@ class AddMember extends React.Component {
     render() {
         const { avatarType } = this.state;
         let Avatar;
-        switch(avatarType) {
+        switch (avatarType) {
             case "pink": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container pink-avatar"/>) };
+                Avatar = () => { return (<img src={profileImg} className="upload-container pink-avatar" />) };
                 break;
             }
             case "yellow": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container yellow-avatar"/>) };
+                Avatar = () => { return (<img src={profileImg} className="upload-container yellow-avatar" />) };
                 break;
             }
             case "orange": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container orange-avatar"/>) };
+                Avatar = () => { return (<img src={profileImg} className="upload-container orange-avatar" />) };
                 break;
             }
             case "purple": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container purple-avatar"/>) };
+                Avatar = () => { return (<img src={profileImg} className="upload-container purple-avatar" />) };
                 break;
             }
             case "blue": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container blue-avatar"/>) };
+                Avatar = () => { return (<img src={profileImg} className="upload-container blue-avatar" />) };
                 break;
             }
             case "green": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container green-avatar"/>) };
+                Avatar = () => { return (<img src={profileImg} className="upload-container green-avatar" />) };
                 break;
             }
             case "camera": {
@@ -61,8 +61,8 @@ class AddMember extends React.Component {
                         <Upload>
                             <Button className="upload-container">
                                 <div className="camera-icon-container">
-                                    <img src={cameraImg} className="camera-img"/>
-                                </div> 
+                                    <img src={cameraImg} className="camera-img" />
+                                </div>
                                 <div className="name-upload-container">
                                     <div className="name-upload">Add Photo</div>
                                 </div>
@@ -96,15 +96,15 @@ class AddMember extends React.Component {
                                         <Avatar />
                                     </Form.Item>
                                     <Form.Item>
-                                    <Radio.Group onChange={this.handleChange} defaultValue="pink" className="list-avatar-container">
-                                        <Radio.Button value="camera" className="avatar camera-avatar"> <i className="fa fa-camera camera-icon" aria-hidden="true"></i></Radio.Button>
-                                        <Radio.Button value="pink" className="avatar pink-avatar"></Radio.Button>
-                                        <Radio.Button value="yellow" className="avatar yellow-avatar"></Radio.Button>
-                                        <Radio.Button value="orange" className="avatar orange-avatar"></Radio.Button>
-                                        <Radio.Button value="purple" className="avatar purple-avatar"></Radio.Button>
-                                        <Radio.Button value="blue" className="avatar blue-avatar"></Radio.Button>
-                                        <Radio.Button value="green" className="avatar green-avatar"></Radio.Button>
-                                    </Radio.Group>
+                                        <Radio.Group onChange={this.handleChange} defaultValue="pink" className="list-avatar-container">
+                                            <Radio.Button value="camera" className="avatar camera-avatar"> <i className="fa fa-camera camera-icon" aria-hidden="true"></i></Radio.Button>
+                                            <Radio.Button value="pink" className="avatar pink-avatar"></Radio.Button>
+                                            <Radio.Button value="yellow" className="avatar yellow-avatar"></Radio.Button>
+                                            <Radio.Button value="orange" className="avatar orange-avatar"></Radio.Button>
+                                            <Radio.Button value="purple" className="avatar purple-avatar"></Radio.Button>
+                                            <Radio.Button value="blue" className="avatar blue-avatar"></Radio.Button>
+                                            <Radio.Button value="green" className="avatar green-avatar"></Radio.Button>
+                                        </Radio.Group>
                                     </Form.Item>
                                     <Form.Item name="name" rules={[{ required: true, message: 'Please input your name!' }]}>
                                         <Input prefix={<i className="fa fa-user" aria-hidden="true"></i>} placeholder="Name" />
@@ -120,14 +120,14 @@ class AddMember extends React.Component {
                                         <Input prefix={ <i className="fa fa-birthday-cake" aria-hidden="true"></i> } placeholder="Age" />
                                     </Form.Item>
                                     <Form.Item>
-                                        <Row>
-                                            <Col flex="260px">  
+                                        <Row style={{ width: '100%' }}>
+                                            <Col span={16}>
                                                 <Select defaultValue="father" >
                                                     <Select.Option value="father">father</Select.Option>
                                                     <Select.Option value="father">mother</Select.Option>
                                                 </Select>
                                             </Col>
-                                            <Col flex="auto"> <Radio className="radio-admin"> Admin </Radio> </Col>
+                                            <Col span={8}> <Radio className="radio-admin"> Admin </Radio> </Col>
                                         </Row>
                                     </Form.Item>
                                     <Form.Item>
