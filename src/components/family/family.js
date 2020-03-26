@@ -10,7 +10,7 @@ import {
     LikeOutlined,
     MessageOutlined
 } from "@ant-design/icons";
-import { fetchMembers } from "../../actions/family";
+//import { getAllMembers } from "../../actions/family";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import profileImg from "../../assets/profile-img.png";
 import "./Family.css";
@@ -22,9 +22,14 @@ class Family extends React.Component {
         super(props);
     }
 
-    UNSAFE_componentWillMount() {
-        const { dispatch } = this.props;
-        dispatch(fetchMembers());
+    componentDidMount() {
+        // const { dispatch } = this.props;
+        // dispatch(getAllMembers());
+
+    }
+
+    handleChange = (e) => {
+        
     }
 
     render() {
@@ -70,7 +75,7 @@ class Family extends React.Component {
                                 <SettingOutlined className="size-icon"/>
                                 <Link to="/family/setting">Setting </Link>
                             </Menu.Item>
-                            <Menu.Item key="message">
+                            <Menu.Item key="chat">
                                 <MailOutlined className="size-icon"/>
                                 <Link to="/family/message"> Message </Link>
                             </Menu.Item>
@@ -129,16 +134,11 @@ class Family extends React.Component {
                         </Row>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+                    <input name="name" value={name} onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
                 </Layout>
             </Layout>
         );
     }
 }
 
-function mapStateToProps(state) {
-    return { 
-        members: state.family.members
-    }
-}
-
-export default connect(mapStateToProps)(Family);
+export default Family;
