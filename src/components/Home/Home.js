@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Row } from "antd"
+import { Button } from "antd"
 
 import "./home.css";
 import "antd/dist/antd.css";

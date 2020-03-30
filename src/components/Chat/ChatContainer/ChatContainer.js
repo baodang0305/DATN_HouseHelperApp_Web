@@ -1,185 +1,402 @@
 import React from "react";
-import { Layout, Row, Col, Button, Input, Menu, Tooltip } from "antd";
+import { Layout, Row, Col, Button, Input, Tooltip, Tabs, Menu } from "antd";
 import { LeftOutlined } from "@ant-design/icons";
 import socketIoClient from "socket.io-client";
-import history from "../../../helpers/history";
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
 import Messages from "../Messages/Messages";
-import profileImg from "../../../assets/profile-img.png";
+import history from "../../../helpers/history";
 import "./ChatContainer.css";
 
-const { Header, Content, Footer } = Layout; 
 const { Search } = Input;
+const { TabPane } = Tabs;
+const { Header, Content, Footer } = Layout;
 
 let socket;
 
 class ChatContainer extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-            name: "",
+            receiverActive: null,
+            receiverRecent: null,
+            usersActive: null,
+            usersRecent: null,
+            filteredUsersActive: null,
+            filteredUsersRecent: null,
+            familyGroup: null,
             message: "",
             messages: [],
-            usersActive: []
+            activeTab: "recent",
+            searchInput: "",
+            enpoint: "http://localhost:3001"
         }
+    }
+
+    componentDidMount() {
+
+        const { enpoint } = this.state;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const { member } = user;
+
+        socket = socketIoClient(enpoint);
+
+        socket.emit("join", member);
+
+        socket.on("server-send-list-user-active", (usersActive) => {
+            let index = -1;
+            for (let i = 0; i < usersActive.length; i++) {
+                if (usersActive[i].mEmail !== member.mEmail) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index !== -1) {
+                this.setState({
+                    usersActive,
+                    receiverActive: usersActive[index],
+                    filteredUsersActive: usersActive
+                });
+                socket.emit("client-request-content-messages", {"receiver": usersActive[index], "sender": member});
+            } else {
+                this.setState({ messages: [] });
+            }
+        });
+
+        socket.on("server-send-list-user-recent", (usersRecent) => {
+            if (usersRecent.length !== 0) {
+                this.setState({
+                    usersRecent,
+                    receiverRecent: usersRecent[0],
+                    filteredUsersRecent: usersRecent
+                });
+                socket.emit("client-request-content-messages", {"receiver": usersRecent[0], "sender": member});
+            }
+        });
+
+        socket.on("server-send-family-group", (familyGroup) => {
+            if (familyGroup) {
+                this.setState({ 
+                    familyGroup,
+                    messages: familyGroup.messages
+                });
+            }
+        });
+        
+        socket.on("server-response-messages", (messages) => {
+            this.setState({messages});
+        });
     }
 
     handleClickBack = () => {
         history.goBack();
     }
 
-    componentDidMount() {
-        socket = socketIoClient("http://localhost:3001");
-        socket.on("server-send-message", (message) => {
-            this.setState((state) => ({
-                messages: [...state.messages, message]
-            }));
-        });
-        socket.on("server-response-message", (message) => {
-            this.setState((state) => ({
-                messages: [...state.messages, message]
-            }));
-        });
-        socket.on("server-send-list-user-active", (listUserActive) => {
-            this.setState({
-                usersActive: listUserActive
-            });
-        });
+    handleClickMenuActive = (e) => {
+
+        const { usersActive } = this.state;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const { member } = user;
+
+        const result = usersActive.find(userActive => userActive.mSocketID === e.key);
+        socket.emit("client-request-content-messages", {"receiver": result, "sender": member});
+        this.setState({ receiverActive: result });
     }
 
     handleChange = (e) => {
         const { name, value } = e.target;
-        this.setState({
-            [name]: value
-        });
+        this.setState({ [name]: value });
     }
 
-    handleKeyPress = (e) => {
-        const { message } = this.state;
-        if(message) {
-            if(e.key === "Enter") {
-                socket.emit("client-send-message", message);
-                this.setState({message: ""});
+    handleKeyPressMessage = (e) => {
+
+        const { message, receiverActive, receiverRecent, activeTab } = this.state;
+
+        if (message) {
+            if (e.key === "Enter") {
+                const user = JSON.parse(localStorage.getItem("user"));
+                const { member } = user;
+                if (activeTab === "active") {
+                    socket.emit("client-send-message", { "receiver": receiverActive, "sender": member, message });
+                } else if (e.key === "recent") {
+                    socket.emit("client-send-message", { "receiver": receiverRecent, "sender": member, message });
+                } else {
+                    socket.emit("client-send-message-to-family-group", {"member": member, "message": message});
+                }
+                this.setState({ message: ""});
             }
         }
     }
 
-    handleKeyPress1 = (e) => {
-        const { name } = this.state;
-        if(name) {
-            if(e.key === "Enter") {
-                socket.emit("join", {name, room: "room1"}, (error) => {
-                    if(error) {
-                        console.log(error);
-                    }
+    handleClickMenuRecent = (e) => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const { member } = user; 
+        const { usersRecent } = this.state;
+        const result = usersRecent.find(userRecent => userRecent.mEmail === e.key);
+        socket.emit("client-request-content-messages", {"receiver": result, "sender": member});
+        this.setState({ receiverRecent: result });
+    }
+
+    handleTabClick = (key) => {
+
+        this.setState({ activeTab: key});
+
+        const user = JSON.parse(localStorage.getItem("user"));
+        const { member } = user;
+
+        if (key === "active") {
+            socket.emit("client-request-send-list-user-active", member.fID);
+        } else if (key === "recent") {
+            socket.emit("client-request-send-list-user-recent", member.mEmail);
+        } else {
+            socket.emit("client-request-send-family-group", member.fID);
+        }
+
+    }
+
+    handleChangeSearchInput = (e) => {
+        const { usersRecent, usersActive, activeTab } = this.state;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const { member } = user;
+
+        const { name, value } = e.target;
+
+        if (activeTab === "recent") {
+            const filteredUsersRecent = usersRecent.filter(element => {
+                return element.mName.toLowerCase().includes(value.toLowerCase());
+            });
+
+            if (filteredUsersRecent.length !== 0) {
+                this.setState({
+                    filteredUsersRecent,
+                    receiverRecent: filteredUsersRecent[0]
+                });
+                socket.emit("client-request-content-messages", {"receiver": filteredUsersRecent[0], "sender": member});
+            } else {
+                this.setState({ 
+                    messages: null,
+                    receiverRecent: null,
+                    filteredUsersRecent: null
+                });
+            }
+        } else {
+            const filteredUsersActive = usersActive.filter(element => {
+                return element.mName.toLowerCase().includes(value.toLowerCase());
+            });
+            let index = -1;
+            for (let i = 0; i < filteredUsersActive.length; i++) {
+                if (filteredUsersActive[i].mEmail !== member.mEmail) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index !== -1) {
+                this.setState({
+                    filteredUsersActive,
+                    receiverActive: filteredUsersActive[index]
+                });
+                socket.emit("client-request-content-messages", {"receiver": filteredUsersActive[index], "sender": member});
+            } else {
+                this.setState({ 
+                    messages: null,
+                    receiverActive: null,
+                    filteredUsersActive: null
                 });
             }
         }
+        this.setState({ [name]: value });
     }
 
     render() {
 
-        const { messages, name, message, usersActive } = this.state;
-        let listUsersActive;
-        if (usersActive) {
-            listUsersActive = usersActive.map(user =>
-                <Menu.Item className="menu-item-container">
-                    <Row className="item-chat-list-container"> 
-                        <img className="img-item-chat-list" src={profileImg} /> &emsp;
-                        <span>
-                            <div className="name-item-chat-list">{user.name}</div>
-                            <div className="content-item-chat-list">You: How are you?</div>
-                        </span>
-                    </Row>
-                </Menu.Item>
-            );
+        const { filteredUsersActive, filteredUsersRecent, receiverActive, receiverRecent,
+                messages, message, activeTab, searchInput, familyGroup } = this.state;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const { member } = user;
+
+        const toolBar = () => (
+            <Row className="tool-bar-container">
+                <Col>
+                    <i className="fa fa-camera fa-lg"></i> &ensp;
+                    <i className="fa fa-microphone fa-lg" ></i> &ensp;
+                    <i className="fa fa-image fa-lg"></i> &ensp;
+                </Col>
+                <Col flex="auto">
+                    <Input
+                        className="message-input"
+                        placeholder="Type a message..."
+                        suffix={
+                            <Tooltip title="choose an emoji">
+                                <i className="fa fa-smile-o fa-lg icon-smile"></i>
+                            </Tooltip>
+                        }
+                        name="message"
+                        value={message}
+                        onChange={this.handleChange}
+                        onKeyPress={this.handleKeyPressMessage}
+                    />
+                </Col>
+            </Row>
+        );
+
+        const showToolBar = () => {
+            if (activeTab === "active") {
+                if (receiverActive) {
+                    return toolBar();
+                }
+            } else if (activeTab === "recent") {
+                if (receiverRecent) {
+                    return toolBar();
+                }
+            } else {
+                if (familyGroup) {
+                    return toolBar();
+                }
+            }
         }
 
+        const headerBodyMessage = () => {
+            if (activeTab === "active") {
+                if (receiverActive) {
+                    return (
+                        <>
+                            <img className="img-header-message" src={receiverActive.mAvatar} /> &emsp;
+                            <span>
+                                <div className="name-header-message">{receiverActive.mName}</div>
+                                <div className="active-container">  <div className="circle-active" /> &nbsp; Active  </div>
+                            </span>
+                        </>
+                    );
+                }
+            } else if (activeTab === "recent") {
+                if (receiverRecent) {
+                    return (    
+                        <>
+                            <img className="img-header-message" src={receiverRecent.mAvatar} /> &emsp;
+                            <span>
+                                <div className="name-header-message">{receiverRecent.mName}</div>
+                                { receiverRecent.mSocketID && <div className="active-container">  <div className="circle-active" /> &nbsp; Active  </div> }
+                            </span>
+                        </>
+                    );
+                }
+            } else {
+                if (familyGroup) {
+                    return(
+                        <>
+                            <img className="img-header-message" src={familyGroup.fAvatar} /> &emsp;
+                            <div className="name-header-message">{familyGroup.fName}</div>
+                        </>
+                    );
+                }
+            }
+        }
+
+        const showMessages = () => {
+            if (messages) {
+                if (activeTab === "recent") {
+                    if (receiverRecent) {
+                        return <Messages messages={messages} mName={member.mName}/> 
+                    }
+                } else if (activeTab === "active") {
+                    if (receiverActive) {
+                        return <Messages messages={messages} mName={member.mName}/> 
+                    }
+                } else {
+                    if (familyGroup) {
+                        return <Messages messages={messages} mName={member.mName}/> 
+                    }   
+                }
+            }
+        }
+        
+
         return (
-            <Layout style={{minHeight: "100vh"}}>
-                <DashboardMenu menuItem="1"/>
+            <Layout style={{ minHeight: "100vh" }}>
+                <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{padding: 0}}>
-                        <Row style={{textAlign: "center"}}>
-                            <Col style={{marginLeft: "10px"}}> 
-                                <Button onClick={this.handleClickBack}> <LeftOutlined className="icon-back"/> </Button> 
-                            </Col>                         
+                    <Header className="site-layout-background" style={{ padding: 0 }}>
+                        <Row style={{ textAlign: "center" }}>
+                            <Col style={{ marginLeft: "10px" }}>
+                                <Button onClick={this.handleClickBack}> <LeftOutlined className="icon-back" /> </Button>
+                            </Col>
                             <Col flex="auto">
                                 <div className="title-header">Message</div>
                             </Col>
-                       </Row>
+                        </Row>
                     </Header>
-                    <Content style={{margin: 20}}>
+                    <Content style={{ margin: 20 }}>
                         <Row className="chat-container">
                             <Col span={8} className="chat-list-container">
                                 <Row className="header-chat-list-container">
-                                    <img className="img-header-chat-list" src={profileImg} /> &emsp;
-                                    <div className="name-header-chat-list">Name</div>
+                                    <img className="img-header-chat-list" src={member.mAvatar} /> &emsp;
+                                        <div className="name-header-chat-list">{member.mName}</div>
                                 </Row>
                                 <Row className="search-chat-list-container">
-                                    <Search className="search-chat-list" placeholder="search messenger" onSearch={value => console.log(value)} />
+                                    <Search name="searchInput" value={searchInput} onChange={this.handleChangeSearchInput} className="search-chat-list" placeholder="search messenger" />
                                 </Row>
                                 <Row className="content-chat-list-container">
-                                    <Menu style={{borderRight: "none"}}>
-                                        {/* <Menu.Item className="menu-item-container">
-                                            <Row className="item-chat-list-container"> 
-                                                <img className="img-item-chat-list" src={profileImg} /> &emsp;
-                                                <span>
-                                                    <div className="name-item-chat-list">Name</div>
-                                                    <div className="content-item-chat-list">You: How are you?</div>
-                                                </span>
-                                            </Row>
-                                        </Menu.Item>
-                                        <Menu.Item className="menu-item-container">
-                                            <Row className="item-chat-list-container"> 
-                                                <img className="img-item-chat-list" src={profileImg} /> &emsp;
-                                                <span>
-                                                    <div className="name-item-chat-list">Name</div>
-                                                    <div className="content-item-chat-list">You: How are you?</div>
-                                                </span>
-                                            </Row>
-                                        </Menu.Item> */}
-                                        { listUsersActive }
-                                    </Menu>
+                                    <Tabs defaultActiveKey={activeTab} onTabClick={this.handleTabClick}>
+                                        <TabPane tab="Recent" key="recent">
+                                            { receiverRecent &&
+                                                <Menu style={{ borderRight: "none" }} selectedKeys={[receiverRecent.mEmail]} onClick={this.handleClickMenuRecent}>
+                                                    { filteredUsersRecent && filteredUsersRecent.map((userRecent) =>
+                                                        <Menu.Item className="menu-item-container" key={userRecent.mEmail}>
+                                                            <Row className="item-chat-list-container">
+                                                                <img className="img-item-chat-list" src={userRecent.mAvatar} /> &emsp;
+                                                                <div className="name-item-chat-list">{userRecent.mName}</div> &emsp; 
+                                                                { userRecent.mSocketID && <div className="icon-active" /> }
+                                                            </Row>
+                                                        </Menu.Item>
+                                                    )}
+                                                </Menu>
+                                            }
+                                        </TabPane>
+
+                                        <TabPane tab="Active" key="active">
+                                            { receiverActive &&
+                                                <Menu style={{ borderRight: "none" }} selectedKeys={[receiverActive.mSocketID]} onClick={this.handleClickMenuActive}>
+                                                    { filteredUsersActive.map((userActive) => {
+                                                        return userActive.mEmail !== member.mEmail ?
+                                                            <Menu.Item className="menu-item-container" key={userActive.mSocketID}>
+                                                                <Row className="item-chat-list-container">
+                                                                    <img className="img-item-chat-list" src={userActive.mAvatar} /> &emsp;
+                                                                    <div className="name-item-chat-list">{userActive.mName}</div> &emsp; <div className="icon-active" />
+                                                                </Row>
+                                                            </Menu.Item>
+                                                            :
+                                                            null
+                                                        })
+                                                    }
+                                                </Menu>
+                                            }
+                                        </TabPane>
+                                        <TabPane tab="Family Group" key="family-group">
+                                            {familyGroup &&
+                                                <Menu style={{ borderRight: "none" }}>
+                                                    <Menu.Item className="menu-item-container">
+                                                        <Row className="item-chat-list-container">
+                                                            <img className="img-item-chat-list"  src={familyGroup.fAvatar}/> &emsp;
+                                                            <div className="name-item-chat-list"> {familyGroup.fName} </div>
+                                                        </Row>
+                                                    </Menu.Item>
+                                                </Menu>
+                                            }
+                                        </TabPane>
+                                    </Tabs>
                                 </Row>
                             </Col>
-                            <Col span={16} className="message-container">
+                            <Col span={16}>
                                 <Row className="header-message-container">
-                                    <img className="img-header-message" src={profileImg} /> &emsp;
-                                    <span>
-                                        <div className="name-header-message">Name</div>
-                                        <div className="active-container">  <div className="circle-active" /> &nbsp; Active  </div>
-                                    </span>
+                                    { headerBodyMessage() }
                                 </Row>
                                 <Row className="content-message-container">
-                                    <Messages messages={messages} name={name}/>
+                                    { showMessages() }
                                 </Row>
-                                <Row className="tool-bar-container">
-                                    <Col><i className="fa fa-camera fa-lg"></i> &ensp;
-                                    <i className="fa fa-microphone fa-lg" ></i> &ensp;
-                                    <i className="fa fa-image fa-lg"></i> &ensp;
-                                    </Col>
-                                    <Col flex="auto">
-                                        <Input 
-                                            className="message-input"
-                                            placeholder="Type a message..."
-                                            suffix={
-                                                <Tooltip title="choose an emoji">
-                                                    <i className="fa fa-smile-o fa-lg icon-smile"></i>
-                                                </Tooltip>
-                                            }
-                                            name="message"
-                                            value={message}
-                                            onChange = {this.handleChange}
-                                            onKeyPress={this.handleKeyPress}
-                                        />
-                                    </Col>
-                                </Row>
+                                { showToolBar() }
                             </Col>
                         </Row>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-                    <input name="name" value={name} onChange={this.handleChange} onKeyPress={this.handleKeyPress1} />
                 </Layout>
             </Layout>
         );

@@ -6,6 +6,57 @@
     background-color: white;
 }
 
+/* chat body */
+.header-message-container {
+    height: 8vh;
+    border-bottom: groove thin;
+    padding: 10px;
+    align-items: center;
+}
+
+.img-header-message {
+    height: 100%;
+    width: auto;
+    border-radius: 50%;
+}
+
+.name-header-message {
+    font-weight: bold;
+}
+
+.tool-bar-container {
+    height: 7vh;
+    padding: 0px 40px;
+    align-items: center;
+    width: 100%;
+}
+
+.message-input {
+    border-radius: 5px;
+}
+
+.name-header-chat-list {
+    font-weight: bold;
+}
+
+.content-message-container {
+    height: 60vh;
+}
+
+.active-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.circle-active {
+    background-color: rgb(66, 183, 42);
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50%;
+    margin: auto 0px;
+}
+
+/* chat list */
 .chat-list-container {
     border-right: groove thin;
 }
@@ -50,57 +101,15 @@
     border-radius: 10px;
 }
 
-.header-message-container {
-    height: 8vh;
-    border-bottom: groove thin;
-    padding: 10px;
-    align-items: center;
-}
-
-.img-header-message {
-    height: 100%;
-    width: auto;
-    border-radius: 50%;
-}
-
-.name-header-message {
-    font-weight: bold;
-}
-
-.tool-bar-container {
-    height: 7vh;
-    padding: 0px 40px;
-    align-items: center;
-    width: 100%;
-}
-
-.message-input {
-    border-radius: 5px;
-}
-
 .content-item-chat-list {
     color: rgb(153, 153, 153);
 }
 
-.name-header-chat-list {
-    font-weight: bold;
-}
-
-.content-message-container {
-    height: 60vh;
-}
-
-.active-container {
-    display: flex;
-    flex-direction: row;
-}
-
-.circle-active {
-    background-color: rgb(66, 183, 42);
-    width: 10px;
-    height: 10px;
+.icon-active {
+    width: 8px !important;
+    height: 8px !important;
     border-radius: 50%;
-    margin: auto;
+    background-color: rgb(66, 183, 42);
 }
 
 /* big tablets to 1200px */
@@ -111,7 +120,7 @@
     }
     .icon-back {
         font-size: 16px;
-    }
+    }   
 
     .name-item-chat-list {
         font-size: 18px;
@@ -124,7 +133,7 @@
 
 /* small tablets to big tablets from 768px to 1023px */
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
-    .title-header
+    .title-header,
     .name-header-chat-list {
         font-size: 18px;
     }
@@ -151,6 +160,7 @@
 
         font-size: 12px;
     }
+
     .name-item-chat-list {
         font-size: 14px;
     }
@@ -169,6 +179,7 @@
     .icon-back {
         font-size: 10px;
     }
+
     .name-item-chat-list {
         font-size: 12px;
     }
