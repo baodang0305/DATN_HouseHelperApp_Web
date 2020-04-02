@@ -1,0 +1,15 @@
+.create-profile-container {
+    height: 100vh !important;
+}
+
+.input-member-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 40px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}

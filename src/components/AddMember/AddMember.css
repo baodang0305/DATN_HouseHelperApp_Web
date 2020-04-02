@@ -15,36 +15,11 @@
     line-height: 50px;
 }
 
-.camera-icon-container {
-    top: 10px;
-    left: 25px;
-    position: absolute;
-}
-
-.camera-img {
-    width: 25px;
-}
-
 .upload-container {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     position: relative;
-}
-
-.name-upload {
-    text-align: center;
-    background: #9e978e;
-    height: 40px;
-    width:  80px;
-    border-bottom-left-radius:  80px;
-    border-bottom-right-radius: 80px;
-}
-
-.name-upload-container {
-    left: 0px;
-    font-size: 12px;
-    position: absolute;
 }
 
 button.upload-container:hover, button.upload-container:hover::after {

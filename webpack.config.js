@@ -28,7 +28,7 @@ const config = {
     output: {
         filename: "[name].[chunkhash].js",
         path: path.resolve(__dirname, "dist"),
-        publicPath: "http://localhost:3000/"
+        publicPath: "/"
     },
     module: {
         rules: [
@@ -41,7 +41,7 @@ const config = {
             {
                 test: /\.(png|jp(e*)g|svg)$/,
                 use: [{
-                    loader: 'url-loader',
+                    loader: 'file-loader',
                     options: {
                         limit: 8000, // Convert images < 8kb to base64 strings
                         name: 'images/[hash]-[name].[ext]'

@@ -6,7 +6,9 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "package": "webpack --config webpack.config.js --progress --colors",
+    "deploy": "npm run clean && npm run package && firebase deploy"
   },
   "author": "",
   "license": "ISC",
@@ -42,6 +44,7 @@
     "ant-design-pro": "^2.3.2",
     "antd": "^4.0.2",
     "axios": "^0.19.2",
+    "firebase": "^7.13.1",
     "history": "^4.10.1",
     "moment": "^2.24.0",
     "react": "^16.13.0",

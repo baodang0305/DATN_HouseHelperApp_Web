@@ -10,10 +10,10 @@ import {
     LikeOutlined,
     MessageOutlined
 } from "@ant-design/icons";
-//import { getAllMembers } from "../../actions/family";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import profileImg from "../../assets/profile-img.png";
 import "./Family.css";
+import { familyActions } from "../../actions/family.actions";
 
 const { Header, Content, Footer } = Layout; 
 
@@ -23,13 +23,8 @@ class Family extends React.Component {
     }
 
     componentDidMount() {
-        // const { dispatch } = this.props;
-        // dispatch(getAllMembers());
-
-    }
-
-    handleChange = (e) => {
-        
+        const { getAllMembers } = this.props;
+        getAllMembers();
     }
 
     render() {
@@ -41,7 +36,7 @@ class Family extends React.Component {
                 <Col md={8} className="col-modified" key={id}>
                     <div className="container-img-profile">
                         <img src={member.mAvatar} className="profile-img"></img>
-                        <div className="badge">{member.mPoint}</div>
+                        <div className="badge">{member.mPoints}</div>
                         <div className="size-member-name">{member.mName}</div>
                     </div>
                 </Col>
@@ -53,8 +48,7 @@ class Family extends React.Component {
             listData.push({
                 title: `Activity ${i}`,
                 // avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-                description:
-                'You need to describe an activity that take place.'
+                description: 'You need to describe an activity that take place.'
             });
         }
 
@@ -134,11 +128,18 @@ class Family extends React.Component {
                         </Row>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
-                    <input name="name" value={name} onChange={this.handleChange} onKeyPress={this.handleKeyPress}/>
                 </Layout>
             </Layout>
         );
     }
 }
 
-export default Family;
+const  mapStateToProps = (state) => {
+    const { members } = state.getAllMembers;
+    return { members };
+}
+
+const actionCreators = {
+    getAllMembers: familyActions.getAllMembers
+}
+export default connect(mapStateToProps, actionCreators)(Family);

@@ -1,0 +1,50 @@
+.body-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.container-create-family {
+    margin: auto;
+    width: 22%;
+}
+
+.title-form-create-family{
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 25px;
+}
+
+.form-create-family {
+    width: 100%;
+}
+
+.button-back,
+.button-next {
+    width: 100%;
+    border-radius: 5px;
+    border-style: ridge;
+}
+
+.button-next {
+    float: right;
+}
+
+.button-back {
+    background-color: darkgrey;
+}
+
+.text-red {
+    color: red
+}
+
+.family-img {
+    width: 20%;
+    height: auto;
+    border-radius: 50%;
+}
+
+.input-upload-family-img {
+    margin-top: 5px;
+    margin-left: 100px;
+}
+
