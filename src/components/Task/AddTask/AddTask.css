@@ -1,0 +1,78 @@
+.container-add-task {
+	padding: 20px auto;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+.container-form-add-task {
+	width: 800px;
+}
+
+.list-avatar-member {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.container-avatar-member {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	margin-right: 15px;
+}
+
+.avatar-member {
+	display: flex;
+	position: relative;
+}
+
+.icon-avatar-member {
+	width: 40px;
+	height: 40px;
+	border-radius: 50% !important;
+	position: relative;
+	border: 1px solid rgba(161, 156, 156, 0.533);
+	cursor: pointer;
+}
+.icon-avatar-member::before {
+	width: unset !important;
+}
+
+.icon-check-assign-member {
+	color: rgb(50, 230, 33);
+	font-size: 30px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	cursor: pointer;
+}
+
+.icon-avatar-member:hover {
+	transform: translateY(-1px);
+	border: 1px solid #819ed8;
+	box-shadow: 0px 0px 20px #9fb8eb;
+}
+
+.name-avatar-member {
+	margin-left: 5px;
+	display: inline-block;
+	background-color: #f2f3f5;
+	color: #385898;
+	padding: 5px 10px;
+	font-weight: 600;
+	border-radius: 10px;
+}
+
+.avatar-checked-assign-member {
+	opacity: 0.5;
+}
+
+.button-add-task-form {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	align-items: center;
+}

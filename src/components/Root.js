@@ -11,6 +11,8 @@ import Chat from './Chat/ChatContainer/ChatContainer';
 import Setting from './Setting/Setting';
 import MyAccount from './MyAccount/MyAccount';
 import history from '../helpers/history';
+import FormCreateTask from './Task/AddTask/AddTask';
+import FormEditTask from './Task/AddTask/EditTask';
 
 const Root = () => {
 
@@ -20,7 +22,10 @@ const Root = () => {
                 <Switch>
                     <Route path="/login" component={Login} />
                     <Route path="/create-family" component={Register} />
+                    <Route path="/edit-task" component={FormEditTask} />
+                    <Route path='/tasks/add-task' component={FormCreateTask} />
                     <Route path="/tasks" component={Task} />
+
                     <Route path="/family/add-member" component={AddMember} />
                     <Route path="/family/message" component={Chat} />
                     <Route path="/family/setting/my-account" component={MyAccount} />

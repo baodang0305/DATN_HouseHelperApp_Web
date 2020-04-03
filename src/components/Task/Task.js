@@ -3,11 +3,13 @@ import React from "react";
 import './Task.css';
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import axios from 'axios';
+import { connect } from 'react-redux';
 
 import TaskList from './TaskList/TaskList'
-import { Layout, Breadcrumb, Row, Col, Input, Button, Tabs, Collapse, Modal } from "antd";
+import { Layout, Avatar, Breadcrumb, Row, Col, Input, Button, Tabs, Collapse, Modal, Select } from "antd";
 import { PlusOutlined, SearchOutlined, HomeOutlined, CaretRightOutlined, AlertOutlined, BellOutlined } from '@ant-design/icons';
-import FormCreateTask from "./FormCreateTask/FormCreateTask";
+import FormCreateTask from "./AddTask/AddTask";
+import token from '../../helpers/token'
 import { Link } from "react-router-dom";
 
 const { TabPane } = Tabs;
@@ -22,16 +24,17 @@ const text = `
   it can be found as a welcome guest in many households across the world.
 `;
 
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTZjOTM4NGFiYmZjNDQ4NThiMTdkZWEiLCJtTmFtZSI6IlPhu69hIFPhu69hIiwibUVtYWlsIjoic3Vhc3VhQGdtYWlsLmNvbSIsIm1BZ2UiOm51bGwsIm1Sb2xlIjpudWxsLCJtSXNBZG1pbiI6ZmFsc2UsImZJRCI6IjVlNmI3YWFlNjUyYjAzM2IxYzkwZTA3ZiIsImlhdCI6MTU4NDE3Njg5M30.XJBgpNMD2zubJFyTTWF3qm-99h4DFPmlP53pQRZrj-k';
+
 class Task extends React.Component {
     state = {
         visibleFormCreateTask: false,
+        listTaskCate: [],
         dataListTask: []
     }
 
-    componentDidMount() {
+    getData() {
         axios.get(
-            'https://datn-house-helper-app.herokuapp.com/list-task', {
+            'https://househelperapp-api.herokuapp.com/list-task', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -39,10 +42,28 @@ class Task extends React.Component {
             .then(res => {
                 const data = res.data;
                 console.log(data);
-                this.setState({ dataListTask: data.listTasks });
+                this.setState({ dataListTask: data.listTasks.reverse() });
             })
             .catch(err => console.log(err));
+    }
+    componentDidMount() {
+        axios.get(
+            'https://househelperapp-api.herokuapp.com/list-task-category', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                const data = res.data;
+                console.log(data);
+                this.setState({ listTaskCate: data.listTaskCategories });
+            })
+            .catch(err => console.log(err));
+        this.getData();
+    }
 
+    componentWillReceiveProps(nextProps) {
+        nextProps.messageType === 'success' ? this.getData() : null
     }
     showFormCreateTask = () => {
         this.setState({
@@ -66,8 +87,8 @@ class Task extends React.Component {
 
     render() {
 
-        const { dataListTask } = this.state;
-        console.log('data list task', dataListTask);
+        const { dataListTask, listTaskCate } = this.state;
+        console.log(dataListTask)
 
         const dataTodoTasks = dataListTask.filter(item => item.state === 'todo')
         const dataCompletedTasks = dataListTask.filter(item => item.state === 'completed')
@@ -94,21 +115,42 @@ class Task extends React.Component {
 
                             <Col span={10} className="header-part-right">
                                 <Button style={{ marginRight: 10 }} size="large"><BellOutlined style={{ fontSize: 19 }} /></Button>
-                                <Button onClick={this.showFormCreateTask} size="large"><PlusOutlined style={{ fontSize: 19 }} /></Button>
+                                <Button size="large"><Link to='/tasks/add-task' className="btn-link"><PlusOutlined style={{ fontSize: 19 }} /></Link></Button>
                             </Col>
                         </Row>
                     </Header>
-                    <Content style={{ margin: '20px 16px' }}>
+                    <Content style={{ margin: '20px 20px' }}>
 
                         <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-
+                            <div className="filter-list-task">
+                                <div className="list-cate-task">
+                                    <Avatar src="https://media.istockphoto.com/vectors/small-house-icon-home-icon-vector-design-vector-id810190800?k=6&m=810190800&s=170667a&w=0&h=s2doFETLvYcb70M2_k_BOBaasGYrnuAuPfwArxJUK_Y=" className="task-cate"></Avatar>
+                                    <div>All</div>
+                                </div>
+                                {listTaskCate.map(item =>
+                                    (<div className="list-cate-task">
+                                        <Avatar src={item.image} className="task-cate"></Avatar>
+                                        <div>{item.name}</div>
+                                    </div>))}
+                                <div className="list-cate-task">
+                                    <Avatar src="https://static.thenounproject.com/png/1701541-200.png" className="task-cate"></Avatar>
+                                    <div>Filter</div>
+                                </div>
+                            </div>
                             <Collapse
                                 bordered={false}
                                 defaultActiveKey={['1', '2']}
                                 expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                                 className="site-collapse-custom-collapse"
                             >
-                                <Panel header="To-do" key="1" className="site-collapse-custom-panel">
+
+                                <Panel
+                                    header={<div className="header-list-task">
+                                        <div className="title-header-list-task">
+                                            To do
+                                        </div>
+
+                                    </div>} key="1" className="site-collapse-custom-panel">
                                     <TaskList dataTasks={dataTodoTasks} />
                                 </Panel>
                                 <Panel header="Completed" key="2" className="site-collapse-custom-panel">
@@ -134,5 +176,13 @@ class Task extends React.Component {
         );
     }
 }
+const mapStateToProps = (state) => ({
+    deleted: state.task.deleted,
+    actionTask: state.task.actionTask,
+    user: state.authentication.user,
+    messageType: state.alert.type,
+    messageAlert: state.alert.message
+})
 
-export default Task;
+
+export default connect(mapStateToProps, null)(Task);
