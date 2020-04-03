@@ -14,10 +14,7 @@ const login = (email, password) => {
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                email,
-                password
-            })
+            body: JSON.stringify({ email, password })
         })
             .then(response => response.json()
                 .then(data => {
@@ -44,6 +41,14 @@ const login = (email, password) => {
     function failure() { return { type: memberConstants.LOGIN_FAILURE } }
 }
 
+const logout = () => {
+    localStorage.removeItem("user");
+    return {
+        type: memberConstants.LOGOUT
+    }
+}
+
 export const memberActions = {
     login,
+    logout
 }

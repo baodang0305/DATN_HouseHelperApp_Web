@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import FormItem from 'antd/lib/form/FormItem';
 import { connect } from 'react-redux';
 import { memberActions } from '../../actions/member.actions';
-import './Login.css';
 import Alert from "../Alert"
+import './Login.css';
 
 class Login extends React.Component {
 

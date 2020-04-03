@@ -2,8 +2,10 @@ import React from "react";
 import { Layout, Row, Col, Button } from "antd";
 import { Link } from "react-router-dom";
 import { LeftOutlined, CaretRightOutlined } from "@ant-design/icons";
+import { connect } from "react-redux";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import history from "../../helpers/history";
+import { memberActions } from "../../actions/member.actions"; 
 import "./Setting.css";
 const { Header, Content, Footer } = Layout;
 
@@ -11,6 +13,12 @@ class Setting extends React.Component {
 
     handleClickBack = () => {
         history.goBack();
+    }
+
+    handleClickLogout = () => {
+        const { logout } = this.props;
+        logout();
+        history.push("/login");
     }
 
     render(){
@@ -58,10 +66,9 @@ class Setting extends React.Component {
                         </Link>
                         <div className="panel-container" onClick={this.handleClickLogout}>
                             <span className="panel-content">
-                            <i className="fa fa-sign-out custom-icon" ></i>
+                                <i className="fa fa-sign-out custom-icon" ></i>
                                 Log Out
                             </span> 
-                            <CaretRightOutlined className="caretright-icon"/> 
                         </div>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
@@ -71,4 +78,8 @@ class Setting extends React.Component {
     }
 }
 
-export default Setting;
+const actionCreators = {
+    logout: memberActions.logout
+}
+
+export default connect(null, actionCreators)(Setting);

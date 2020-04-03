@@ -18,6 +18,9 @@ function authentication(state = initiateState, action) {
         case memberConstants.LOGIN_FAILURE: {
             return {}
         }
+        case memberConstants.LOGOUT: {
+            return {}
+        }
         default: return state;
     }
 }
