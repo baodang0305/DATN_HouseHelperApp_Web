@@ -5,7 +5,7 @@ import history from "../helpers/history";
 
 const login = (email, password) => {
     return dispatch => {
-        
+
         dispatch(request());
 
         return fetch(`${apiUrlTypes.heroku}/users/login`, {
@@ -36,9 +36,9 @@ const login = (email, password) => {
         )
     }
 
-    function request() { return { type: memberConstants.LOGIN_REQUEST }}
-    function success(user) { return { type: memberConstants.LOGIN_SUCCESS, user }}
-    function failure() { return { type: memberConstants.LOGIN_FAILURE }}
+    function request() { return { type: memberConstants.LOGIN_REQUEST } }
+    function success(user) { return { type: memberConstants.LOGIN_SUCCESS, user } }
+    function failure() { return { type: memberConstants.LOGIN_FAILURE } }
 }
 
 const logout = () => {

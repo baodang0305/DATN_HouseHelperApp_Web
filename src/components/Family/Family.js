@@ -15,10 +15,10 @@ import profileImg from "../../assets/profile-img.png";
 import "./Family.css";
 import { familyActions } from "../../actions/family.actions";
 
-const { Header, Content, Footer } = Layout; 
+const { Header, Content, Footer } = Layout;
 
 class Family extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
     }
 
@@ -31,16 +31,16 @@ class Family extends React.Component {
         const { members } = this.props;
         let listMembers;
         if (members) {
-            listMembers = 
-            members.map((member, id) =>
-                <Col md={8} className="col-modified" key={id}>
-                    <div className="container-img-profile">
-                        <img src={member.mAvatar} className="profile-img"></img>
-                        <div className="badge">{member.mPoints}</div>
-                        <div className="size-member-name">{member.mName}</div>
-                    </div>
-                </Col>
-            );
+            listMembers =
+                members.map((member, id) =>
+                    <Col md={8} className="col-modified" key={id}>
+                        <div className="container-img-profile">
+                            <img src={member.mAvatar} className="profile-img"></img>
+                            <div className="badge">{member.mPoints}</div>
+                            <div className="size-member-name">{member.mName}</div>
+                        </div>
+                    </Col>
+                );
         }
 
         const listData = [];
@@ -54,14 +54,14 @@ class Family extends React.Component {
 
         const IconText = ({ icon, text }) => (
             <span>
-              {React.createElement(icon, { style: { marginRight: 8 } })}
-              {text}
+                {React.createElement(icon, { style: { marginRight: 8 } })}
+                {text}
             </span>
         );
 
-        return(
-            <Layout style={{ minHeight: '100vh'}}>
-                <DashboardMenu menuItem="1"/>
+        return (
+            <Layout style={{ minHeight: '100vh' }}>
+                <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
 
                     <Header className="site-layout-background" >
@@ -91,7 +91,7 @@ class Family extends React.Component {
                             <Divider orientation="left" className="divider-modified">
                                 All Member
                             </Divider>
-                            { listMembers }
+                            {listMembers}
                         </Row>
 
                         <Row className="row-modified">

@@ -12,13 +12,11 @@ function getBase64(file) {
         reader.onerror = error => reject(error);
     });
 }
-export default class UploadImage extends Component {
+class UploadImage extends Component {
     state = {
         previewVisible: false,
         previewImage: '',
         fileList: [
-
-
         ],
     };
     handleCancel = () => this.setState({ previewVisible: false });
@@ -34,9 +32,21 @@ export default class UploadImage extends Component {
         });
     };
 
-    handleChange = ({ fileList }) => this.setState({ fileList });
+    tempDataBase = async file => {
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        this.props.handleLinkImage(file.preview)
+    }
+
+    handleChange = ({ fileList }) => {
+        this.setState({ fileList });
+
+        this.tempDataBase(fileList[0])
+    };
     render() {
         const { previewVisible, previewImage, fileList } = this.state;
+        console.log(fileList)
         const uploadButton = (
             <div>
                 <PlusOutlined />
@@ -61,3 +71,4 @@ export default class UploadImage extends Component {
         );
     }
 }
+export default UploadImage;

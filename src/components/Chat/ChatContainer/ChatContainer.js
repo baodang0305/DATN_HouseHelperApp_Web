@@ -90,6 +90,7 @@ class ChatContainer extends React.Component {
         
         socket.on("server-response-messages-chat-single", ({ user, messages }) => {
             const {activeTab, receiverRecent, receiverActive } = this.state;
+            console.log(messages)
             if (activeTab === "recent") {
                 if (user.mEmail === receiverRecent.mEmail) {
                     this.setState({ messagesChatSingle: messages });
@@ -235,7 +236,7 @@ class ChatContainer extends React.Component {
 
         const { filteredUsersActive, filteredUsersRecent, receiverActive, receiverRecent,
                 messagesChatSingle, messagesChatGroup, message, activeTab, searchInput, familyGroup } = this.state;
-
+         
         const user = JSON.parse(localStorage.getItem("user"));
         const { member } = user;
 

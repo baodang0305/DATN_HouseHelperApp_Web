@@ -1,0 +1,44 @@
+div.ant-modal-confirm-btns {
+	display: none;
+	height: 0;
+}
+
+.form-done-task {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.action-task-title {
+	font-size: 15px;
+	font-weight: 500;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+.action-task-label {
+	margin: 15px 0 10px;
+	font-size: 15px;
+	font-weight: 600;
+	width: 100%;
+	text-align: center;
+	color: black;
+}
+.action-task-detail-data {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.action-task-form-btn {
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 0px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
