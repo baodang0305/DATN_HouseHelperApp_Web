@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Form, Input, Button, Row, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import history from "../../../helpers/history";
+import { storage } from "../../../helpers/firebaseConfig";
 import { indexConstants } from "../../../constants/index.constants";
 import "./RegisterFamily.css";
 
@@ -54,7 +55,25 @@ class RegisterFamily extends Component {
 			messageError.fConfirmPassword = "confirm password is required";
 		}
 		if (fPassword === fConfirmPassword && Object.keys(messageError).length === 0) {
-			history.push("/create-account", {fName, fPassword, fImage});
+			let fImgUrl;
+			if (!fImage) {
+				fImgUrl = indexConstants.FAMILY_IMG_DEFAULT;
+				history.push("/create-account", {fName, fPassword, fImgUrl});
+			} else {
+				const uploadTask = storage.ref(`images/${fImage.name}`).put(fImage);
+				uploadTask.on('state_changed',
+				(snapshot) => {
+
+				},
+				(error)=> {
+					console.log(error);
+				},
+				async () => {
+					fImgUrl = await storage.ref('images').child(fImage.name).getDownloadURL();
+					history.push("/create-account", {fName, fPassword, fImgUrl});
+				});
+			}
+
 		} else {
 			if (fPassword !== fConfirmPassword) {
 				messageError.fConfirmPassword = "confirm password is invalid";
@@ -78,8 +97,10 @@ class RegisterFamily extends Component {
 					>
 						
 						<Form.Item style={{textAlign: "center"}}>
-							<img src={currentUrlImg} className="family-img"/>
-							<input onChange={this.handleChangeImg} type="file" className="input-upload-family-img"/>
+							<div className="container-family-img">
+								<img src={currentUrlImg} className="family-img" />
+								<input onChange={this.handleChangeImg} type="file" className="input-family-img"/> 
+							</div>
 						</Form.Item>
 						<Form.Item >
 							<Input 

@@ -39,7 +39,7 @@ const config = {
             },
             //use to import file .png .jpg ... to js file.
             {
-                test: /\.(png|jp(e*)g|svg)$/,
+                test: /\.(png|PNG|jp(e*)g|svg)$/,
                 use: [{
                     loader: 'file-loader',
                     options: {

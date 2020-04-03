@@ -8,7 +8,7 @@ const login = (email, password) => {
         
         dispatch(request());
 
-        return fetch(`${apiUrlTypes.local}/users/login`, {
+        return fetch(`${apiUrlTypes.heroku}/users/login`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
@@ -19,7 +19,7 @@ const login = (email, password) => {
         .then(response => response.json()
             .then(data => {
                 const message = data.message;
-                if (response.status === 200) {
+                if (data.status === "success") {
                     const user = {
                         member: data.user,
                         token: data.token

@@ -26,7 +26,7 @@ const Root = () => {
                     <Route path="/create-account" component={RegisterAccount} />
                     <Route path="/tasks" component={Task} />
                     <Route path="/family/add-member" component={AddMember} />
-                    <Route path="/family/message" component={Chat} />
+                    <Route path="/family/chat" component={Chat} />
                     <Route path="/family/setting/my-account" component={MyAccount} />
                     <Route path="/family/setting" component={Setting} />
                     <Route path="/family" component={Family} />

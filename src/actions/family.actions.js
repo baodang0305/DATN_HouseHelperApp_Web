@@ -27,7 +27,6 @@ const createFamily = (inforCreate) => {
                     dispatch(success(message));
                     dispatch(alertActions.success(message));
                     history.push("/login");
-                    dispatch(alertActions.clear());
                 }
 
             })
@@ -43,7 +42,7 @@ const getAllMembers = () => {
         return fetch(`${apiUrlTypes.heroku}/list-member`, {
             method: "GET",
             headers: {
-                'Authorization': `Bearer ${memberConstants.TOKEN_API}` 
+                'Authorization': `Bearer ${indexConstants.TOKEN_API}` 
             }
         })
         .then(response => response.json()

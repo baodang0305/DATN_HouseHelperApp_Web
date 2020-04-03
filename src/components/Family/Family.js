@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Layout, Menu, Row, Col, Divider, List, Avatar} from "antd";
+import { Layout, Row, Col, Divider, List, Avatar, Button} from "antd";
 import { Link } from "react-router-dom";
 import { 
-    PlusCircleOutlined , 
+    PlusOutlined , 
     SettingOutlined, 
     MailOutlined,
     StarOutlined,
@@ -63,23 +63,30 @@ class Family extends React.Component {
             <Layout style={{ minHeight: '100vh'}}>
                 <DashboardMenu menuItem="1"/>
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{ padding: 0 }}>
-                        <Menu onClick={this.handleClick} mode="horizontal" className="modified-top-menu">
-                            <Menu.Item key="setting">
-                                <SettingOutlined className="size-icon"/>
-                                <Link to="/family/setting">Setting </Link>
-                            </Menu.Item>
-                            <Menu.Item key="chat">
-                                <MailOutlined className="size-icon"/>
-                                <Link to="/family/message"> Message </Link>
-                            </Menu.Item>
-                            <Menu.Item key="add">
-                                <PlusCircleOutlined  className="size-icon"/>
-                                <Link to="/family/add-member"> Add </Link>
-                            </Menu.Item>
-                        </Menu>
+
+                    <Header className="site-layout-background" >
+                        <Row style={{ width: '100%' }}>
+                            <Col span={10} className="header-part-left" >
+                                <Button style={{ marginRight: 10 }} size="large">
+                                    <Link to="/family/setting"> <SettingOutlined className="size-icon" /> </Link>
+                                </Button>
+                                <Button size="large">
+                                    <Link to="/family/chat"> <MailOutlined className="size-icon" /> </Link>
+                                </Button>
+                            </Col>
+
+                            <Col span={4} className="header-title">Family</Col>
+
+                            <Col span={10} className="header-part-right">
+                                <Button style={{ marginRight: 10 }} size="large">
+                                    <Link to="/family/add-member"> <PlusOutlined  className="size-icon" /> </Link>
+                                </Button>
+                            </Col>
+                        </Row>
                     </Header>
-                    <Content>
+
+                    <Content style={{padding: 20}}>
+
                         <Row className="row-modified">
                             <Divider orientation="left" className="divider-modified">
                                 All Member
@@ -135,7 +142,7 @@ class Family extends React.Component {
 }
 
 const  mapStateToProps = (state) => {
-    const { members } = state.getAllMembers;
+    const { members } = state.family;
     return { members };
 }
 

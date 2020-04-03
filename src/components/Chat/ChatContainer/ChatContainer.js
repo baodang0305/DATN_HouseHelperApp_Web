@@ -5,6 +5,7 @@ import socketIoClient from "socket.io-client";
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
 import Messages from "../Messages/Messages";
 import history from "../../../helpers/history";
+import { indexConstants } from "../../../constants/index.constants";
 import "./ChatContainer.css";
 
 const { Search } = Input;
@@ -25,8 +26,9 @@ class ChatContainer extends React.Component {
             filteredUsersRecent: null,
             familyGroup: null,
             message: "",
-            messages: [],
-            activeTab: "recent",
+            messagesChatSingle: [],
+            messagesChatGroup: [],
+            activeTab: "active",
             searchInput: "",
             enpoint: "http://localhost:3001"
         }
@@ -58,7 +60,7 @@ class ChatContainer extends React.Component {
                 });
                 socket.emit("client-request-content-messages", {"receiver": usersActive[index], "sender": member});
             } else {
-                this.setState({ messages: [] });
+                this.setState({ messagesChatSingle: [] })
             }
         });
 
@@ -70,6 +72,8 @@ class ChatContainer extends React.Component {
                     filteredUsersRecent: usersRecent
                 });
                 socket.emit("client-request-content-messages", {"receiver": usersRecent[0], "sender": member});
+            } else {
+                this.setState({ messagesChatSingle: [] });
             }
         });
 
@@ -77,13 +81,29 @@ class ChatContainer extends React.Component {
             if (familyGroup) {
                 this.setState({ 
                     familyGroup,
-                    messages: familyGroup.messages
+                    messagesChatGroup: familyGroup.messages
                 });
+            } else {
+                this.setState({ messagesChatGroup: [] });
             }
         });
         
-        socket.on("server-response-messages", (messages) => {
-            this.setState({messages});
+        socket.on("server-response-messages-chat-single", ({ user, messages }) => {
+            const {activeTab, receiverRecent, receiverActive } = this.state;
+            if (activeTab === "recent") {
+                if (user.mEmail === receiverRecent.mEmail) {
+                    this.setState({ messagesChatSingle: messages });
+                }
+            } else if (activeTab === "active") {
+                if (user.mEmail === receiverActive.mEmail) {
+                    this.setState({ messagesChatSingle: messages });
+                }
+            }
+            
+        });
+
+        socket.on("server-response-messages-chat-group", ( messages ) => {
+            this.setState({ messagesChatGroup: messages });
         });
     }
 
@@ -117,10 +137,10 @@ class ChatContainer extends React.Component {
                 const { member } = user;
                 if (activeTab === "active") {
                     socket.emit("client-send-message", { "receiver": receiverActive, "sender": member, message });
-                } else if (e.key === "recent") {
+                } else if (activeTab === "recent") {
                     socket.emit("client-send-message", { "receiver": receiverRecent, "sender": member, message });
                 } else {
-                    socket.emit("client-send-message-to-family-group", {"member": member, "message": message});
+                    socket.emit("client-send-message-to-chat-group", {"member": member, "message": message});
                 }
                 this.setState({ message: ""});
             }
@@ -131,6 +151,7 @@ class ChatContainer extends React.Component {
         const user = JSON.parse(localStorage.getItem("user"));
         const { member } = user; 
         const { usersRecent } = this.state;
+
         const result = usersRecent.find(userRecent => userRecent.mEmail === e.key);
         socket.emit("client-request-content-messages", {"receiver": result, "sender": member});
         this.setState({ receiverRecent: result });
@@ -173,7 +194,7 @@ class ChatContainer extends React.Component {
                 socket.emit("client-request-content-messages", {"receiver": filteredUsersRecent[0], "sender": member});
             } else {
                 this.setState({ 
-                    messages: null,
+                    messagesChatSingle: null,
                     receiverRecent: null,
                     filteredUsersRecent: null
                 });
@@ -197,7 +218,7 @@ class ChatContainer extends React.Component {
                 socket.emit("client-request-content-messages", {"receiver": filteredUsersActive[index], "sender": member});
             } else {
                 this.setState({ 
-                    messages: null,
+                    messagesChatSingle: null,
                     receiverActive: null,
                     filteredUsersActive: null
                 });
@@ -206,10 +227,15 @@ class ChatContainer extends React.Component {
         this.setState({ [name]: value });
     }
 
+    // handleOnMouseEnter = (e) => {
+    //     console.log(e);
+    // }
+
     render() {
 
         const { filteredUsersActive, filteredUsersRecent, receiverActive, receiverRecent,
-                messages, message, activeTab, searchInput, familyGroup } = this.state;
+                messagesChatSingle, messagesChatGroup, message, activeTab, searchInput, familyGroup } = this.state;
+
         const user = JSON.parse(localStorage.getItem("user"));
         const { member } = user;
 
@@ -233,6 +259,8 @@ class ChatContainer extends React.Component {
                         value={message}
                         onChange={this.handleChange}
                         onKeyPress={this.handleKeyPressMessage}
+                        onMouseEnter={this.handleOnMouseEnter}
+                        onMouseLeave={this.handleOnMouseLeave}
                     />
                 </Col>
             </Row>
@@ -292,32 +320,25 @@ class ChatContainer extends React.Component {
         }
 
         const showMessages = () => {
-            if (messages) {
-                if (activeTab === "recent") {
-                    if (receiverRecent) {
-                        return <Messages messages={messages} mName={member.mName}/> 
-                    }
-                } else if (activeTab === "active") {
-                    if (receiverActive) {
-                        return <Messages messages={messages} mName={member.mName}/> 
-                    }
-                } else {
-                    if (familyGroup) {
-                        return <Messages messages={messages} mName={member.mName}/> 
-                    }   
-                }
+            if (activeTab === "family-group") {
+                if (familyGroup && messagesChatGroup) {
+                    return <Messages messages={messagesChatGroup} mName={member.mName}/> 
+                } 
+            } else {
+                if ( (receiverActive || receiverRecent) && messagesChatSingle) {
+                    return <Messages messages={messagesChatSingle} mName={member.mName}/> 
+                }  
             }
         }
-        
 
         return (
             <Layout style={{ minHeight: "100vh" }}>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{ padding: 0 }}>
+                    <Header className="site-layout-background" >
                         <Row style={{ textAlign: "center" }}>
                             <Col style={{ marginLeft: "10px" }}>
-                                <Button onClick={this.handleClickBack}> <LeftOutlined className="icon-back" /> </Button>
+                                <Button onClick={this.handleClickBack} size="large"> <LeftOutlined /> </Button>
                             </Col>
                             <Col flex="auto">
                                 <div className="title-header">Message</div>
@@ -336,22 +357,7 @@ class ChatContainer extends React.Component {
                                 </Row>
                                 <Row className="content-chat-list-container">
                                     <Tabs defaultActiveKey={activeTab} onTabClick={this.handleTabClick}>
-                                        <TabPane tab="Recent" key="recent">
-                                            { receiverRecent &&
-                                                <Menu style={{ borderRight: "none" }} selectedKeys={[receiverRecent.mEmail]} onClick={this.handleClickMenuRecent}>
-                                                    { filteredUsersRecent && filteredUsersRecent.map((userRecent) =>
-                                                        <Menu.Item className="menu-item-container" key={userRecent.mEmail}>
-                                                            <Row className="item-chat-list-container">
-                                                                <img className="img-item-chat-list" src={userRecent.mAvatar} /> &emsp;
-                                                                <div className="name-item-chat-list">{userRecent.mName}</div> &emsp; 
-                                                                { userRecent.mSocketID && <div className="icon-active" /> }
-                                                            </Row>
-                                                        </Menu.Item>
-                                                    )}
-                                                </Menu>
-                                            }
-                                        </TabPane>
-
+                                        
                                         <TabPane tab="Active" key="active">
                                             { receiverActive &&
                                                 <Menu style={{ borderRight: "none" }} selectedKeys={[receiverActive.mSocketID]} onClick={this.handleClickMenuActive}>
@@ -370,10 +376,27 @@ class ChatContainer extends React.Component {
                                                 </Menu>
                                             }
                                         </TabPane>
+
+                                        <TabPane tab="Recent" key="recent">
+                                            { receiverRecent &&
+                                                <Menu style={{ borderRight: "none" }} selectedKeys={[receiverRecent.mEmail]} onClick={this.handleClickMenuRecent}>
+                                                    { filteredUsersRecent && filteredUsersRecent.map((userRecent) =>
+                                                        <Menu.Item className="menu-item-container" key={userRecent.mEmail}>
+                                                            <Row className="item-chat-list-container">
+                                                                <img className="img-item-chat-list" src={userRecent.mAvatar} /> &emsp;
+                                                                <div className="name-item-chat-list">{userRecent.mName}</div> &emsp; 
+                                                                { userRecent.mSocketID && <div className="icon-active" /> }
+                                                            </Row>
+                                                        </Menu.Item>
+                                                    )}
+                                                </Menu>
+                                            }
+                                        </TabPane>
+
                                         <TabPane tab="Family Group" key="family-group">
                                             {familyGroup &&
-                                                <Menu style={{ borderRight: "none" }}>
-                                                    <Menu.Item className="menu-item-container">
+                                                <Menu style={{ borderRight: "none" }} selectedKeys={["group"]}>
+                                                    <Menu.Item className="menu-item-container" key="group">
                                                         <Row className="item-chat-list-container">
                                                             <img className="img-item-chat-list"  src={familyGroup.fAvatar}/> &emsp;
                                                             <div className="name-item-chat-list"> {familyGroup.fName} </div>

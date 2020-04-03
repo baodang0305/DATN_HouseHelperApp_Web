@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import FormItem from 'antd/lib/form/FormItem';
 import { connect } from 'react-redux';
 import { memberActions } from '../../actions/member.actions';
-import Alert from "../Alert"
 import './Login.css';
 
 class Login extends React.Component {
@@ -38,7 +37,6 @@ class Login extends React.Component {
 
         return (
             <div className="container-login">
-                <Alert />
                 <div className="title-login">
                     Your Account
                 </div>  
@@ -76,7 +74,7 @@ class Login extends React.Component {
                     </Form.Item>
 
                     <FormItem className="register-link">
-                        <Link to="/register">Create family now!</Link>
+                        <Link to="/create-family">Create family now!</Link>
                     </FormItem>
 
                 </Form>

@@ -18,6 +18,7 @@
     height: 100%;
     width: auto;
     border-radius: 50%;
+    border: groove thin;
 }
 
 .name-header-message {
@@ -56,7 +57,6 @@
     margin: auto 0px;
 }
 
-/* chat list */
 .chat-list-container {
     border-right: groove thin;
 }
@@ -70,6 +70,7 @@
     width: 10%;
     height: auto;
     border-radius: 50%;
+    border: groove thin;
 }
 
 .search-chat-list-container {
@@ -92,6 +93,7 @@
     width: 12%;
     height: auto;
     border-radius: 50%;
+    border: groove thin;
 }
 
 .menu-item-container {
@@ -112,9 +114,12 @@
     background-color: rgb(66, 183, 42);
 }
 
+.title-header {
+    font-size: 25px;
+}
+
 /* big tablets to 1200px */
 @media only screen and (min-width: 1024px) {
-    .title-header,
     .name-header-chat-list {
         font-size: 20px;
     }
@@ -133,12 +138,8 @@
 
 /* small tablets to big tablets from 768px to 1023px */
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
-    .title-header,
     .name-header-chat-list {
         font-size: 18px;
-    }
-    .icon-back {
-        font-size: 14px;
     }
 
     .name-item-chat-list {
@@ -152,13 +153,8 @@
 
 /* small phones to small tablets */
 @media only screen and (min-width: 480px) and ( max-width: 767px) {
-    .title-header,
     .name-header-chat-list {
         font-size: 16px;
-    }
-    .icon-back {
-
-        font-size: 12px;
     }
 
     .name-item-chat-list {
@@ -172,12 +168,8 @@
 
 /* small phones from 0 - 480px */
 @media only screen and (min-width: 0px) and (max-width: 479px) {
-    .title-header,
     .name-header-chat-list {
         font-size: 14px;
-    }
-    .icon-back {
-        font-size: 10px;
     }
 
     .name-item-chat-list {

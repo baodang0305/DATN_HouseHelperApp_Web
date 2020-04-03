@@ -26,7 +26,7 @@
 
 .row-modified {
     background-color: white;
-    margin: 10px 0px;
+    margin-bottom: 15px;
     padding: 15px 0px;
 }
 
@@ -48,19 +48,15 @@
 
 /* big tablets to 1200px */
 @media only screen and (min-width: 1450px) {
-    a,
     .size-icon {
-        font-size: 18px !important;
+        font-size: 19px !important;
     }
 
     .divider-modified {
         font-size: 17px !important;
     }
 
-    .container-img-profile {    
-        width: 100px;
-    }
-    
+    .container-img-profile,
     .profile-img {
         width: 100px;
     }
@@ -80,6 +76,7 @@
 
     .col-modified {
         padding-left: 200px;
+        padding-bottom: 20px;
     }
 
     .activity-img {
@@ -88,7 +85,6 @@
 }
 
 @media only screen and (min-width: 1222px) and (max-width: 1449px) {
-    a,
     .size-icon {
         font-size: 17px !important;
     }
@@ -97,10 +93,7 @@
         font-size: 16px !important;
     }
 
-    .container-img-profile {    
-        width: 95px;
-    }
-    
+    .container-img-profile,
     .profile-img {
         width: 95px;
     }
@@ -128,19 +121,12 @@
 }
 
 @media only screen and (min-width: 995px) and (max-width: 1221px) {
-    a,
-    .size-icon {
-        font-size: 16px !important;
-    }
-
+    .size-icon,
     .divider-modified {
         font-size: 15px !important;
     }
 
-    .container-img-profile {    
-        width: 90px;
-    }
-    
+    .container-img-profile,
     .profile-img {
         width: 90px;
     }
@@ -168,19 +154,15 @@
 }
 
 @media only screen and (min-width: 768px) and (max-width: 994px) {
-    a,
     .size-icon {
-        font-size: 15px !important;
+        font-size: 13px !important;
     }
 
     .divider-modified {
         font-size: 14px !important;
     }
 
-    .container-img-profile {    
-        width: 85px;
-    }
-    
+    .container-img-profile,
     .profile-img {
         width: 85px;
     }
@@ -209,25 +191,18 @@
 
 /* small phones to small tablets */
 @media only screen and (min-width: 480px) and ( max-width: 767px) {
-    a,
-    .size-icon {
-        font-size: 14px !important;
+    .size-icon,
+    .size-member-name {
+        font-size: 11px !important;
     }
 
     .divider-modified {
         font-size: 13px !important;
     }
 
-    .container-img-profile {    
-        width: 80px;
-    }
-    
+    .container-img-profile,
     .profile-img {
         width: 80px;
-    }
-
-    .size-member-name {
-        font-size: 11px;
     }
     
     .badge {
@@ -252,17 +227,14 @@
 @media only screen and (min-width: 0px) and (max-width: 479px) {
     a,
     .size-icon {
-        font-size: 13px !important;
+        font-size: 9px !important;
     }
 
     .divider-modified {
         font-size: 12px !important;
     }
 
-    .container-img-profile {    
-        width: 75px;
-    }
-    
+    .container-img-profile,
     .profile-img {
         width: 75px;
     }

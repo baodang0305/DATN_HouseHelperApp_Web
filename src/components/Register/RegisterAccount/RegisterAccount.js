@@ -17,7 +17,7 @@ class RegisterAccount extends React.Component {
             mAge: 1,
             mRole: "Father",
             avatarType: "pink",
-            currentUrlImg: "",
+            currentUrlImg: indexConstants.UPLOAD_IMG,
             mAvatar: null,
             errorMessages: {
                 mName: "",
@@ -55,8 +55,9 @@ class RegisterAccount extends React.Component {
     }
 
     handleClickCreate = () => {
+
         const { mName, mEmail, mAvatar, mRole, mAge, avatarType } = this.state;
-        const { fName, fPassword, fImage } = history.location.state;
+        const { fName, fPassword, fImgUrl } = history.location.state;
         let errorMessages = {};
         if (mName === "") {
             errorMessages.mName = "Name is required";
@@ -70,8 +71,9 @@ class RegisterAccount extends React.Component {
         if (Object.keys(errorMessages).length !== 0) {
             this.setState({ errorMessages });
         } else {
+
             const { createFamily } = this.props;
-            let mImgUrl, fImgUrl, backgroundAvatar = "";
+
             if (avatarType === "camera" && mAvatar) {
 
                 const uploadTask = storage.ref(`images/${mAvatar.name}`).put(mAvatar);
@@ -82,39 +84,19 @@ class RegisterAccount extends React.Component {
                 (error)=> {
                     console.log(error);
                 },
-                () => {
-                    storage.ref('images').child(mAvatar.name).getDownloadURL().then(url => {
-                        mImgUrl = url;
-                    });
-                })
+                async () => {
+                    const mImgUrl = await storage.ref('images').child(mAvatar.name).getDownloadURL();
+                    const inforCreate = { fName, fPassword, "fImage": fImgUrl, mName, "mAvatar": mImgUrl, mEmail, mAge, mRole, "mBackgroundColorAvatar": "" }
+                    createFamily(inforCreate);
+                });
 
             } else {
-                mImgUrl = indexConstants.MEMBER_IMG_DEFAULT;
-                backgroundAvatar = avatarType;
+                const mImgUrl = indexConstants.MEMBER_IMG_DEFAULT;
+                const inforCreate = { fName, fPassword, "fImage": fImgUrl, mName, "mAvatar": mImgUrl, mEmail, mAge, mRole, "mBackgroundColorAvatar": avatarType }
+                createFamily(inforCreate);
             }
 
-            if (fImage) {
-
-                const uploadTask = storage.ref(`images/${fImage.name}`).put(fImage);
-                uploadTask.on('state_changed',
-                (snapshot) => {
-
-                },
-                (error)=> {
-                    console.log(error);
-                },
-                () => {
-                    storage.ref('images').child(fImage.name).getDownloadURL().then(url => {
-                        fImgUrl = url;
-                    })
-                })
-
-            } else {
-                fImgUrl = indexConstants.FAMILY_IMG_DEFAULT;
-            }
-
-            const inforCreate = { fName, fPassword, "fImage": fImgUrl, mName, "mAvatar": mImgUrl, mEmail, mAge, mRole, "mBackgroundColorAvatar": backgroundAvatar }
-            createFamily(inforCreate);
+            
         }
 
     }    
@@ -125,9 +107,13 @@ class RegisterAccount extends React.Component {
         
         let Avatar;
         if (avatarType === "camera") {
-            Avatar = () => <img src={currentUrlImg} className="upload-container" />
+            Avatar = () => 
+                <div className="container-profile-img">
+                    <img src={currentUrlImg} className="img-profile" />
+                    <input onChange={this.handleChangeImg} type="file" className="input-profile-img"/> 
+                </div>
         } else {
-            Avatar = () => <img src={profileImg} className={`upload-container ${avatarType}-avatar`} />
+            Avatar = () => <img src={profileImg} className={`img-profile ${avatarType}-avatar`} />
         }
 
         return (
@@ -140,8 +126,7 @@ class RegisterAccount extends React.Component {
                         </Form.Item>
                         <Form.Item>
                             <Radio.Group defaultValue={avatarType} onChange={this.handleChangeTypesOfImage} className="list-avatar-container">
-                                <Radio.Button value="camera" className="avatar camera-avatar"> 
-                                    <input onChange={this.handleChangeImg} className="input-member-img" type="file"/> 
+                                <Radio.Button value="camera" className="avatar camera-avatar">  
                                     <i className="fa fa-camera camera-icon" aria-hidden="true" /> 
                                 </Radio.Button>
                                 <Radio.Button value="pink" className="avatar pink-avatar"></Radio.Button>

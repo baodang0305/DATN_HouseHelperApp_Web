@@ -26,10 +26,10 @@ class Setting extends React.Component {
             <Layout style={{ minHeight: '100vh'}}>
                 <DashboardMenu menuItem="1"/>
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{ padding: 0}}>
+                    <Header className="site-layout-background" >
                         <Row style={{textAlign: "center"}}>
                             <Col flex="30px"> 
-                                <Button onClick={this.handleClickBack} style={{marginLeft: "10px"}}> <LeftOutlined className="icon-back"/> </Button> 
+                                <Button onClick={this.handleClickBack} size="large" style={{marginLeft: "10px"}}> <LeftOutlined /> </Button> 
                             </Col>
                             <Col flex="auto">
                                 <div className="title-header">Setting</div>

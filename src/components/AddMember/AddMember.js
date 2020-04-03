@@ -1,10 +1,10 @@
 import React from "react";
-import { Layout, Form, Input, Button, Select, Row, Col, Radio, Upload } from 'antd';
+import { Layout, Form, Input, Button, Select, Row, Col, Radio } from 'antd';
 import { LeftOutlined } from "@ant-design/icons";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
-import cameraImg from "../../assets/camera-img.png";
 import profileImg from "../../assets/profile-img.png";
 import history from "../../helpers/history";
+import { indexConstants } from "../../constants/index.constants";
 import "./AddMember.css";
 
 const { Header, Footer, Content } = Layout;
@@ -13,7 +13,9 @@ class AddMember extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            avatarType: "pink"
+            avatarType: "pink",
+            currentUrlImg: indexConstants.UPLOAD_IMG,
+            mAvatar: null
         }
     }
 
@@ -23,65 +25,38 @@ class AddMember extends React.Component {
         });
     }
 
+    handleChangeImg = (e) => {
+        this.setState({
+            currentUrlImg: URL.createObjectURL(e.target.files[0]),
+            mAvatar: e.target.files[0]
+        });
+    }
+
     handleClickBack = () => {
         history.goBack();
     }
 
     render() {
-        const { avatarType } = this.state;
+        const { avatarType, currentUrlImg } = this.state;
         let Avatar;
-        switch (avatarType) {
-            case "pink": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container pink-avatar" />) };
-                break;
-            }
-            case "yellow": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container yellow-avatar" />) };
-                break;
-            }
-            case "orange": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container orange-avatar" />) };
-                break;
-            }
-            case "purple": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container purple-avatar" />) };
-                break;
-            }
-            case "blue": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container blue-avatar" />) };
-                break;
-            }
-            case "green": {
-                Avatar = () => { return (<img src={profileImg} className="upload-container green-avatar" />) };
-                break;
-            }
-            case "camera": {
-                Avatar = () => {
-                    return (
-                        <Upload>
-                            <Button className="upload-container">
-                                <div className="camera-icon-container">
-                                    <img src={cameraImg} className="camera-img" />
-                                </div>
-                                <div className="name-upload-container">
-                                    <div className="name-upload">Add Photo</div>
-                                </div>
-                            </Button>
-                        </Upload>
-                    );
-                }
-                break;
-            }
+        if (avatarType === "camera") {
+            Avatar = () => 
+                <div className="container-profile-img">
+                    <img src={currentUrlImg} className="img-profile" />
+                    <input onChange={this.handleChangeImg} type="file" className="input-profile-img"/> 
+                </div>
+        } else {
+            Avatar = () => <img src={profileImg} className={`img-profile ${avatarType}-avatar`} />
         }
 
         return (
             <Layout style={{ minHeight: '100vh'}}>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" style={{ padding: 0}}>
+                    <Header className="site-layout-background" >
                         <Row style={{textAlign: "center"}}>
                             <Col flex="30px"> 
-                                <Button onClick={this.handleClickBack} style={{marginLeft: "10px"}}> <LeftOutlined className="icon-back"/> </Button> 
+                                <Button onClick={this.handleClickBack} style={{marginLeft: "10px"}} size="large"> <LeftOutlined /> </Button> 
                             </Col>
                             <Col flex="auto">
                                 <div className="title-header">Create Profile</div>
@@ -97,7 +72,9 @@ class AddMember extends React.Component {
                                     </Form.Item>
                                     <Form.Item>
                                         <Radio.Group onChange={this.handleChange} defaultValue="pink" className="list-avatar-container">
-                                            <Radio.Button value="camera" className="avatar camera-avatar"> <i className="fa fa-camera camera-icon" aria-hidden="true"></i></Radio.Button>
+                                            <Radio.Button value="camera" className="avatar camera-avatar"> 
+                                                <i className="fa fa-camera camera-icon" aria-hidden="true"></i>
+                                            </Radio.Button>
                                             <Radio.Button value="pink" className="avatar pink-avatar"></Radio.Button>
                                             <Radio.Button value="yellow" className="avatar yellow-avatar"></Radio.Button>
                                             <Radio.Button value="orange" className="avatar orange-avatar"></Radio.Button>
