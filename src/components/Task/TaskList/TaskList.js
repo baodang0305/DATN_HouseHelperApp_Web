@@ -164,7 +164,7 @@ class TaskList extends React.Component {
 
                                 <div className="detail-task">
                                     <Row gutter={10} style={{ width: '100%', paddingBottom: 5 }}>
-                                        <Col span={10}>
+                                        <Col span={10} hidden={item._id === index ? (hiddenActionsList === true ? false : true) : false}>
                                             <div className="infor-task">
                                                 <div className="name-task">{item.name}<span style={{ fontSize: 13, fontWeight: 500, color: 'green' }}>&nbsp;{" - " + item.tcID.name}</span></div>
                                                 <div className="note-task" hidden={item.notes === null ? true : false}><SnippetsOutlined style={{ fontSize: 16 }} />&nbsp;{item.notes}</div>

@@ -17,14 +17,13 @@ import FormCreateTask from './Task/AddTask/AddTask';
 import FormEditTask from './Task/AddTask/EditTask';
 
 const Root = () => {
-
     return (
         <div>
             <Alert />
             <Router history={history}>
                 <Switch>
                     <Route path="/login" component={Login} />
-                    <Route path="/create-family" component={Register} />
+
                     <Route path="/edit-task" component={FormEditTask} />
                     <Route path='/tasks/add-task' component={FormCreateTask} />
                     <Route path="/create-family" component={RegisterFamily} />
