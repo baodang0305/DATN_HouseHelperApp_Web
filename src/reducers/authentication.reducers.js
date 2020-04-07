@@ -1,7 +1,7 @@
 import { memberConstants } from "../constants/member.constants";
 
-let user = JSON.parse(localStorage.getItem("user"));
-const initiateState = user ? { loggedIn: true, user} : {};
+let inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+const initiateState = inforLogin ? { loggedIn: true, inforLogin} : {};
 function authentication(state = initiateState, action) {
     switch(action.type) {
         case memberConstants.LOGIN_REQUEST: {
@@ -12,7 +12,7 @@ function authentication(state = initiateState, action) {
         case memberConstants.LOGIN_SUCCESS: {
             return {
                 loggedIn: true,
-                user: action.user
+                inforLogin: action.inforLogin
             }
         }
         case memberConstants.LOGIN_FAILURE: {

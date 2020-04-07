@@ -13,21 +13,26 @@ class Login extends React.Component {
         super(props);
         this.state = {
             email: "",
-            password: ""
+            password: "",
+            remember: true
         }
     }
 
-    handleChange = (e) => {
+    handleChangeInput = (e) => {
         const { name, value } = e.target;
         this.setState({
             [name]: value
         });
     }
 
+    handleChangeRemember = (e) => {
+        this.setState({ remember: e.target.checked });
+    }
+
     handleSubmit = () => {
-        const { email, password } = this.state;
+        const { email, password, remember } = this.state;
         const { login } = this.props;
-        login(email, password);
+        login(email, password, remember);
     }
 
     render() {
@@ -44,14 +49,14 @@ class Login extends React.Component {
 
                     <Form.Item name="email" rules={[ { required: true, message: 'Please input your email!' } ]} >
                         <Input 
-                            name="email" value={email} onChange={this.handleChange} 
-                            prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" 
+                            name="email" value={email} onChange={this.handleChangeInput} 
+                            prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" type="text"
                         />
                     </Form.Item>
 
                     <Form.Item name="password" rules={[ { required: true, message: 'Please input your Password!'} ]} >
                         <Input
-                            name="password" value={password} onChange={this.handleChange}
+                            name="password" value={password} onChange={this.handleChangeInput}
                             prefix={<LockOutlined className="site-form-item-icon" />} 
                             type="password" placeholder="Password" size="large"
                         />
@@ -59,7 +64,7 @@ class Login extends React.Component {
 
                     <Form.Item>
                         <Form.Item name="remember" valuePropName="checked" noStyle>
-                            <Checkbox>Remember me</Checkbox>
+                            <Checkbox onChange={this.handleChangeRemember}>Remember me</Checkbox>
                         </Form.Item>
                         <a className="login-form-forgot" href="">
                             Forgot password

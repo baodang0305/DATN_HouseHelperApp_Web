@@ -13,22 +13,17 @@ class RegisterFamily extends Component {
 		this.state = {
 			fName: "",
 			fPassword: "",
-			currentUrlImg: indexConstants.FAMILY_IMG_DEFAULT,
 			fImage: null,
 			fConfirmPassword: "",
-			messageError: {
-				fName: "",
-				fPassword: "",
-				fConfirmPassword: ""
-			}
+			statusConfirmPass: "",
+			confirmPassValidate: null,
+			currentUrlImg: indexConstants.FAMILY_IMG_DEFAULT
 		}
 	}
 
-	handleChange = (e) => {
+	handleChangeInput = (e) => {
 		const { name, value } = e.target;
-		this.setState({
-			[name]: value
-		});
+		this.setState({ [name]: value });
 	}
 
 	handleChangeImg = (e) => {
@@ -42,22 +37,14 @@ class RegisterFamily extends Component {
 		history.goBack();
 	}
 
-	handleClickNext = (e) => {
-		const { fName, fPassword, fConfirmPassword, fImage } = this.state;
-		let messageError = {};
-		if (fName === "") {
-			messageError.fName = "name family is required";
-		}
-		if (fPassword === "") {
-			messageError.fPassword = "password is required";
-		}
-		if (fConfirmPassword === "") {
-			messageError.fConfirmPassword = "confirm password is required";
-		}
-		if (fPassword === fConfirmPassword && Object.keys(messageError).length === 0) {
-			let fImgUrl;
+	handleSubmit = () => {
+
+		const { fPassword, fConfirmPassword, fImage, fName } = this.state;
+
+		if (fPassword === fConfirmPassword) {
+
 			if (!fImage) {
-				fImgUrl = indexConstants.FAMILY_IMG_DEFAULT;
+				const fImgUrl = indexConstants.FAMILY_IMG_DEFAULT;
 				history.push("/create-account", {fName, fPassword, fImgUrl});
 			} else {
 				const uploadTask = storage.ref(`images/${fImage.name}`).put(fImage);
@@ -69,22 +56,22 @@ class RegisterFamily extends Component {
 					console.log(error);
 				},
 				async () => {
-					fImgUrl = await storage.ref('images').child(fImage.name).getDownloadURL();
+					const fImgUrl = await storage.ref('images').child(fImage.name).getDownloadURL();
 					history.push("/create-account", {fName, fPassword, fImgUrl});
 				});
 			}
 
 		} else {
-			if (fPassword !== fConfirmPassword) {
-				messageError.fConfirmPassword = "confirm password is invalid";
-			}
-			this.setState({ messageError });
+			this.setState({ 
+				statusConfirmPass: "error",
+				confirmPassValidate: "confirm password is invalid"
+			});
 		}
 	}
 
 	render() {
 
-		const { fName, fPassword, fConfirmPassword, messageError, currentUrlImg } = this.state;
+		const { fName, fPassword, fConfirmPassword, currentUrlImg, statusConfirmPass, confirmPassValidate } = this.state;
 
 		return (
 			<div className="body-container">
@@ -94,6 +81,7 @@ class RegisterFamily extends Component {
 						className="form-create-family"
 						size="large"
 						initialValues={{ remember: true }}
+						onFinish={this.handleSubmit}
 					>
 						
 						<Form.Item style={{textAlign: "center"}}>
@@ -102,48 +90,42 @@ class RegisterFamily extends Component {
 								<input onChange={this.handleChangeImg} type="file" className="input-family-img"/> 
 							</div>
 						</Form.Item>
-						<Form.Item >
+						<Form.Item name="name" rules={[{ required: true, message: 'Please input your family name!' }]} >
 							<Input 
-								name="fName" value={fName} 
+								name="fName" value={fName} onChange={this.handleChangeInput}
 								prefix={<UserOutlined className="site-form-item-icon" />} 
 								placeholder="Name your family" 
-								onChange={this.handleChange}
 							/>
-							{ messageError.fName && <div className="text-red"> {messageError.fName} </div> }
 						</Form.Item>
-						<Form.Item >
+						<Form.Item name="password" rules={[ { required: true, message: 'Please input your password!' }]}>
 							<Input
-								name="fPassword" value={fPassword}
-								onChange={this.handleChange}
+								name="fPassword" value={fPassword} onChange={this.handleChangeInput}
 								prefix={<LockOutlined className="site-form-item-icon" />}
 								type="password"
 								placeholder="Set family password"
 							/>
-							{ messageError.fPassword && <div className="text-red"> {messageError.fPassword} </div> }
 						</Form.Item>
-						<Form.Item >
+						<Form.Item 
+							validateStatus={statusConfirmPass}
+							help={confirmPassValidate}
+							name="confirm" rules={[{ required: true , message: "Please input your confirm password!" }]} 
+						>
 							<Input
-								name="fConfirmPassword" value={fConfirmPassword}
-								onChange={this.handleChange}
+								name="fConfirmPassword" value={fConfirmPassword} onChange={this.handleChangeInput}
 								prefix={<LockOutlined className="site-form-item-icon" />}
 								type="password"
 								placeholder="Confirm family password"
 							/>
-							 { messageError.fConfirmPassword && <div className="text-red"> {messageError.fConfirmPassword} </div> }
 						</Form.Item>
 
-						<Form.Item>
+						<Form.Item >
 							<Row>
 								<Col span={11}>
-									<Button onClick={this.handleClickBack} className="button-back" >
-										Back
-                                	</Button>
+									<Button onClick={this.handleClickBack} className="button-back" > Back </Button>
 								</Col>
 
 								<Col span={11} offset={2}>
-									<Button onClick={this.handleClickNext} className="button-next" type="primary">
-										Next
-                                    </Button>
+									<Button className="button-next" type="primary" htmlType="submit"> Next </Button>
 								</Col>
 							</Row>
 						</Form.Item>

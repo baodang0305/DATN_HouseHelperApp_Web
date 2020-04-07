@@ -2,19 +2,6 @@
   background-color: white;
 }
 
-.content-add-member-container {
-  margin: 10px 0px;
-}
-
-.create-profile-container {
-  height: 100%;
-}
-
-.radio-admin {
-  float: right;
-  line-height: 50px;
-}
-
 .img-profile {
     width: 80px;
     height: 80px;
@@ -28,38 +15,17 @@ button.upload-container:hover::after {
   color: black;
 }
 
-.list-avatar-container {
-  display: flex;
-  justify-content: space-between;
-}
-
 .avatar {
   width: 40px;
   height: 40px;
   border-radius: 50% !important;
   position: relative;
 }
+
 .avatar::before {
   width: unset !important;
 }
-.pink-avatar {
-  background-color: #f7c2c1;
-}
-.yellow-avatar {
-  background-color: #fcefc3;
-}
-.orange-avatar {
-  background-color: #fadec2;
-}
-.purple-avatar {
-  background-color: #e4cce2;
-}
-.blue-avatar {
-  background-color: #d3dff1;
-}
-.green-avatar {
-  background-color: #9dcc80;
-}
+
 .camera-icon {
   position: absolute;
   left: 11px;
@@ -70,28 +36,30 @@ button.upload-container:hover::after {
   background-color: #efefef;
 }
 
-.avatar:hover {
+.avatar:hover{
   transform: translateY(-3px);
 }
+
 .camera-avatar:hover {
   box-shadow: 0px 0px 40px #efefef;
 }
-.pink-avatar:hover {
+
+.avatar1:hover {
   box-shadow: 0px 0px 40px #f7c2c1;
 }
-.yellow-avatar:hover {
+.avatar2:hover {
   box-shadow: 0px 0px 40px #fcefc3;
 }
-.orange-avatar:hover {
+.avatar3:hover {
   box-shadow: 0px 0px 40px #fadec2;
 }
-.purple-avatar:hover {
+.avatar4:hover {
   box-shadow: 0px 0px 40px #e4cce2;
 }
-.blue-avatar:hover {
+.avatar5:hover {
   box-shadow: 0px 0px 40px #d3dff1;
 }
-.green-avatar:hover {
+.avatar6:hover {
   box-shadow: 0px 0px 40px #9dcc80;
 }
 
@@ -111,22 +79,22 @@ button.upload-container:hover::after {
 .camera-avatar::after {
   background-color: #a29b9b;
 }
-.pink-avatar::after {
+.avatar1::after {
   background-color: #f14743;
 }
-.yellow-avatar::after {
+.avatar2::after {
   background-color: #efbe18;
 }
-.orange-avatar::after {
+.avatar3::after {
   background-color: #f38110;
 }
-.purple-avatar::after {
+.avatar4::after {
   background-color: #d652cb;
 }
-.blue-avatar::after {
+.avatar5::after {
   background-color: #528fea;
 }
-.green-avatar::after {
+.avatar6::after {
   background-color: #61c722;
 }
 
@@ -139,8 +107,4 @@ button.upload-container:hover::after {
 .fa-envelope,
 .fa-birthday-cake {
   color: #d7d7d7;
-}
-
-.create-button {
-  width: 100%;
 }
