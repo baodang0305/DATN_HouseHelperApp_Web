@@ -13,16 +13,12 @@ class DismissTaskForm extends Component {
         super(props);
     }
 
-    componentWillReceiveProps(next) {
-        next.messageType === 'error' ? message.error({ content: next.messageAlert, duration: 2 }) :
-            message.success({ content: next.messageAlert, duration: 2 })
-    }
     handleClickOk = () => {
-        const { idTask, deleteTask } = this.props;
-        deleteTask(idTask);
+        const { idTask, dismissTask } = this.props;
+        dismissTask(idTask);
     }
     render() {
-        const { idTask, memberDismiss, nameTask } = this.props
+        const { idTask, memberDismiss } = this.props
         return (
             <div>
                 <div className="action-task-title">
@@ -65,7 +61,7 @@ const mapStateToProps = (state) => ({
     messageAlert: state.alert.message
 })
 const actionCreators = {
-    deleteTask: taskActions.deleteTask
+    dismissTask: taskActions.dismissTask
 }
 
 export default connect(mapStateToProps, actionCreators)(DismissTaskForm);

@@ -124,7 +124,8 @@ class Task extends React.Component {
                         <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
                             <div className="filter-list-task">
                                 <div className="list-cate-task">
-                                    <Avatar src="https://media.istockphoto.com/vectors/small-house-icon-home-icon-vector-design-vector-id810190800?k=6&m=810190800&s=170667a&w=0&h=s2doFETLvYcb70M2_k_BOBaasGYrnuAuPfwArxJUK_Y=" className="task-cate"></Avatar>
+                                    <Avatar src="https://media.istockphoto.com/vectors/small-house-icon-home-icon-vector-design-vector-id810190800?k=6&m=810190800&s=170667a&w=0&h=s2doFETLvYcb70M2_k_BOBaasGYrnuAuPfwArxJUK_Y="
+                                        className="task-cate" />
                                     <div>All</div>
                                 </div>
                                 {listTaskCate.map(item =>
@@ -149,14 +150,24 @@ class Task extends React.Component {
                                         <div className="title-header-list-task">
                                             To do
                                         </div>
-
+                                        <div className="number-of-task">{dataTodoTasks.length}</div>
                                     </div>} key="1" className="site-collapse-custom-panel">
                                     <TaskList dataTasks={dataTodoTasks} />
                                 </Panel>
-                                <Panel header="Completed" key="2" className="site-collapse-custom-panel">
+                                <Panel header={<div className="header-list-task">
+                                    <div className="title-header-list-task">
+                                        Completed
+                                        </div>
+                                    <div className="number-of-task">{dataCompletedTasks.length}</div>
+                                </div>} key="2" className="site-collapse-custom-panel">
                                     <TaskList dataTasks={dataCompletedTasks} />
                                 </Panel>
-                                <Panel header="Suggestions" key="3" className="site-collapse-custom-panel">
+                                <Panel header={<div className="header-list-task">
+                                    <div className="title-header-list-task">
+                                        Dismissed
+                                        </div>
+                                    <div className="number-of-task">0</div>
+                                </div>} key="3" className="site-collapse-custom-panel">
                                     <TaskList />
                                 </Panel>
                             </Collapse>

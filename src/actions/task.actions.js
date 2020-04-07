@@ -112,9 +112,46 @@ const getRecentTask = recentTask => {
 }
 
 
+const dismissTask = (idTask) => {
+    return dispatch => {
+
+        dispatch(request());
+
+        return axios.post(`${apiUrlTypes.heroku}/skip-task`, { tID: idTask }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                const message = res.data.message;
+                if (res.data.status === 'success') {
+                    dispatch(success());
+                    dispatch(alertActions.success(message));
+                    history.push("/tasks");
+                }
+                else {
+                    dispatch(alertActions.error(message));
+                }
+            }
+
+            )
+
+    }
+    function request() { return { type: taskConstants.dismissTaskConstants.DISMISS_REQUEST } }
+    function success() { return { type: taskConstants.dismissTaskConstants.DISMISS_SUCCESS } }
+}
+
+const checkTaskToRemind = (taskNeedRemind) => {
+    return {
+        type: taskConstants.checkTaskToRemindConstants.CHECK_TASK_TO_REMIND,
+        taskNeedRemind
+    }
+}
 export const taskActions = {
     deleteTask,
     completeTask,
     addTask,
-    getRecentTask
+    getRecentTask,
+    dismissTask,
+    checkTaskToRemind
 }

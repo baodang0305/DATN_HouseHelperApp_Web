@@ -4,7 +4,7 @@ import './AddTask.css';
 
 import {
     Form, Input, Button, Checkbox, DatePicker,
-    TimePicker, Row, Col, Select, Avatar, Divider, Layout, message
+    TimePicker, Row, Col, Select, Avatar, Divider, Layout, message, Switch
 } from 'antd';
 import { connect } from 'react-redux';
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
@@ -25,10 +25,6 @@ import { taskActions } from '../../../actions/task.actions'
 
 const { Option } = Select;
 const { Header, Footer, Content } = Layout;
-
-
-
-
 
 
 let index = 0;
@@ -88,10 +84,6 @@ class FormCreateTask extends Component {
             .catch(err => console.log(err));
     }
 
-    componentWillReceiveProps(next) {
-        next.messageAlert === 'error' ? message.error({ content: 'Add task unsuccessfully!', duration: 3 }) :
-            message.success({ content: 'Add task successfully!', duration: 3 })
-    }
     handleInputChange(event) {
         this.setState({ [event.target.name]: event.target.value });
     }
@@ -266,9 +258,10 @@ class FormCreateTask extends Component {
                                     <Input name="nameTask" onChange={this.handleInputChange} size="large" placeholder="Task name" />
                                 </Form.Item>
 
+
                                 <Form.Item label={
                                     keyTaskCate.length > 0 ?
-                                        <div style={{ fontSize: 16, color: '#2295FF' }}><AppstoreOutlined style={{ fontSize: 17 }} />&nbsp;Assign</div> :
+                                        <div style={{ fontSize: 16, color: '#2295FF' }}><AppstoreOutlined style={{ fontSize: 17 }} />&nbsp;Categories</div> :
                                         <div style={{ fontSize: 16 }}><AppstoreOutlined style={{ fontSize: 17 }} />&nbsp;Categories</div>
 
                                 } >

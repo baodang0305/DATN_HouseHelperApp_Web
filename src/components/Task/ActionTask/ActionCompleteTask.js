@@ -23,10 +23,7 @@ class CompleteTaskForm extends Component {
         }
 
     }
-    componentWillReceiveProps(next) {
-        next.messageType === 'error' ? message.error({ content: next.messageAlert, duration: 2 }) :
-            message.success({ content: next.messageAlert, duration: 2 })
-    }
+
     handleClickOk = () => {
         const { idTask, completeTask } = this.props;
         const { checkedMembers } = this.state;

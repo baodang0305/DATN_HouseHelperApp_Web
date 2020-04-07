@@ -109,60 +109,60 @@ class TaskList extends React.Component {
                         <List.Item style={{ height: 90, paddingBottom: 5 }}
                             onClick={(e) => {
                                 this.setState({ hiddenActionsList: !hiddenActionsList, index: item._id, dataTemp: { idTask: item._id, nameTask: item.name, memberUser: item.assign } })
-                                this.props.getRecentTask(item)
+                                this.props.getRecentTask(item);
                             }}
-                            actions={item.state === 'todo' ? [
-
-                                <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
-                                    <div className="list-action done-action"
-                                        onClick={() => (this.setState({ visibleCompleteTask: true }))}
-                                    >
-                                        <div>
-                                            <CheckOutlined style={{ color: '#09ed37', fontSize: 20 }} />
-                                        </div>
-                                        <div>Complete</div>
-                                    </div>
-                                    <div className="list-action dismiss-action"
-                                        onClick={() => (this.setState({ visibleDismissTask: true }))}
-                                    >
-                                        <div><StopOutlined style={{ color: '#F8DA74', fontSize: 20 }} /></div>
-                                        <div>Dismiss</div>
-                                    </div>
-                                    <div className="list-action nudge-action"
-                                        onClick={() => (this.setState({ visibleRemindTask: true }))}
-                                    >
-                                        <div><AlertOutlined style={{ color: 'orange', fontSize: 20 }} /></div>
-                                        <div>Remind</div>
-                                    </div>
-                                    <div className="list-action edit-action"
-                                        onClick={() => history.push("/edit-task")}>
-                                        <div><EditOutlined style={{ color: '##756f6d', fontSize: 20 }} /></div>
-                                        <div>Edit</div>
-
-                                    </div>
-                                    <div className="list-action delete-action"
-                                        onClick={(e) => {
-
-                                            this.setState({ visibleDeleteTask: true, })
-                                        }}>
-                                        <div><DeleteOutlined style={{ color: '#EC6764', fontSize: 20 }} /></div>
-                                        <div>Delete</div>
-                                    </div>
-                                </div>
-                            ] : [
+                            actions={
+                                (item._id === index && hiddenActionsList === false) ? (item.state === 'todo' ? [
                                     <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
-                                        <div className="list-action redo-action"
+                                        <div className="list-action done-action"
+                                            onClick={() => (this.setState({ visibleCompleteTask: true }))}
+                                        >
+                                            <div>
+                                                <CheckOutlined style={{ color: '#09ed37', fontSize: 20 }} />
+                                            </div>
+                                            <div>Complete</div>
+                                        </div>
+                                        <div className="list-action dismiss-action"
+                                            onClick={() => (this.setState({ visibleDismissTask: true }))}
+                                        >
+                                            <div><StopOutlined style={{ color: '#F8DA74', fontSize: 20 }} /></div>
+                                            <div>Dismiss</div>
+                                        </div>
+                                        <div className="list-action nudge-action"
+                                            onClick={() => (this.setState({ visibleRemindTask: true }))}
+                                        >
+                                            <div><AlertOutlined style={{ color: 'orange', fontSize: 20 }} /></div>
+                                            <div>Remind</div>
+                                        </div>
+                                        <div className="list-action edit-action"
+                                            onClick={() => history.push("/edit-task")}>
+                                            <div><EditOutlined style={{ color: '##756f6d', fontSize: 20 }} /></div>
+                                            <div>Edit</div>
+
+                                        </div>
+                                        <div className="list-action delete-action"
                                             onClick={(e) => {
+
                                                 this.setState({ visibleDeleteTask: true, })
                                             }}>
-                                            <div><ArrowUpOutlined style={{ color: '#2295FF', fontSize: 20 }} /></div>
-                                            <div>Redo task</div>
+                                            <div><DeleteOutlined style={{ color: '#EC6764', fontSize: 20 }} /></div>
+                                            <div>Delete</div>
                                         </div>
                                     </div>
-                                ]}>
-                            <Skeleton avatar title={false} loading={item.loading} active>
+                                ] : [
+                                        <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
+                                            <div className="list-action redo-action"
+                                                onClick={(e) => {
+                                                    this.setState({ visibleDeleteTask: true, })
+                                                }}>
+                                                <div><ArrowUpOutlined style={{ color: '#2295FF', fontSize: 20 }} /></div>
+                                                <div>Redo task</div>
+                                            </div>
+                                        </div>
+                                    ]) : null}>
+                            <Skeleton avatar title={false} loading={item.loading} active style={{ width: '100%' }}>
 
-                                <div className="detail-task">
+                                <div className="detail-task" style={{ width: '100%' }}>
                                     <Row gutter={10} style={{ width: '100%', paddingBottom: 5 }}>
                                         <Col span={10} hidden={item._id === index ? (hiddenActionsList === true ? false : true) : false}>
                                             <div className="infor-task">
@@ -240,7 +240,8 @@ const mapStateToProps = (state) => ({
 })
 
 const actionCreators = {
-    getRecentTask: taskActions.getRecentTask
+    getRecentTask: taskActions.getRecentTask,
+
 
 }
 

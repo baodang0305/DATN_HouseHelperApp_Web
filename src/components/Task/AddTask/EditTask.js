@@ -88,10 +88,7 @@ class FormEditTask extends Component {
         this.setState({ keyMember: listAssignedMember })
     }
 
-    componentWillReceiveProps(next) {
-        next.messageAlert === 'error' ? message.error({ content: 'Add task unsuccessfully!', duration: 3 }) :
-            message.success({ content: 'Add task successfully!', duration: 3 })
-    }
+
     handleInputChange(event) {
         this.setState({ [event.target.name]: event.target.value });
     }
@@ -217,7 +214,7 @@ class FormEditTask extends Component {
         } = this.state;
 
         const { recentTask } = this.props;
-        console.log(keyMember)
+        console.log(recentTask)
         let classNameForAssignMember = ["icon-avatar-member"];
         if (!this.state.hiddenCheckAssign) {
             classNameForAssignMember.push('avatar-checked-assign-member');
@@ -361,7 +358,8 @@ class FormEditTask extends Component {
                                         <Col span={12}>
                                             <Form.Item name="date-time-picker" >
                                                 <DatePicker
-                                                    defaultValue={recentTask.date === null ? null : recentTask.date.lastDueDate}
+
+                                                    defaultValue={recentTask.date === null ? null : moment(`${recentTask.date.lastDueDate}`, "YYYY-MM-DD HH:mm")}
                                                     onChange={this.handleOnChangeDatePicker}
                                                     name="dateTask" style={{ width: '100%' }} placeholder="Due time" showTime format="YYYY-MM-DD HH:mm:ss" size="large" />
                                             </Form.Item>
@@ -369,7 +367,7 @@ class FormEditTask extends Component {
                                         <Col span={12}>
                                             <Form.Item name="date-time-remind" >
                                                 <DatePicker showTime
-                                                    defaultValue={recentTask.date === null ? null : recentTask.date.reminder}
+                                                    defaultValue={recentTask.date === null ? null : moment(`${recentTask.date.reminder}`, "YYYY-MM-DD HH:mm")}
                                                     onChange={this.handleOnChangeTimePicker}
                                                     style={{ width: '100%' }} size="large" placeholder="Reminder" />
                                             </Form.Item>

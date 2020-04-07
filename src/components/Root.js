@@ -16,10 +16,12 @@ import history from '../helpers/history';
 import FormCreateTask from './Task/AddTask/AddTask';
 import FormEditTask from './Task/AddTask/EditTask';
 
+
 const Root = () => {
     return (
         <div>
             <Alert />
+
             <Router history={history}>
                 <Switch>
                     <Route path="/login" component={Login} />

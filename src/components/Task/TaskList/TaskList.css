@@ -109,18 +109,16 @@
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: center;
+	transition-property: opacity, left, top, height;
+	transition-duration: 3s, 5s;
 }
-.list-action,
-.list-cate-task {
+.list-action {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	margin: 0 10px;
-}
-
-.task-cate:hover {
-	border: 1.5px solid #2985ff;
+	transition-duration: 1s;
 }
 
 .image-task {
@@ -135,13 +133,4 @@
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: center;
-}
-
-.filter-list-task {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	max-height: max-content;
-	width: 100%;
-	margin: 10px 0 15px;
 }

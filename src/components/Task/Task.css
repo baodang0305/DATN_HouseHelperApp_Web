@@ -56,9 +56,41 @@
 .site-collapse-custom-collapse {
 	position: relative;
 }
-.filter-header-list-task {
+.number-of-task {
 	position: absolute;
 	z-index: 1;
 	right: 10px;
-	top: 8px;
+	align-items: center;
+	text-align: center;
+	width: 22px;
+	height: 22px;
+	line-height: 22px;
+	background-color: red;
+	color: white;
+	border-radius: 11px;
+}
+
+.list-cate-task {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 0 10px;
+}
+.list-cate-task:hover {
+	cursor: pointer;
+}
+
+.task-cate:hover {
+	cursor: pointer;
+	border: 1.5px solid #2985ff;
+}
+
+.filter-list-task {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	max-height: max-content;
+	width: 100%;
+	margin: 10px 0 15px;
 }

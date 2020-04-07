@@ -17,13 +17,26 @@ const deleteTaskConstants = {
     DELETE_FAILURE: "DELETE_FAILURE",
 }
 
+const dismissTaskConstants = {
+    DISMISS_REQUEST: "DISMISS_REQUEST",
+    DISMISS_SUCCESS: "DISMISS_SUCCESS",
+    DISMISS_FAILURE: "DISMISS_FAILURE",
+}
+
+
 const getRecentTaskConstants = {
     GET_RECENT_TASK: "GET_RECENT_TASK"
 }
 
+
+const checkTaskToRemindConstants = {
+    CHECK_TASK_TO_REMIND: "CHECK_TASK_TO_REMIND"
+}
 export const taskConstants = {
     addTaskConstants,
     deleteTaskConstants,
     completeTaskConstants,
-    getRecentTaskConstants
+    getRecentTaskConstants,
+    dismissTaskConstants,
+    checkTaskToRemindConstants
 };

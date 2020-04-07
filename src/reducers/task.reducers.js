@@ -66,10 +66,32 @@ function task(state = initialState, action) {
                 }
             }
 
+        case taskConstants.dismissTaskConstants.DISMISS_REQUEST:
+            {
+                return {
+                    ...state,
+                    loading: true,
+                }
+            }
+        case taskConstants.dismissTaskConstants.DISMISS_SUCCESS:
+            {
+                return {
+                    ...state,
+                    loading: false,
+                    actionTask: true
+                }
+            }
         case taskConstants.getRecentTaskConstants.GET_RECENT_TASK:
             {
                 return {
                     ...state, recentTask: action.recentTask
+                }
+            }
+        case taskConstants.checkTaskToRemindConstants.CHECK_TASK_TO_REMIND:
+            {
+                return {
+                    ...state,
+                    taskNeedRemind: action.taskNeedRemind
                 }
             }
         default: return state;
