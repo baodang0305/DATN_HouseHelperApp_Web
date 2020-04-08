@@ -147,8 +147,17 @@ class MyAccount extends React.Component {
 
         if (isSetPass) {
             if (mCurrentPass !== "" && mNewPass !== "" && mConfirmPass !== "" && stateConfirmPass !== "error") {
-
-                if (avatarType === "camera" && mAvatar) {
+                if (avatarType === "") {
+                    editMember({
+                        "mName": fieldsValue.mName,
+                        "mEmail": fieldsValue.mEmail,
+                        "mAge": fieldsValue.mAge,
+                        "mIsAdmin": mIsAdmin,
+                        "mRole": mRole,
+                        "mAvatar": user.mAvatar,
+                        "isSetPass": isSetPass
+                    });
+                } else if (avatarType === "camera" && mAvatar) {
 
                     const uploadTask = storage.ref().child(`images/${mAvatar.name}`).put(mAvatar);
                     uploadTask.on("state_changed", function (snapshot) {
@@ -174,20 +183,12 @@ class MyAccount extends React.Component {
                             "mRole": mRole,
                             "mAvatar": {
                                 "image": imgUrl
-                            }
+                            }, 
+                            "isSetPass": isSetPass
                         });
                     });
 
 
-                } else if (avatarType === "") {
-                    editMember({
-                        "mName": fieldsValue.mName,
-                        "mEmail": fieldsValue.mEmail,
-                        "mAge": fieldsValue.mAge,
-                        "mIsAdmin": mIsAdmin,
-                        "mRole": mRole,
-                        "mAvatar": user.mAvatar
-                    });
                 } else {
                     let background;
                     if (avatarType === "camera") {
@@ -204,14 +205,25 @@ class MyAccount extends React.Component {
                         "mAvatar": {
                             "image": indexConstants.MEMBER_IMG_DEFAULT,
                             "color": background
-                        }
+                        },
+                        "isSetPass": isSetPass
                     });
                 }
                 changePassword({ "oldPassword": mCurrentPass, "newPassword": mNewPass });
             }
         } else {
 
-            if (avatarType === "camera" && mAvatar) {
+            if (avatarType === "") {
+                editMember({
+                    "mName": fieldsValue.mName,
+                    "mEmail": fieldsValue.mEmail,
+                    "mAge": fieldsValue.mAge,
+                    "mIsAdmin": mIsAdmin,
+                    "mRole": mRole,
+                    "mAvatar": user.mAvatar,
+                    "isSetPass": isSetPass
+                });
+            }else if (avatarType === "camera" && mAvatar) {
 
                 const uploadTask = storage.ref().child(`images/${mAvatar.name}`).put(mAvatar);
                 uploadTask.on("state_changed", function (snapshot) {
@@ -237,19 +249,11 @@ class MyAccount extends React.Component {
                         "mRole": mRole,
                         "mAvatar": {
                             "image": imgUrl
-                        }
+                        },
+                        "isSetPass": isSetPass
                     });
                 });
 
-            } else if (avatarType === "") {
-                editMember({
-                    "mName": fieldsValue.mName,
-                    "mEmail": fieldsValue.mEmail,
-                    "mAge": fieldsValue.mAge,
-                    "mIsAdmin": mIsAdmin,
-                    "mRole": mRole,
-                    "mAvatar": user.mAvatar
-                });
             } else {
                 let background;
                 if (avatarType === "camera") {
@@ -266,7 +270,8 @@ class MyAccount extends React.Component {
                     "mAvatar": {
                         "image": indexConstants.MEMBER_IMG_DEFAULT,
                         "color": background
-                    }
+                    },
+                    "isSetPass": isSetPass
                 });
             }
         }

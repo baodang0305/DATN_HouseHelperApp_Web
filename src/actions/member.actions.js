@@ -17,26 +17,27 @@ const login = (email, password, remember) => {
             },
             body: JSON.stringify({ email, password })
         })
-        .then(response => response.json()
-            .then(data => {
-                const message = data.message;
-                if (data.status === "success") {
-                    const inforLogin = {
-                        "user": data.user,
-                        "token": data.token
+            .then(response => response.json()
+                .then(data => {
+                    console.log(data)
+                    const message = data.message;
+                    if (data.status === "success") {
+                        const inforLogin = {
+                            "user": data.user,
+                            "token": data.token
+                        }
+                        if (remember) {
+                            localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
+                        }
+                        dispatch(success(inforLogin));
+                        dispatch(alertActions.success(message));
+                        history.push("/family");
+                    } else {
+                        dispatch(failure());
+                        dispatch(alertActions.error(message));
                     }
-                    if (remember) {
-                        localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
-                    }
-                    dispatch(success(inforLogin));
-                    dispatch(alertActions.success(message));
-                    history.push("/family");
-                } else {
-                    dispatch(failure());
-                    dispatch(alertActions.error(message));
-                }
-            })
-        )
+                })
+            )
     }
 
     function request() { return { type: memberConstants.LOGIN_REQUEST } }
@@ -60,49 +61,72 @@ const addMember = (userInfor) => {
                 "Accept": "application/json",
                 "Authorization": `Bearer ${indexConstants.TOKEN_API}`
             },
-            body: JSON.stringify( userInfor )
+            body: JSON.stringify(userInfor)
         })
-        .then(response => response.json()
-            .then(data => {
-                if (data.status === "failed") {
-                    dispatch(alertActions.error(data.message));
-                } else {
-                    dispatch(alertActions.success(data.message));
-                }
-            })
-        )
+            .then(response => response.json()
+                .then(data => {
+                    if (data.status === "failed") {
+                        dispatch(alertActions.error(data.message));
+                    } else {
+                        dispatch(alertActions.success(data.message));
+                    }
+                })
+            )
     }
 }
 
-const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar }) => {
+const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar, isSetPass }) => {
 
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
-    const { token } = inforLogin;
-
-    return dispatch => {
-        return fetch(`${apiUrlTypes.heroku}/edit-member`, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar })
-        })
-        .then(response => response.json()
-            .then(data => {
-                console.log(data)
-                if (data.status === "failed") {
-                    dispatch(alertActions.error(data.message));
-                } else {
-                    dispatch(alertActions.success(data.message));
-                }
+    const { token, user } = inforLogin;
+    
+    if (user.mName !== mName || user.mEmail !== mEmail || user.mAge !== mAge || user.mRole !== mRole ||
+        user.mIsAdmin !== mIsAdmin || user.mAvatar.image !== mAvatar.image || user.mAvatar.color !== mAvatar.color
+    ) {
+        return dispatch => {
+            return fetch(`${apiUrlTypes.heroku}/edit-member`, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar })
             })
-        )
+                .then(response => response.json()
+                    .then(data => {
+                        if (data.status === "failed") {
+                            dispatch(alertActions.error(data.message));
+                        } else {
+                            if (!isSetPass) {
+                                localStorage.removeItem("inforLogin");
+                                inforLogin.user = { ...data.user, mName, mEmail, mRole, mAge, mIsAdmin, mAvatar }
+                                localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
+                                dispatch(success(inforLogin));
+                            }
+                            dispatch(alertActions.success(data.message));
+                            history.push("/family");
+                        }
+                    })
+                )
+        }
+
+        function success(inforLogin) { return { type: memberConstants.LOGIN_SUCCESS, inforLogin } }
+
+    } else {
+        if (!isSetPass) {
+            return dispatch => {
+                dispatch(alertActions.error("No changes have been made"));
+            }
+        } else {
+            return dispatch => {
+                dispatch(alertActions.clear());
+            }
+        }
     }
 }
 
-const changePassword = ({oldPassword, newPassword}) => {
+const changePassword = ({ oldPassword, newPassword }) => {
 
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
     const { token } = inforLogin;
@@ -117,15 +141,17 @@ const changePassword = ({oldPassword, newPassword}) => {
             },
             body: JSON.stringify({ oldPassword, newPassword })
         })
-        .then(response => response.json()
-            .then(data => {
-                if (data.status === "failed") {
-                    dispatch(alertActions.error(data.message));
-                } else {
-                    dispatch(alertActions.success(data.message));
-                }
-            })
-        )
+            .then(response => response.json()
+                .then(data => {
+                    if (data.status === "failed") {
+                        dispatch(alertActions.error(data.message));
+                    } else {
+                        dispatch(alertActions.success(data.message));
+                        localStorage.removeItem("inforLogin");
+                        history.push("/login");
+                    }
+                })
+            )
     }
 }
 

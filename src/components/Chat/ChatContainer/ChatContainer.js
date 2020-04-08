@@ -49,7 +49,9 @@ class ChatContainer extends React.Component {
         socket.on("server-send-list-user-active", (usersActive) => {
             const { activeTab } = this.state;
             if (activeTab === "active") {
+
                 if (usersActive.length !== 0) {
+
                     this.setState({
                         usersActive,
                         receiverActive: usersActive[0],
@@ -57,58 +59,67 @@ class ChatContainer extends React.Component {
                     });
 
                     socket.emit("client-request-content-messages", { "receiver": usersActive[0], "sender": user });
+
                 } else {
+
                     this.setState({ 
                         receiverActive: null,
                         messagesChatSingle: null,
                         filteredUsersActive: null
                     });
+
                 }
             }
         });
 
-        // socket.on("server-send-list-user-recent", (usersRecent) => {
-        //     if (usersRecent.length !== 0) {
-        //         this.setState({
-        //             usersRecent,
-        //             receiverRecent: usersRecent[0],
-        //             filteredUsersRecent: usersRecent
-        //         });
-        //         socket.emit("client-request-content-messages", { "receiver": usersRecent[0], "sender": user });
-        //     } else {
-        //         this.setState({ messagesChatSingle: [] });
-        //     }
-        // });
+        socket.on("server-send-list-user-recent", (usersRecent) => {
+ 
+            if (usersRecent.length !== 0) {
+                this.setState({
+                    usersRecent,
+                    receiverRecent: usersRecent[0],
+                    filteredUsersRecent: usersRecent
+                });
 
-        // socket.on("server-send-family-group", (familyGroup) => {
-        //     if (familyGroup) {
-        //         this.setState({
-        //             familyGroup,
-        //             messagesChatGroup: familyGroup.messages
-        //         });
-        //     } else {
-        //         this.setState({ messagesChatGroup: [] });
-        //     }
-        // });
+                socket.emit("client-request-content-messages", { "receiver": usersRecent[0], "sender": user });
 
-        socket.on("server-response-messages-chat-single", ({ user, messages }) => {
+            } else {
+                this.setState({ 
+                    messagesChatSingle: null,
+                    receiverRecent: null,
+                    filteredUsersRecent: null 
+                });
+            }
+        });
+
+        socket.on("server-send-family-group", (familyGroup) => {
+            if (familyGroup) {
+                this.setState({
+                    familyGroup,
+                    messagesChatGroup: familyGroup.messages
+                });
+            } else {
+                this.setState({ messagesChatGroup: [] });
+            }
+        });
+
+        socket.on("server-response-messages-chat-single", ({ partner, messages }) => {
+            const messTemp = [...messages];
             const { activeTab, receiverRecent, receiverActive } = this.state;
-
             if (activeTab === "recent") {
-                if (user.mEmail === receiverRecent.mEmail) {
-                    this.setState({ messagesChatSingle: messages });
+                if (partner.mEmail === receiverRecent.mEmail) {
+                    this.setState({ messagesChatSingle: messTemp });
                 }
             } else if (activeTab === "active") {
-                if (user.mEmail === receiverActive.mEmail) {
-                    this.setState({ messagesChatSingle: messages });
+                if (partner.mEmail === receiverActive.mEmail) {
+                    this.setState({ messagesChatSingle: messTemp });
                 }
             }
-
         });
 
-        // socket.on("server-response-messages-chat-group", (messages) => {
-        //     this.setState({ messagesChatGroup: messages });
-        // });
+        socket.on("server-response-messages-chat-group", (messages) => {
+            this.setState({ messagesChatGroup: messages });
+        });
 
         socket.on("server-response-user-is-entering-to-partner", (sender) => {
             const { activeTab, receiverActive, receiverRecent } = this.state;
@@ -136,13 +147,13 @@ class ChatContainer extends React.Component {
             }
         });
 
-        // socket.on("server-response-user-is-entering-to-group", (sender) => {
-        //     this.setState({ userIsEnteringGroup: sender });
-        // });
+        socket.on("server-response-user-is-entering-to-group", (sender) => {
+            this.setState({ userIsEnteringGroup: sender });
+        });
 
-        // socket.on("server-response-user-is-stoped-entering-to-group", (sender) => {
-        //     this.setState({ userIsEnteringGroup: null });
-        // });
+        socket.on("server-response-user-is-stoped-entering-to-group", (sender) => {
+            this.setState({ userIsEnteringGroup: null });
+        });
     }
 
     handleClickBack = () => {
@@ -234,19 +245,13 @@ class ChatContainer extends React.Component {
             const filteredUsersActive = usersActive.filter(element => {
                 return element.mName.toLowerCase().includes(value.toLowerCase());
             });
-            let index = -1;
-            for (let i = 0; i < filteredUsersActive.length; i++) {
-                if (filteredUsersActive[i].mEmail !== user.mEmail) {
-                    index = i;
-                    break;
-                }
-            }
-            if (index !== -1) {
+           
+            if (filteredUsersActive.length !== 0) {
                 this.setState({
                     filteredUsersActive,
-                    receiverActive: filteredUsersActive[index]
+                    receiverActive: filteredUsersActive[0]
                 });
-                socket.emit("client-request-content-messages", { "receiver": filteredUsersActive[index], "sender": user });
+                socket.emit("client-request-content-messages", { "receiver": filteredUsersActive[0], "sender": user });
             } else {
                 this.setState({
                     messagesChatSingle: null,
@@ -290,6 +295,8 @@ class ChatContainer extends React.Component {
         const { filteredUsersActive, filteredUsersRecent, receiverActive, receiverRecent, userIsEnteringSingle,
             messagesChatSingle, messagesChatGroup, message, activeTab, searchInput, familyGroup, userIsEnteringGroup } = this.state;
         const { user } = this.props;
+
+        console.log(userIsEnteringSingle)
 
         const toolBar = () => (
             <Row className="tool-bar-container">
