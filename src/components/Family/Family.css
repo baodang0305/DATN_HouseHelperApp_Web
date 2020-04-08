@@ -1,17 +1,11 @@
-.modified-top-menu {
-    border-bottom: 2px solid transparent !important;
-    color: inherit !important;
-    padding-top: 8px;
-    font-weight: bolder;
-}
-
-.container-img-profile {
+.container-member {
     text-align: center;
     position: relative;
+    cursor: pointer
 }
-.profile-img {
-    height: auto;
+.img-member {
     border-radius: 50%;
+    border: groove thin;
 }
 
 .badge {
@@ -24,26 +18,12 @@
     position: absolute;
 }
 
-.row-modified {
-    background-color: white;
-    margin-bottom: 15px;
-    padding: 15px 0px;
-}
-
-.divider-modified {
-    margin: 0px !important;
-    padding-bottom: 10px;
-    font-weight: bolder !important;
-    color: '#333'
-}
-
-.list-modified {
-    padding: 0px 50px;
-    width: 100%;
-}
-
 .ant-list-pagination {
     text-align: center;
+}
+
+.size-member-name {
+    margin-top: 5px;
 }
 
 /* big tablets to 1200px */
@@ -52,35 +32,23 @@
         font-size: 19px !important;
     }
 
-    .divider-modified {
-        font-size: 17px !important;
-    }
-
-    .container-img-profile,
-    .profile-img {
-        width: 100px;
+    .container-member,
+    .img-member {
+        width: 80px;
+        height: 80px;
     }
 
     .size-member-name {
-        font-size: 15px;
+        font-size: 12px;
     }
     
     .badge {
-        width: 30px ;
-        height: 30px ;
+        width: 28px ;
+        height: 28px ;
         font-size: 15px;
         line-height: 27px;
-        top: 5px;
-        left: 70px;
-    }
-
-    .col-modified {
-        padding-left: 200px;
-        padding-bottom: 20px;
-    }
-
-    .activity-img {
-        width: 272px;
+        top: 6px;
+        left: 60px;
     }
 }
 
@@ -89,67 +57,48 @@
         font-size: 17px !important;
     }
 
-    .divider-modified {
-        font-size: 16px !important;
-    }
-
-    .container-img-profile,
-    .profile-img {
-        width: 95px;
+    .container-member,
+    .img-member {
+        width: 75px;
+        height: 75px;
     }
 
     .size-member-name {
-        font-size: 14px;
+        font-size: 11px;
     }
     
     .badge {
-        width: 28px ;
-        height: 28px ;
-        font-size: 14px;
-        line-height: 26px;
+        width: 25px ;
+        height: 25px ;
+        font-size: 12px;
+        line-height: 25px;
         top: 5px;
-        left: 70px;
-    }
-
-    .col-modified {
-        padding-left: 160px;
-    }
-
-    .activity-img {
-        width: 230px;
+        left: 55px;
     }
 }
 
 @media only screen and (min-width: 995px) and (max-width: 1221px) {
-    .size-icon,
-    .divider-modified {
+    .size-icon{
         font-size: 15px !important;
     }
 
-    .container-img-profile,
-    .profile-img {
-        width: 90px;
+    .container-member,
+    .img-member {
+        width: 70px;
+        height: 70px;
     }
 
     .size-member-name {
-        font-size: 13px;
+        font-size: 11px;
     }
     
     .badge {
-        width: 26px ;
-        height: 26px ;
-        font-size: 13px;
-        line-height: 25px;
-        top: 5px;
-        left: 70px;
-    }
-
-    .col-modified {
-        padding-left: 120px;
-    }
-
-    .activity-img {
-        width: 200px;
+        width: 24px ;
+        height: 24px ;
+        font-size: 11px;
+        line-height: 24px;
+        top: 4px;
+        left: 50px;
     }
 }
 
@@ -158,34 +107,23 @@
         font-size: 13px !important;
     }
 
-    .divider-modified {
-        font-size: 14px !important;
-    }
-
-    .container-img-profile,
-    .profile-img {
-        width: 85px;
+    .container-member,
+    .img-member {
+        width: 65px;
+        height: 65px;
     }
 
     .size-member-name {
-        font-size: 12px;
+        font-size: 10px;
     }
     
     .badge {
-        width: 24px ;
-        height: 24px ;
+        width: 22px ;
+        height: 22px ;
         font-size: 12px;
-        line-height: 24px;
-        top: 6px;
-        left: 65px;
-    }
-
-    .col-modified {
-        padding-left: 80px;
-    }
-
-    .activity-img {
-        width: 170px;
+        line-height: 22px;
+        top: 5px;
+        left: 45px;
     }
 }
 
@@ -193,33 +131,22 @@
 @media only screen and (min-width: 480px) and ( max-width: 767px) {
     .size-icon,
     .size-member-name {
-        font-size: 11px !important;
+        font-size: 9px !important;
     }
 
-    .divider-modified {
-        font-size: 13px !important;
-    }
-
-    .container-img-profile,
-    .profile-img {
-        width: 80px;
+    .container-member,
+    .img-member {
+        width: 60px;
+        height: 60px;
     }
     
     .badge {
-        width: 22px ;
-        height: 22px ;
-        font-size: 11px;
-        line-height: 23px;
+        width: 20px ;
+        height: 20px ;
+        font-size: 9px;
+        line-height: 20px;
         top: 7px;
-        left: 60px;
-    }
-
-    .col-modified {
-        padding-left: 70px;
-    }
-
-    .activity-img {
-        width: 140px;
+        left: 43px;
     }
 }
 
@@ -230,13 +157,10 @@
         font-size: 9px !important;
     }
 
-    .divider-modified {
-        font-size: 12px !important;
-    }
-
-    .container-img-profile,
-    .profile-img {
-        width: 75px;
+    .container-member,
+    .img-member {
+        width: 55px;
+        height: 55px;
     }
 
     .size-member-name {
@@ -248,15 +172,7 @@
         height: 20px ;
         font-size: 10px;
         line-height: 22px;
-        top: 8px;
-        left: 55px;
-    }
-
-    .col-modified {
-        padding-left: 30px;
-    }
-
-    .activity-img {
-        width: 100px;
+        top: 9px;
+        left: 42px;
     }
 }

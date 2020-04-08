@@ -17,11 +17,12 @@ class Setting extends React.Component {
 
     handleClickLogout = () => {
         const { logout } = this.props;
-        logout();
         history.push("/login");
+        logout();
     }
 
     render(){
+        
         return(
             <Layout style={{ minHeight: '100vh'}}>
                 <DashboardMenu menuItem="1"/>

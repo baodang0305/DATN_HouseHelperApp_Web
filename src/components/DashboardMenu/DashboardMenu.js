@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
     HomeOutlined,
     CalendarOutlined,
@@ -8,7 +8,7 @@ import {
     GiftOutlined,
     ShoppingCartOutlined
 } from '@ant-design/icons';
-import familyImg from "../../assets/family-img.png";
+import { connect } from "react-redux";
 import './DashboardMenu.css';
 
 const { Sider } = Layout;
@@ -27,41 +27,52 @@ class DashboardMenu extends React.Component {
 
     render() {
 
-        const {collapsed} = this.state;
-        const {menuItem} = this.props;
+        const { collapsed } = this.state;
+        const { menuItem, user } = this.props;
+
         return (
             <Sider className="container-dashboard-menu" trigger={null} collapsible collapsed={collapsed} onCollapse={this.onCollapse}>
                 <div className="container-infor-family">
                     <div>
-                        <img className="container-img-family" src={familyImg}/>
+                        <img className="container-img-family" src={user.fImage} />
                     </div>
-                    <div className="name-family">Family Name</div>
+                    <div className="name-family"> {user.fName} </div>
                 </div>
                 <Menu theme="dark" defaultSelectedKeys={menuItem} mode="inline">
                     <Menu.Item key="1" >
-                        <HomeOutlined className="size-icon"/>
+                        <HomeOutlined className="size-icon" />
                         <Link to="/family">Family</Link>
                     </Menu.Item>
                     <Menu.Item key="2">
-                        <CalendarOutlined className="size-icon"/>
+                        <CalendarOutlined className="size-icon" />
                         <Link to="#">Calendar</Link>
                     </Menu.Item>
                     <Menu.Item key="3">
-                        <CheckOutlined className="size-icon"/>
+                        <CheckOutlined className="size-icon" />
                         <Link to="/tasks">Tasks</Link>
                     </Menu.Item>
                     <Menu.Item key="4">
-                        <GiftOutlined className="size-icon"/>
+                        <GiftOutlined className="size-icon" />
                         <Link to="#">Rewards</Link>
                     </Menu.Item>
                     <Menu.Item key="5">
-                        <ShoppingCartOutlined className="size-icon"/>
+                        <ShoppingCartOutlined className="size-icon" />
                         <Link to="#">Groceries</Link>
-                    </Menu.Item>    
+                    </Menu.Item>
                 </Menu>
             </Sider>
         );
     }
 }
 
-export default DashboardMenu;
+const mapStateToProps = (state) => {
+    const { inforLogin } = state.authentication;
+    if (inforLogin) {
+        const { user } = inforLogin;
+        return {
+            user
+        }
+    }
+}
+
+export default connect(mapStateToProps)(DashboardMenu);
