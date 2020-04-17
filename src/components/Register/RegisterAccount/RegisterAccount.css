@@ -15,5 +15,26 @@
     filter: alpha(opacity=0);
 }
 
+.register-account-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.register-account-form {
+    width: 400px;
+    margin: auto;
+    border: groove thin;
+	border-radius: 5px;
+	background-color: #f7f7f7;
+	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); 
+}
+
+.title-create-account {
+    text-align: center;
+    font-size: 25px;
+    margin-top: 10px;
+}
+
 
 

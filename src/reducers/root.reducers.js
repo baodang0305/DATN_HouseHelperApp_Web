@@ -1,13 +1,16 @@
-import authentication from './authentication.reducers';
-import family from './family.reducers';
-import alert from './alert.reducers';
-import task from './task.reducers';
 import { combineReducers } from 'redux';
+import task from './task.reducers';
+import index from './index.reducers';
+import alert from './alert.reducers';
+import family from './family.reducers';
+import authentication from './authentication.reducers';
+
 
 const rootReducer = combineReducers({
-    authentication,
     task,
+    alert,
+    index,
     family,
-    alert
+    authentication
 });
 export default rootReducer;

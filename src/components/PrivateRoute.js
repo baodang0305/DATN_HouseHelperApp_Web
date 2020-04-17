@@ -8,12 +8,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
             localStorage.getItem("inforLogin") ? (
                 <Component { ...props } />
             ) : (
-                <Redirect 
-                    to = {{
-                        pathname: "/login",
-                        state: { from: props.location }
-                    }}
-                />
+                <Redirect to = {{ pathname: "/login", state: { from: props.location } }} />
             )
         }
     />

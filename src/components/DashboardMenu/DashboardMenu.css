@@ -11,7 +11,7 @@
 @media only screen and (min-width: 1024px) {
     .container-dashboard-menu {
         max-width: none !important;
-        flex-basis: 260px !important;
+        flex-basis: 260px !important; 
     }
 
     img.container-img-family {
@@ -37,7 +37,7 @@
 @media only screen and (min-width: 768px) and (max-width: 1023px) {
     .container-dashboard-menu {
         max-width: none !important;
-        flex-basis: 230px !important;
+        flex-basis: 180px !important;
     }
 
     img.container-img-family {
@@ -63,7 +63,7 @@
 @media only screen and (min-width: 480px) and ( max-width: 767px) {
     .container-dashboard-menu {
         max-width: none !important;
-        flex-basis: 200px !important;
+        flex-basis: 100px !important;
     }
 
     img.container-img-family {
@@ -90,7 +90,7 @@
     .container-dashboard-menu {
         max-width: none !important;
         min-width: 0px !important;
-        flex-basis: 180px !important;
+        flex-basis: 50px !important;
     }
 
     img.container-img-family {

@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { Form, Input, Button, Row, Col } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+
+import "./RegisterFamily.css";
 import history from "../../../helpers/history";
 import { storage } from "../../../helpers/firebaseConfig";
 import { indexConstants } from "../../../constants/index.constants";
-import "./RegisterFamily.css";
 
 class RegisterFamily extends Component {
 
@@ -27,10 +28,7 @@ class RegisterFamily extends Component {
 	}
 
 	handleChangeImg = (e) => {
-		this.setState({
-			currentUrlImg: URL.createObjectURL(e.target.files[0]),
-			fImage: e.target.files[0]
-		});
+		this.setState({ currentUrlImg: URL.createObjectURL(e.target.files[0]), fImage: e.target.files[0] });
 	}
 
 	handleClickBack = () => {
@@ -40,9 +38,7 @@ class RegisterFamily extends Component {
 	handleSubmit = () => {
 
 		const { fPassword, fConfirmPassword, fImage, fName } = this.state;
-
 		if (fPassword === fConfirmPassword) {
-
 			if (!fImage) {
 				const fImgUrl = indexConstants.FAMILY_IMG_DEFAULT;
 				history.push("/create-account", {fName, fPassword, fImgUrl});
@@ -60,12 +56,8 @@ class RegisterFamily extends Component {
 					history.push("/create-account", {fName, fPassword, fImgUrl});
 				});
 			}
-
 		} else {
-			this.setState({ 
-				statusConfirmPass: "error",
-				confirmPassValidate: "confirm password is invalid"
-			});
+			this.setState({ statusConfirmPass: "error", confirmPassValidate: "confirm password is invalid" });
 		}
 	}
 
@@ -74,15 +66,14 @@ class RegisterFamily extends Component {
 		const { fName, fPassword, fConfirmPassword, currentUrlImg, statusConfirmPass, confirmPassValidate } = this.state;
 
 		return (
+
 			<div className="body-container">
+
 				<div className="container-create-family">
+
 					<div className="title-form-create-family">Create Family</div>
-					<Form 
-						className="form-create-family"
-						size="large"
-						initialValues={{ remember: true }}
-						onFinish={this.handleSubmit}
-					>
+
+					<Form onFinish={this.handleSubmit} size="large" className="form-create-family" >
 						
 						<Form.Item style={{textAlign: "center"}}>
 							<div className="container-family-img">
@@ -90,49 +81,49 @@ class RegisterFamily extends Component {
 								<input onChange={this.handleChangeImg} type="file" className="input-family-img"/> 
 							</div>
 						</Form.Item>
+
 						<Form.Item name="name" rules={[{ required: true, message: 'Please input your family name!' }]} >
 							<Input 
 								name="fName" value={fName} onChange={this.handleChangeInput}
-								prefix={<UserOutlined className="site-form-item-icon" />} 
-								placeholder="Name your family" 
+								placeholder="Name your family"  prefix={<UserOutlined className="site-form-item-icon" />} 
 							/>
 						</Form.Item>
+
 						<Form.Item name="password" rules={[ { required: true, message: 'Please input your password!' }]}>
 							<Input
-								name="fPassword" value={fPassword} onChange={this.handleChangeInput}
+								type="password" placeholder="Set family password"
 								prefix={<LockOutlined className="site-form-item-icon" />}
-								type="password"
-								placeholder="Set family password"
+								name="fPassword" value={fPassword} onChange={this.handleChangeInput}
 							/>
 						</Form.Item>
+
 						<Form.Item 
 							validateStatus={statusConfirmPass}
 							help={confirmPassValidate}
 							name="confirm" rules={[{ required: true , message: "Please input your confirm password!" }]} 
 						>
 							<Input
-								name="fConfirmPassword" value={fConfirmPassword} onChange={this.handleChangeInput}
+								type="password" placeholder="Confirm family password"
 								prefix={<LockOutlined className="site-form-item-icon" />}
-								type="password"
-								placeholder="Confirm family password"
+								name="fConfirmPassword" value={fConfirmPassword} onChange={this.handleChangeInput}
 							/>
 						</Form.Item>
 
 						<Form.Item >
 							<Row>
-								<Col span={11}>
-									<Button onClick={this.handleClickBack} className="button-back" > Back </Button>
-								</Col>
-
-								<Col span={11} offset={2}>
-									<Button className="button-next" type="primary" htmlType="submit"> Next </Button>
-								</Col>
+								<Col span={11}> <Button onClick={this.handleClickBack} className="button-back" > Back </Button> </Col>
+								<Col span={11} offset={2}> <Button className="button-next" type="primary" htmlType="submit"> Next </Button> </Col>
 							</Row>
-						</Form.Item>
+						</Form.Item> 
+
 					</Form>
+
 				</div>
+
 			</div>
+
 		);
+		
 	}
 }
 

@@ -4,13 +4,13 @@ import { familyConstants } from "../constants/family.constants";
 function family(state = {}, action) {
     switch (action.type) {
         case familyConstants.CREATE_FAMILY_SUCCESS: {
-            return { message: action.message }
+            return { ...state, message: action.message }
         }
         case familyConstants.CREATE_FAMILY_FAILURE: { 
-            return { message: action.message }
+            return { ...state, message: action.message }
         }
         case memberConstants.GET_ALL_MEMBERS: {
-            return { members: action.members }
+            return { ...state, members: action.members }
         }
         default: return state;
     }
