@@ -1,31 +1,22 @@
-import apiUrlTypes from "../helpers/apiURL";
-import { memberConstants } from "../constants/member.constants";
-import { alertActions } from "../actions/alert.actions";
 import history from "../helpers/history";
-import { indexConstants } from "../constants/index.constants";
+import apiUrlTypes from "../helpers/apiURL";
+import { alertActions } from "../actions/alert.actions";
+import { memberConstants } from "../constants/member.constants";
 
 const login = (email, password, remember) => {
+
     return dispatch => {
-
         dispatch(request());
-
         return fetch(`${apiUrlTypes.heroku}/users/login`, {
             method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
         })
             .then(response => response.json()
                 .then(data => {
-                    console.log(data)
                     const message = data.message;
                     if (data.status === "success") {
-                        const inforLogin = {
-                            "user": data.user,
-                            "token": data.token
-                        }
+                        const inforLogin = { "user": data.user, "token": data.token }
                         if (remember) {
                             localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
                         }
@@ -41,26 +32,27 @@ const login = (email, password, remember) => {
     }
 
     function request() { return { type: memberConstants.LOGIN_REQUEST } }
-    function success(inforLogin) { return { type: memberConstants.LOGIN_SUCCESS, inforLogin } }
     function failure() { return { type: memberConstants.LOGIN_FAILURE } }
+    function success(inforLogin) { return { type: memberConstants.LOGIN_SUCCESS, inforLogin } }
 }
 
 const logout = () => {
+
     localStorage.removeItem("inforLogin");
+    history.push("/login");
     return {
         type: memberConstants.LOGOUT
     }
+
 }
 
 const addMember = (userInfor) => {
+
+    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
     return dispatch => {
         return fetch(`${apiUrlTypes.heroku}/add-member`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": `Bearer ${indexConstants.TOKEN_API}`
-            },
+            headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": `Bearer ${inforLogin.token}` },
             body: JSON.stringify(userInfor)
         })
             .then(response => response.json()
@@ -68,6 +60,7 @@ const addMember = (userInfor) => {
                     if (data.status === "failed") {
                         dispatch(alertActions.error(data.message));
                     } else {
+                        history.push("/family");
                         dispatch(alertActions.success(data.message));
                     }
                 })
@@ -75,37 +68,52 @@ const addMember = (userInfor) => {
     }
 }
 
-const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar, isSetPass }) => {
+const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar, isSetPass, member, fromSetting }) => {
 
+    let mID = null;
+    let isChanges = false;
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
-    const { token, user } = inforLogin;
-    
-    if (user.mName !== mName || user.mEmail !== mEmail || user.mAge !== mAge || user.mRole !== mRole ||
-        user.mIsAdmin !== mIsAdmin || user.mAvatar.image !== mAvatar.image || user.mAvatar.color !== mAvatar.color
-    ) {
+
+    if (
+        member.mAge !== mAge ||
+        member.mRole !== mRole ||
+        member.mName !== mName ||
+        member.mEmail !== mEmail ||
+        member.mIsAdmin !== mIsAdmin ||
+        member.mAvatar.image !== mAvatar.image ||
+        member.mAvatar.color !== mAvatar.color
+    ) { isChanges = true; }
+
+    if (member.mEmail !== inforLogin.user.mEmail) {
+        mID = member._id;
+    }
+
+    if (isChanges) {
         return dispatch => {
             return fetch(`${apiUrlTypes.heroku}/edit-member`, {
                 method: "POST",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar })
+                headers: { "Accept": "application/json", "Content-Type": "application/json", "Authorization": `Bearer ${inforLogin.token}` },
+                body: JSON.stringify({ mID, mName, mEmail, mAge, mRole, mIsAdmin, mAvatar })
             })
                 .then(response => response.json()
                     .then(data => {
                         if (data.status === "failed") {
                             dispatch(alertActions.error(data.message));
                         } else {
-                            if (!isSetPass) {
+                            if (inforLogin.user.mEmail === member.mEmail) {
                                 localStorage.removeItem("inforLogin");
-                                inforLogin.user = { ...data.user, mName, mEmail, mRole, mAge, mIsAdmin, mAvatar }
+                                inforLogin.user = { ...inforLogin.user, mName, mEmail, mRole, mAge, mIsAdmin, mAvatar }
+                                console.log(inforLogin)
                                 localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
                                 dispatch(success(inforLogin));
                             }
                             dispatch(alertActions.success(data.message));
-                            history.push("/family");
+                            if (fromSetting) {
+                                history.push("/family/setting");
+                            } else {
+                                const memberTemp = { "_id": member._id, mName, mEmail, mAge, mAvatar, mRole, mIsAdmin }
+                                history.push({ pathname: "/family/member", search: `?id=${member._id}`, state: { "member": memberTemp } });
+                            }
                         }
                     })
                 )
@@ -129,16 +137,11 @@ const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar, isSetPass }
 const changePassword = ({ oldPassword, newPassword }) => {
 
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
-    const { token } = inforLogin;
 
     return dispatch => {
         return fetch(`${apiUrlTypes.heroku}/change-password`, {
             method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Accept": "application/json", "Content-Type": "application/json", "Authorization": `Bearer ${inforLogin.token}` },
             body: JSON.stringify({ oldPassword, newPassword })
         })
             .then(response => response.json()
@@ -146,9 +149,77 @@ const changePassword = ({ oldPassword, newPassword }) => {
                     if (data.status === "failed") {
                         dispatch(alertActions.error(data.message));
                     } else {
+
                         dispatch(alertActions.success(data.message));
-                        localStorage.removeItem("inforLogin");
+                    }
+                })
+            )
+    }
+}
+
+const deleteMember = (mID) => {
+
+    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+
+    return dispatch => {
+        return fetch(`${apiUrlTypes.heroku}/delete-member`, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json", "Authorization": `Bearer ${inforLogin.token}` },
+            body: JSON.stringify({ mID })
+        })
+            .then(response => response.json()
+                .then(data => {
+                    console.log(data)
+                    if (data.status === "success") {
+                        if (inforLogin.user._id === mID || !mID) {
+                            dispatch(logout());
+                        } else {
+                            history.push("/family")
+                        }
+                        dispatch(alertActions.success(data.message));
+                    } else {
+                        dispatch(alertActions.error(data.message));
+                    }
+                })
+            )
+    }
+}
+
+const requestResetPassword = ({ email, type }) => {
+
+    return dispatch => {
+        return fetch(`${apiUrlTypes.heroku}/users/request-reset-password`, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify({ email, type })
+        })
+            .then(response => response.json()
+                .then(data => {
+                    if (data.status === "success") {
+                        dispatch(alertActions.success(data.message));
+                    } else {
+                        dispatch(alertActions.error(data.message));
+                    }
+                })
+            )
+    }
+}
+
+const resetPassword = ({ newPassword, rpID }) => {
+
+    return dispatch => {
+        return fetch(`${apiUrlTypes.heroku}/users/reset-password`, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify({ newPassword, rpID })
+        })
+            .then(response => response.json()
+                .then(data => {
+                    if (data.status === "success") {
                         history.push("/login");
+                        dispatch(alertActions.success(data.message));
+                    } else {
+                        dispatch(alertActions.error(data.message));
                     }
                 })
             )
@@ -160,5 +231,8 @@ export const memberActions = {
     logout,
     addMember,
     editMember,
-    changePassword
+    deleteMember,
+    resetPassword,
+    changePassword,
+    requestResetPassword
 }

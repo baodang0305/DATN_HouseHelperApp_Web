@@ -1,0 +1,11 @@
+.family-account-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+}
+
+.form-family-account {
+    width: 400px;
+    margin: auto;
+
+}
