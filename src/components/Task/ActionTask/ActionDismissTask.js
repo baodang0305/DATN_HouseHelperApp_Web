@@ -23,22 +23,22 @@ class DismissTaskForm extends Component {
             <div>
                 <div className="action-task-title">
                     <ExclamationCircleOutlined style={{ color: '#F8DA74', fontSize: 20, marginRight: 10 }} />
-                    <span>Do you want to dismiss this task?</span>
+                    <span>Bạn có muốn bỏ qua công việc đã chọn?</span>
                 </div>
 
                 <div >
                     <div>
-                        <div className="action-task-label">Dismissed by</div>
+                        <div className="action-task-label">Thành viên bỏ qua:</div>
                         <div className="action-task-detail-data">
                             <div className="avatar-member">
-                                <Avatar className="icon-avatar-member" src={memberDismiss.member.mAvatar} />
+                                <Avatar className="icon-avatar-member" src={memberDismiss.mAvatar.image} />
                             </div>
-                            <div className='name-avatar-member'>{memberDismiss.member.mName}</div>
+                            <div className='name-avatar-member'>{memberDismiss.mName}</div>
                         </div>
                     </div>
 
                     <div>
-                        <div className="action-task-label">Dismissed at</div>
+                        <div className="action-task-label">Thời điểm bỏ qua:</div>
                         <div className="action-task-detail-data" style={{ color: '#38589E', fontSize: 14, fontWeight: 500 }}>{moment().format('MMMM Do YYYY, h:mm:ss a')}</div>
                     </div>
                     <div style={{ width: '100%' }}>
@@ -46,9 +46,9 @@ class DismissTaskForm extends Component {
                         <div className="action-task-form-btn">
                             <Button type='default'
                                 style={{ marginRight: 15 }}
-                                onClick={() => { Modal.destroyAll() }}>Cancel</Button>
+                                onClick={() => { Modal.destroyAll() }}>Hủy</Button>
                             <Button type="primary"
-                                onClick={this.handleClickOk}>Dismiss</Button>
+                                onClick={this.handleClickOk}>Bỏ qua</Button>
                         </div>
                     </div>
                 </div>

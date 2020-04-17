@@ -6,7 +6,7 @@
 	padding: 0 20px;
 }
 .header-title {
-	font-size: 25px;
+	font-size: 23px;
 	text-align: center;
 }
 
@@ -28,9 +28,9 @@
 }
 
 .site-collapse-custom-collapse .site-collapse-custom-panel {
-	background: #f7f7f7;
+	background: white;
 	border-radius: 2px;
-	margin-bottom: 24px;
+	margin-bottom: 20px;
 	border: 0px;
 	overflow: hidden;
 }
@@ -70,22 +70,51 @@
 	border-radius: 11px;
 }
 
-.list-cate-task {
+.list-task-filter {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	margin: 0 10px;
 }
-.list-cate-task:hover {
+.list-task-filter:hover {
 	cursor: pointer;
 }
-
-.task-cate:hover {
+.chosen-task-filter {
+	border: 2px solid #2985ff;
+}
+.task-filter:hover {
 	cursor: pointer;
 	border: 1.5px solid #2985ff;
 }
 
+.filter-popover {
+	display: flex;
+	flex-direction: column;
+}
+
+.filter-popover-item {
+	font-size: 15px;
+	cursor: pointer;
+}
+
+.chosen-filter-popover-item {
+	font-size: 15px;
+
+	font-weight: 500;
+	cursor: pointer;
+	color: #2985ff;
+}
+.filter-popover-item:hover {
+	text-decoration: underline;
+	font-size: 15px;
+	font-weight: 500;
+}
+.hide-popover {
+	font-size: 14px;
+	color: #2985ff;
+	cursor: pointer;
+}
 .filter-list-task {
 	display: flex;
 	flex-direction: row;
@@ -93,4 +122,10 @@
 	max-height: max-content;
 	width: 100%;
 	margin: 10px 0 15px;
+}
+.ant-popover-title {
+	min-width: fit-content;
+}
+.ant-popover-inner-content {
+	padding: 5px 10px;
 }

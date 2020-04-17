@@ -19,26 +19,26 @@ class DeleteTaskForm extends Component {
 
     }
     render() {
-        const { idTask, user, nameTask } = this.props
+        const { idTask, memberDelete, nameTask } = this.props
         return (
             <div>
                 <div className="action-task-title">
                     <DeleteOutlined style={{ color: '#EC6764', fontSize: 20, marginRight: 10 }} />
-                    <span>Do you want to delete this task?</span>
+                    <span>Bạn có muốn xóa công việc đã chọn?</span>
                 </div>
                 <div >
                     <div>
-                        <div className="action-task-label">Deleted by</div>
+                        <div className="action-task-label">Thành viên xóa:</div>
                         <div className="action-task-detail-data">
                             <div className="avatar-member">
-                                <Avatar className="icon-avatar-member" src={user.member.mAvatar} />
+                                <Avatar className="icon-avatar-member" src={memberDelete.mAvatar.image} />
                             </div>
-                            <div className='name-avatar-member'>{user.member.mName}</div>
+                            <div className='name-avatar-member'>{memberDelete.mName}</div>
                         </div>
                     </div>
 
                     <div>
-                        <div className="action-task-label">Deleted at</div>
+                        <div className="action-task-label">Thời điểm xóa:</div>
                         <div className="action-task-detail-data" style={{ color: '#38589E', fontSize: 14, fontWeight: 500 }}>{moment().format('MMMM Do YYYY, h:mm:ss a')}</div>
                     </div>
                     <div style={{ width: '100%' }}>
@@ -46,8 +46,8 @@ class DeleteTaskForm extends Component {
                         <div className="action-task-form-btn">
                             <Button type='default'
                                 style={{ marginRight: 15 }}
-                                onClick={() => { Modal.destroyAll() }}>Cancel</Button>
-                            <Button type="danger" onClick={this.handleClickOk}>Delete</Button>
+                                onClick={() => { Modal.destroyAll() }}>Hủy</Button>
+                            <Button type="danger" onClick={this.handleClickOk}>Xóa</Button>
                         </div>
                     </div>
 

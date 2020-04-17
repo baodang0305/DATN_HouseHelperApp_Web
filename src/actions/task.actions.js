@@ -71,12 +71,12 @@ const completeTask = (idTask, memberComplete) => {
 }
 
 
-const addTask = (name, assign, date, photo, time, points, tcID, notes) => {
+const addTask = (name, assign, dueDate, photo, time, points, tcID, notes, penalty, repeat) => {
     return dispatch => {
 
         dispatch(request());
 
-        return axios.post(`${apiUrlTypes.heroku}/add-task`, { name, assign, date, photo, time, points, tcID, notes }, {
+        return axios.post(`${apiUrlTypes.heroku}/add-task`, { name, assign, dueDate, photo, time, points, tcID, notes, penalty, repeat }, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -147,11 +147,106 @@ const checkTaskToRemind = (taskNeedRemind) => {
         taskNeedRemind
     }
 }
+
+const editTask = (_id, name, time, points, assign, photo, tcID, notes, dueDate, penalty, repeat) => {
+    return dispatch => {
+
+        dispatch(request());
+
+        return axios.post(`${apiUrlTypes.heroku}/edit-task`, { _id, name, time, points, assign, photo, tcID, notes, dueDate, penalty, repeat }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                const message = res.data.message;
+                if (res.data.status === 'success') {
+                    dispatch(success());
+                    dispatch(alertActions.success(message));
+
+                    history.push("/tasks");
+                }
+                else {
+                    dispatch(failure());
+                    dispatch(alertActions.error(message));
+                }
+            }
+
+            )
+
+    }
+    function request() { return { type: taskConstants.editTaskConstants.EDIT_TASK_REQUEST } }
+    function success() { return { type: taskConstants.editTaskConstants.EDIT_TASK_SUCCESS } }
+    function failure() { return { type: taskConstants.editTaskConstants.EDIT_TASK_FAILURE } }
+}
+const redoTask = (tID) => {
+    return dispatch => {
+
+        dispatch(request());
+
+        return axios.post(`${apiUrlTypes.heroku}/redo-task`, { tID: tID }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                const message = res.data.message;
+                if (res.data.status === 'success') {
+                    dispatch(success());
+                    dispatch(alertActions.success(message));
+                    history.push("/tasks");
+                }
+                else {
+                    dispatch(alertActions.error(message));
+                }
+            }
+
+            )
+
+    }
+    function request() { return { type: taskConstants.redoTaskConstants.REDO_REQUEST } }
+    function success() { return { type: taskConstants.redoTaskConstants.REDO_SUCCESS } }
+}
+
+const assignTask = (tID) => {
+    return dispatch => {
+
+        dispatch(request());
+
+        return axios.post(`${apiUrlTypes.heroku}/assign-task`, { tID: tID }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                const message = res.data.message;
+                if (res.data.status === 'success') {
+                    dispatch(success());
+                    dispatch(alertActions.success(message));
+                    history.push("/tasks");
+                }
+                else {
+                    dispatch(alertActions.error(message));
+                    dispatch(failure());
+                }
+            }
+
+            )
+
+    }
+    function request() { return { type: taskConstants.assignTaskConstants.ASSIGN_REQUEST } }
+    function success() { return { type: taskConstants.assignTaskConstants.ASSIGN_SUCCESS } }
+    function failure() { return { type: taskConstants.assignTaskConstants.ASSIGN_FAILURE } }
+}
+
 export const taskActions = {
     deleteTask,
     completeTask,
     addTask,
+    editTask,
     getRecentTask,
     dismissTask,
+    redoTask,
+    assignTask,
     checkTaskToRemind
 }

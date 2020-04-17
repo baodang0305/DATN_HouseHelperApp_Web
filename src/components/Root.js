@@ -14,7 +14,6 @@ import MyAccount from './MyAccount/MyAccount';
 import Alert from './Alert';
 import history from '../helpers/history';
 import FormCreateTask from './Task/AddTask/AddTask';
-import FormEditTask from './Task/AddTask/EditTask';
 import PrivateRoute from './PrivateRoute';
 
 
@@ -29,8 +28,12 @@ const Root = () => {
                     <Route path="/create-family" component={RegisterFamily} />
                     <Route path="/create-account" component={RegisterAccount} />
 
-                    <PrivateRoute path="/edit-task" component={FormEditTask} />
-                    <PrivateRoute path='/tasks/add-task' component={FormCreateTask} />
+                    <PrivateRoute path="/tasks/edit-task">
+                        <FormCreateTask type="edit"></FormCreateTask>
+                    </PrivateRoute>
+                    <PrivateRoute path='/tasks/add-task'>
+                        <FormCreateTask type="add"></FormCreateTask>
+                    </PrivateRoute>
                     <PrivateRoute path="/tasks" component={Task} />
 
                     <PrivateRoute path="/family/add-member" component={AddMember} />

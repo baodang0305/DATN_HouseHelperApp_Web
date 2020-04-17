@@ -15,22 +15,21 @@
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: flex-start;
 }
 
 .name-task {
-	font-size: 17px;
-	font-weight: 500;
+	font-size: 18px;
+	color: #0f0f0f;
 }
 
 .note-task {
-	margin-top: 3px;
-
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: center;
+	color: #161616;
 }
 .time-task {
 	margin-top: 8px;
@@ -51,29 +50,23 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
+	height: 100%;
 }
 
 /* show text name when hover*/
 .container-icon-avatar {
-	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
 }
-.container-icon-avatar .icon-avatar-show-name {
-	visibility: hidden;
-	width: max-content;
-	background-color: black;
-	color: #fff;
-	text-align: center;
-	border-radius: 6px;
-	padding: 2px 4px;
 
-	/* Position the text name */
-	position: absolute;
-	top: -25px;
-	left: -5px;
-	z-index: 1;
-}
 .icon-avatar:hover {
 	border: 2px solid rgb(59, 240, 216);
+	width: 45px;
+	height: 45px;
+	transition-duration: 0.2s, 1s;
 }
 
 .icon-avatar:active {
@@ -93,15 +86,20 @@
 	font-size: 18px;
 	color: darkgoldenrod;
 }
+
 .point,
 .task-point {
 	display: flex;
 	width: max-content;
 	flex-direction: row;
 	align-items: center;
+	justify-content: center;
 }
 .task-point {
 	margin-left: 20px;
+}
+.point {
+	font-size: 17px;
 }
 
 .actions {
@@ -109,7 +107,7 @@
 	flex-direction: row;
 	justify-content: space-around;
 	align-items: center;
-	transition-property: opacity, left, top, height;
+
 	transition-duration: 3s, 5s;
 }
 .list-action {
@@ -118,14 +116,26 @@
 	justify-content: center;
 	align-items: center;
 	margin: 0 10px;
-	transition-duration: 1s;
+	height: 100%;
+	transition-duration: 0.2s, 0.5s;
+	cursor: pointer;
+}
+
+.icon-action-task {
+	color: #2985ff;
+	font-size: 21px;
+}
+.icon-action-task:hover,
+.list-action:hover > .icon-action-task {
+	font-size: 26px;
+	transition-duration: 0.2s, 0.2s;
 }
 
 .image-task {
-	max-height: 80px;
+	max-height: 70px;
 	width: auto;
 	object-position: center;
-	object-fit: cover;
+	object-fit: contain;
 }
 .show-image-task,
 .show-assign-action-task {
