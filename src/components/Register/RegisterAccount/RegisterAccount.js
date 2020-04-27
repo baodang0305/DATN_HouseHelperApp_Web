@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Form, Row, Col, Button, Radio, Input, Select } from "antd";
+import { Form, Row, Col, Button, Radio, Input, Select, Spin } from "antd";
 
 import "./RegisterAccount.css";
 import history from "../../../helpers/history";
@@ -171,11 +171,14 @@ class RegisterAccount extends React.Component {
                                     </Row>
                                 </Form.Item>
 
-                                <Form.Item>
+                                <Form.Item style={{ textAlign: "center" }}>
                                     <Row>
                                         <Col span={11}> <Button onClick={this.handleClickBack} className="button-back" > Back </Button> </Col>
                                         <Col span={11} offset={2}> <Button className="button-next" type="primary" htmlType="submit"> Create </Button> </Col>
                                     </Row>
+                                    {this.props.creating && !this.props.created &&
+                                        <Spin tip="Loading..." />
+                                    }
                                 </Form.Item>
 
                             </Form>
@@ -192,8 +195,15 @@ class RegisterAccount extends React.Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        created: state.family.created,
+        creating: state.family.creating
+    }
+}
+
 const actionCreators = {
     createFamily: familyActions.createFamily
 }
 
-export default connect(null, actionCreators)(RegisterAccount);
+export default connect(mapStateToProps, actionCreators)(RegisterAccount);

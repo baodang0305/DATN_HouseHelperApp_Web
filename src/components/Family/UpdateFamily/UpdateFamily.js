@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "firebase/app";
 import { connect } from "react-redux";
 import { LeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Layout, Row, Col, Button, Form, Input, Checkbox, Modal } from "antd";
+import { Layout, Row, Col, Button, Form, Input, Checkbox, Modal, Spin } from "antd";
 
 import "./UpdateFamily.css";
 import history from "../../../helpers/history";
@@ -288,8 +288,11 @@ class UpdateFamily extends React.Component {
                                                 </Form.Item>
                                             </Modal>
                                             <br /><br />
-                                            <Form.Item>
+                                            <Form.Item style={{ textAlign: "center" }}>
                                                 <Button type="primary" htmlType="submit" className="login-form-button"> Save </Button>
+                                                {this.props.changingFamilyPassword && !this.props.changedFamilyPassword &&
+                                                    <Spin tip="Loading..." />
+                                                }
                                             </Form.Item>
                                         </Form>
                                     </Col>
@@ -304,6 +307,13 @@ class UpdateFamily extends React.Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    return { 
+        changedFamilyPassword: state.family.changedFamilyPassword,
+        changingFamilyPassword: state.family.changingFamilyPassword
+    }
+}
+
 const actionCreators = {
     alertError: alertActions.error,
     updateFamily: familyActions.updateFamily,
@@ -311,4 +321,4 @@ const actionCreators = {
     requestResetPassword: memberActions.requestResetPassword
 }
 
-export default connect(null, actionCreators)(UpdateFamily);
+export default connect(mapStateToProps, actionCreators)(UpdateFamily);

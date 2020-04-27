@@ -29,7 +29,7 @@ const Messages = ({ messages, userIsEntering, mID }) => {
                 isSentByCurrentUser ? (
                     <div key={index} className="item-message-container justify-end">
                         <div className="message-box margin-right-5 align-items-flex-end">
-                            <div className="message-text background-blue">{messageContainer.message}</div> 
+                            <div className="message-text background-blue ">{messageContainer.message}</div> 
                         </div>
                         <div className="img-sent-text-container">
                             <img src={messageContainer.avatar.image} className="img-sent-text" style={{backgroundColor: messageContainer.avatar.color}}/>

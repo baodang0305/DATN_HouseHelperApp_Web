@@ -67,7 +67,7 @@ class Member extends React.Component {
                         </div>
                         <div className="site-layout-background" style={{ width: "98%", margin: "0px auto"}}>
                             <div style={{ height: "200px" }}>
-                                 abc 
+                                  
                             </div>
                             <List
                                 dataSource={listTasks}

@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "firebase/app";
 import { connect } from "react-redux";
 import { LeftOutlined } from "@ant-design/icons";
-import { Layout, Form, Input, Button, Select, Row, Col, Radio, Checkbox } from 'antd';
+import { Layout, Form, Input, Button, Select, Row, Col, Radio, Checkbox, Spin } from 'antd';
 
 import "./AddMember.css";
 import history from "../../../helpers/history";
@@ -38,8 +38,8 @@ class AddMember extends React.Component {
     }
 
     handleChangeImg = (e) => {
-        this.setState({ 
-            mAvatar: e.target.files[0], 
+        this.setState({
+            mAvatar: e.target.files[0],
             currentUrlImg: URL.createObjectURL(e.target.files[0])
         });
     }
@@ -88,12 +88,12 @@ class AddMember extends React.Component {
                 background = avatarType;
             }
 
-            const userInfor = { 
-                mAge, mRole, mName, mEmail, mIsAdmin, 
-                "mAvatar": { 
-                    "color": background, 
+            const userInfor = {
+                mAge, mRole, mName, mEmail, mIsAdmin,
+                "mAvatar": {
+                    "color": background,
                     "image": indexConstants.MEMBER_IMG_DEFAULT
-                } 
+                }
             }
             addMember(userInfor);
         }
@@ -106,13 +106,9 @@ class AddMember extends React.Component {
         return (
 
             <Layout style={{ minHeight: '100vh' }}>
-
                 <DashboardMenu menuItem="1" />
-
                 <Layout className="site-layout">
-
                     <Header className="site-layout-background" >
-
                         <Row style={{ textAlign: "center" }}>
                             <Col flex="30px">
                                 <Button onClick={this.handleClickBack} style={{ marginLeft: "10px" }} size="large" >
@@ -121,17 +117,11 @@ class AddMember extends React.Component {
                             </Col>
                             <Col flex="auto"> <div className="title-header">Create Profile</div> </Col>
                         </Row>
-
                     </Header>
-
                     <Content className="site-layout-background" style={{ margin: 40 }}>
-
                         <Row justify="center" align="middle" style={{ height: "100%" }}>
-
                             <Col span={6}>
-
                                 <Form onFinish={this.handleSubmit} size="large" initialValues={{ remember: true }} >
-
                                     <Form.Item style={{ textAlign: "center" }}>
                                         {avatarType === "camera" ?
                                             (
@@ -140,7 +130,7 @@ class AddMember extends React.Component {
                                                     <input onChange={this.handleChangeImg} type="file" className="input-profile-img" />
                                                 </div>
                                             ) : (
-                                                <img src={profileImg} className="img-profile" style={{backgroundColor: avatarType}} />
+                                                <img src={profileImg} className="img-profile" style={{ backgroundColor: avatarType }} />
                                             )
                                         }
                                     </Form.Item>
@@ -149,15 +139,15 @@ class AddMember extends React.Component {
                                         <Radio.Group
                                             onChange={(e) => (this.setState({ avatarType: e.target.value }))}
                                             defaultValue="pink" style={{ display: "flex", justifyContent: "space-between" }}
-                                            
+
                                         >
-                                            <Radio.Button value="camera" className="avatar camera-avatar"> <i className="fa fa-camera camera-icon" aria-hidden="true"/> </Radio.Button>
-                                            <Radio.Button value="#f7c2c1" className="avatar avatar1" style={{backgroundColor: "#f7c2c1"}}></Radio.Button>
-                                            <Radio.Button value="#fcefc3" className="avatar avatar2" style={{backgroundColor: "#fcefc3"}}></Radio.Button>
-                                            <Radio.Button value="#fadec2" className="avatar avatar3" style={{backgroundColor: "#fadec2"}}></Radio.Button>
-                                            <Radio.Button value="#e4cce2" className="avatar avatar4" style={{backgroundColor: "#e4cce2"}}></Radio.Button>
-                                            <Radio.Button value="#d3dff1" className="avatar avatar5" style={{backgroundColor: "#d3dff1"}}></Radio.Button>
-                                            <Radio.Button value="#9dcc80" className="avatar avatar6" style={{backgroundColor: "#9dcc80"}}></Radio.Button>
+                                            <Radio.Button value="camera" className="avatar camera-avatar"> <i className="fa fa-camera camera-icon" aria-hidden="true" /> </Radio.Button>
+                                            <Radio.Button value="#f7c2c1" className="avatar avatar1" style={{ backgroundColor: "#f7c2c1" }}></Radio.Button>
+                                            <Radio.Button value="#fcefc3" className="avatar avatar2" style={{ backgroundColor: "#fcefc3" }}></Radio.Button>
+                                            <Radio.Button value="#fadec2" className="avatar avatar3" style={{ backgroundColor: "#fadec2" }}></Radio.Button>
+                                            <Radio.Button value="#e4cce2" className="avatar avatar4" style={{ backgroundColor: "#e4cce2" }}></Radio.Button>
+                                            <Radio.Button value="#d3dff1" className="avatar avatar5" style={{ backgroundColor: "#d3dff1" }}></Radio.Button>
+                                            <Radio.Button value="#9dcc80" className="avatar avatar6" style={{ backgroundColor: "#9dcc80" }}></Radio.Button>
                                         </Radio.Group>
                                     </Form.Item>
 
@@ -188,7 +178,7 @@ class AddMember extends React.Component {
                                     <Form.Item>
                                         <Row style={{ width: '100%' }}>
                                             <Col span={16}>
-                                                <Select defaultValue={mRole} onChange={(value => (this.setState({ mRole: value }) ))} >
+                                                <Select defaultValue={mRole} onChange={(value => (this.setState({ mRole: value })))} >
                                                     <Select.Option value="Mẹ">Mẹ</Select.Option>
                                                     <Select.Option value="Cha">Cha</Select.Option>
                                                     <Select.Option value="Anh Trai">Anh Trai</Select.Option>
@@ -200,35 +190,37 @@ class AddMember extends React.Component {
                                                 <Checkbox
                                                     style={{ float: "right", lineHeight: 3 }}
                                                     onChange={(e) => (this.setState({ mIsAdmin: e.target.checked }))}
-                                                > Admin 
+                                                > Admin
                                                 </Checkbox>
                                             </Col>
                                         </Row>
                                     </Form.Item>
 
-                                    <Form.Item>
+                                    <Form.Item style={{ textAlign: "center" }}>
                                         <Row>
-                                            <Col span={24}> 
-                                                <Button style={{ width: "100%" }} type="primary" ghost htmlType="submit" >Create</Button> 
+                                            <Col span={24}>
+                                                <Button style={{ width: "100%" }} type="primary" ghost htmlType="submit" >Create</Button>
+                                                {this.props.addingMember && !this.props.addedMember &&
+                                                    <Spin tip="Loading..." />
+                                                }
                                             </Col>
                                         </Row>
                                     </Form.Item>
-
                                 </Form>
-
                             </Col>
-
                         </Row>
-
                     </Content>
-
                     <Footer style={{ textAlign: 'center' }}></Footer>
-
                 </Layout>
-
             </Layout>
-
         );
+    }
+}
+
+const mapStateToProps = (state) => {
+    return {
+        addedMember: state.family.addedMember,
+        addingMember: state.family.addingMember
     }
 }
 
@@ -236,4 +228,4 @@ const actionCreators = {
     addMember: memberActions.addMember
 }
 
-export default connect(null, actionCreators)(AddMember);
+export default connect(mapStateToProps, actionCreators)(AddMember);

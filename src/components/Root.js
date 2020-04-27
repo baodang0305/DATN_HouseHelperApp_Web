@@ -9,14 +9,17 @@ import Login from './Login/Login';
 import Family from './Family/Family';
 import history from '../helpers/history';
 import PrivateRoute from './PrivateRoute';
+import Calendar from './Calendar/Calendar';
 import Member from './Family/Member/Member';
 import Setting from './Family/Setting/Setting';
 import FormEditTask from './Task/AddTask/EditTask';
 import FormCreateTask from './Task/AddTask/AddTask';
+import AddEvent from "./Calendar/AddEvent/AddEvent";
 import MyAccount from './Family/MyAccount/MyAccount';
 import AddMember from './Family/AddMember/AddMember';
 import Chat from './Family/Chat/ChatContainer/ChatContainer';
 import UpdateFamily from './Family/UpdateFamily/UpdateFamily';
+import ActiveAccount from './Family/ActiveAccount/ActiveAccount';
 import ResetPassword from './Family/ResetPassword/ResetPassword';
 import RegisterFamily from './Register/RegisterFamily/RegisterFamily';
 import RegisterAccount from './Register/RegisterAccount/RegisterAccount';
@@ -31,7 +34,8 @@ const Root = () => {
                     <Route path="/login" component={Login} />
                     <Route path="/create-family" component={RegisterFamily} />
                     <Route path="/create-account" component={RegisterAccount} />
-                    <Route exact path="/reset-password&:id" component={ResetPassword}/>
+                    <Route path="/reset-password&:id" component={ResetPassword} />
+                    <Route path="/activate-account&:id" component={ActiveAccount} />
 
                     <PrivateRoute path="/edit-task" component={FormEditTask} />
                     <PrivateRoute path='/tasks/add-task' component={FormCreateTask} />
@@ -44,6 +48,9 @@ const Root = () => {
                     <PrivateRoute exact path="/family/add-member" component={AddMember} />
                     <PrivateRoute exact path="/family/setting/my-account" component={MyAccount} />
                     <PrivateRoute exact path="/family/setting/update-family" component={UpdateFamily} />
+
+                    <PrivateRoute exact path="/calendar" component={Calendar} />
+                    <PrivateRoute exact path="/calendar/add-event" component={AddEvent} />
 
                     <Route exact path="/" component={Home} />
                 </Switch>

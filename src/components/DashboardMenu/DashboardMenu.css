@@ -1,6 +1,7 @@
 .container-infor-family {
     text-align: center;
-    margin: 20px 0px;
+    margin: 20px 20px 20px 0px;
+
 }
 
 .container-dashboard-menu {
@@ -9,6 +10,7 @@
 
 /* big tablets to 1200px */
 @media only screen and (min-width: 1024px) {
+
     .container-dashboard-menu {
         max-width: none !important;
         flex-basis: 260px !important; 
@@ -47,7 +49,7 @@
     }
     
     .name-family {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bolder;
         color: white;
         margin-top: 5px;
@@ -60,7 +62,7 @@
 }
 
 /* small phones to small tablets */
-@media only screen and (min-width: 480px) and ( max-width: 767px) {
+@media only screen and (min-width: 0px) and ( max-width: 767px) {
     .container-dashboard-menu {
         max-width: none !important;
         flex-basis: 100px !important;
@@ -68,33 +70,6 @@
 
     img.container-img-family {
         width: 60px;
-        background-color: white;
-        border-radius: 50%;
-    }
-    
-    .name-family {
-        font-size: 16px;
-        font-weight: bolder;
-        color: white;
-        margin-top: 5px;
-    }
-    
-    a,
-    .size-icon {
-        font-size: 14px !important;
-    }
-}
-
-/* small phones from 0 - 480px */
-@media only screen and (min-width: 0px) and (max-width: 479px) {
-    .container-dashboard-menu {
-        max-width: none !important;
-        min-width: 0px !important;
-        flex-basis: 50px !important;
-    }
-
-    img.container-img-family {
-        width: 40px;
         background-color: white;
         border-radius: 50%;
     }
@@ -108,6 +83,6 @@
     
     a,
     .size-icon {
-        font-size: 12px !important;
+        font-size: 14px !important;
     }
 }

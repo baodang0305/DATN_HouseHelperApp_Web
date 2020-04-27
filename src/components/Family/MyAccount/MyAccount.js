@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "firebase/app";
 import { connect } from "react-redux";
 import { LeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Layout, Form, Input, Button, Select, Row, Col, Radio, Checkbox, Modal } from 'antd';
+import { Layout, Form, Input, Button, Select, Row, Col, Radio, Checkbox, Modal, Spin } from 'antd';
 
 import "./MyAccount.css";
 import history from "../../../helpers/history";
@@ -96,9 +96,9 @@ class MyAccount extends React.Component {
 
         if (stateFamilyPassword === "" && fPassword !== "") {
             this.setState({ fPassword: "", visibleResetFamilyPassword: false });
-            resetFamilyPassword({ "fPassword": fPassword, "mID":  member._id});
+            resetFamilyPassword({ "fPassword": fPassword, "mID": member._id });
         } else {
-            this.setState({ fPassword: "", stateFamilyPassword: "error", errorFamilyPassword: "Please input your family password"});
+            this.setState({ fPassword: "", stateFamilyPassword: "error", errorFamilyPassword: "Please input your family password" });
         }
 
     };
@@ -326,7 +326,7 @@ class MyAccount extends React.Component {
     render() {
 
         const {
-            
+
             mRole,
             mIsAdmin,
             mNewPass,
@@ -492,18 +492,18 @@ class MyAccount extends React.Component {
                                             </Form.Item>
 
                                             <Form.Item>
-                                                { (member.mEmail !== user.mEmail && user.mIsAdmin) ?
-                                                    <div onClick={this.showBoxResetFamilyPassword} style={{float: "left"}} className="login-form-forgot title-forgot"> Reset family password </div>
+                                                {(member.mEmail !== user.mEmail && user.mIsAdmin) ?
+                                                    <div onClick={this.showBoxResetFamilyPassword} style={{ float: "left" }} className="login-form-forgot title-forgot"> Reset family password </div>
                                                     :
                                                     null
                                                 }
-                                                { member.mEmail === user.mEmail ?
-                                                    <div onClick={this.showBoxRequestResetPassword} className="login-form-forgot title-forgot"> Forgot password? </div> 
+                                                {member.mEmail === user.mEmail ?
+                                                    <div onClick={this.showBoxRequestResetPassword} className="login-form-forgot title-forgot"> Forgot password? </div>
                                                     :
                                                     null
                                                 }
                                             </Form.Item>
-                                                
+
                                             <Modal
                                                 onOk={this.handleSendRequestResetPassword}
                                                 title="Please input email to reset password!"
@@ -540,40 +540,41 @@ class MyAccount extends React.Component {
                                                 </Form.Item>
                                             </Modal>
 
-                                            <Form.Item>
+                                            <Form.Item style={{ textAlign: "center" }}>
                                                 <Row>
                                                     <Col span={11}> <Button className="delete-button" onClick={this.handleDeleteMember} > Delete </Button> </Col>
                                                     <Col span={11} offset={2}> <Button className="save-button" type="primary" htmlType="submit" > Save </Button> </Col>
                                                 </Row>
+                                                {this.props.changingPassword && !this.props.changedPassword &&
+                                                    <Spin tip="Loading..." />
+                                                }
                                             </Form.Item>
-
                                         </Form>
-                                    
                                     </Col>
-                               
                                 </Row>
-                            
                             </div>
-
-                            </div>
-
+                        </div>
                     </Content>
-
-                        <Footer style={{ textAlign: 'center' }}></Footer>
-
+                    <Footer style={{ textAlign: 'center' }}></Footer>
                 </Layout>
-
-                </Layout>
+            </Layout>
         );
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        changedPassword: state.family.changedPassword,
+        changingPassword: state.family.changingPassword
+    }
+}
+
 const actionCreators = {
-    editMember: memberActions.editMember, 
+    editMember: memberActions.editMember,
     deleteMember: memberActions.deleteMember,
     changePassword: memberActions.changePassword,
     resetFamilyPassword: familyActions.resetFamilyPassword,
     requestResetPassword: memberActions.requestResetPassword
 }
 
-export default connect(null, actionCreators)(MyAccount);
+export default connect(mapStateToProps, actionCreators)(MyAccount);

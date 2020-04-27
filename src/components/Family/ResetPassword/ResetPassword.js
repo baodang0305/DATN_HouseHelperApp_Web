@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Spin } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 
 import "./ResetPassword.css";
@@ -35,9 +35,9 @@ class ResetPassword extends React.Component {
 
             <div className="container-reset-password">
 
-                <div className="title-reset-password"> Reset Your Password </div>
+                <div className="title-reset-password"> Reset Password </div>
 
-                <Form onFinish={this.handleSubmit} >
+                <Form onFinish={this.handleSubmit} size="large">
 
                     <Form.Item name="newPassword" rules={[{ required: true, message: 'Please input your new Password!' }]} >
                         <Input
@@ -56,8 +56,11 @@ class ResetPassword extends React.Component {
                         />
                     </Form.Item>
 
-                    <Form.Item>
+                    <Form.Item style={{ textAlign: "center" }}>
                         <Button type="primary" htmlType="submit" className="login-form-button"> Reset </Button>
+                        {this.props.resetting && !this.props.resetted &&
+                            <Spin tip="Loading..." />
+                        }
                     </Form.Item>
                     
                 </Form>
@@ -69,8 +72,15 @@ class ResetPassword extends React.Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        resetted: state.family.resetted,
+        resetting: state.family.resetting
+    }
+}
+
 const actionCreators = {
     resetPassword: memberActions.resetPassword
 }
 
-export default connect(null, actionCreators)(ResetPassword);
+export default connect(mapStateToProps, actionCreators)(ResetPassword);

@@ -1,0 +1,52 @@
+.name-event-container,
+.asign-event-container {
+    margin: 10px;
+    background-color: white;
+}
+
+.name-event-input {
+    font-size: 25px;
+    text-align: center;
+}
+
+.pre-icon-add-event {
+    margin-right: 5px;
+    color: hsl(0, 1%, 68%);
+}
+
+.next-icon-add-event {
+    margin-left: 5px;
+    color: hsl(0, 1%, 68%);
+}
+
+.list-users-asign-add-event-container {
+    width: 800px;
+    display: flex;
+    overflow-x: hidden;
+}
+
+.user-add-event-container {
+    text-align: center;
+    position: relative;
+}
+
+.avatar-container {
+    width: 200px;
+    
+}
+
+.check-asign-add-event {
+    position: absolute;
+    font-size: 20px;
+    left: 46%;
+    top: 23%;
+}
+
+.title-asign-add-event,
+.team-icon-add-event {
+    font-size: 20px;
+}
+
+.team-icon-add-event {
+    margin: 20px 2px 0px 20px;
+}

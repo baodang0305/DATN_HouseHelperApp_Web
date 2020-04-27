@@ -37,19 +37,17 @@ const login = (email, password, remember) => {
 }
 
 const logout = () => {
-
     localStorage.removeItem("inforLogin");
     history.push("/login");
-    return {
-        type: memberConstants.LOGOUT
-    }
-
+    return { type: memberConstants.LOGOUT }
 }
 
 const addMember = (userInfor) => {
 
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+
     return dispatch => {
+        dispatch(request());
         return fetch(`${apiUrlTypes.heroku}/add-member`, {
             method: "POST",
             headers: { "Content-Type": "application/json", "Accept": "application/json", "Authorization": `Bearer ${inforLogin.token}` },
@@ -58,14 +56,21 @@ const addMember = (userInfor) => {
             .then(response => response.json()
                 .then(data => {
                     if (data.status === "failed") {
+                        dispatch(failure());
                         dispatch(alertActions.error(data.message));
                     } else {
+                        dispatch(success());
                         history.push("/family");
                         dispatch(alertActions.success(data.message));
                     }
                 })
             )
     }
+
+    function request() { return { type: memberConstants.ADD_MEMBER_REQUEST }}
+    function success() { return { type: memberConstants.ADD_MEMBER_SUCCESS }}
+    function failure() { return { type: memberConstants.ADD_MEMBER_FAILURE }}
+
 }
 
 const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar, isSetPass, member, fromSetting }) => {
@@ -139,6 +144,7 @@ const changePassword = ({ oldPassword, newPassword }) => {
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
 
     return dispatch => {
+        dispatch(request());
         return fetch(`${apiUrlTypes.heroku}/change-password`, {
             method: "POST",
             headers: { "Accept": "application/json", "Content-Type": "application/json", "Authorization": `Bearer ${inforLogin.token}` },
@@ -147,14 +153,20 @@ const changePassword = ({ oldPassword, newPassword }) => {
             .then(response => response.json()
                 .then(data => {
                     if (data.status === "failed") {
+                        dispatch(failure());
                         dispatch(alertActions.error(data.message));
                     } else {
-
+                        dispatch(success());
                         dispatch(alertActions.success(data.message));
                     }
                 })
             )
     }
+
+    function request() { return { type: memberConstants.CHANGE_PASSWORD_REQUEST }};
+    function success() { return { type: memberConstants.CHANGE_PASSWORD_SUCCESS }};
+    function failure() { return { type: memberConstants.CHANGE_PASSWORD_FAILURE }};
+
 }
 
 const deleteMember = (mID) => {
@@ -208,6 +220,7 @@ const requestResetPassword = ({ email, type }) => {
 const resetPassword = ({ newPassword, rpID }) => {
 
     return dispatch => {
+        dispatch(request());
         return fetch(`${apiUrlTypes.heroku}/users/reset-password`, {
             method: "POST",
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
@@ -216,14 +229,21 @@ const resetPassword = ({ newPassword, rpID }) => {
             .then(response => response.json()
                 .then(data => {
                     if (data.status === "success") {
+                        dispatch(success());
                         history.push("/login");
                         dispatch(alertActions.success(data.message));
                     } else {
+                        dispatch(failure());
                         dispatch(alertActions.error(data.message));
                     }
                 })
             )
     }
+
+    function request() { return { type: memberConstants.RESET_PASSWORD_REQUEST }};
+    function success() { return { type: memberConstants.RESET_PASSWORD_SUCCESS }};
+    function failure() { return { type: memberConstants.RESET_PASSWORD_FAILURE }};
+
 }
 
 export const memberActions = {

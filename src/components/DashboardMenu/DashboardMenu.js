@@ -16,7 +16,7 @@ class DashboardMenu extends React.Component {
 
         return (
 
-            <Sider className="container-dashboard-menu" trigger={null} collapsible>
+            <Sider className="container-dashboard-menu">
 
                 <div className="container-infor-family">
                     <div> <img className="container-img-family" src={user.fImage} /> </div>
@@ -32,7 +32,7 @@ class DashboardMenu extends React.Component {
 
                     <Menu.Item key="2">
                         <CalendarOutlined className="size-icon" />
-                        <Link to="#">Calendar</Link>
+                        <Link to="/calendar">Calendar</Link>
                     </Menu.Item>
 
                     <Menu.Item key="3">

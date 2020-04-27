@@ -21,24 +21,25 @@ const getListTasks = () => {
     }
 
     function success(listTasks) { return { type: indexConstants.GET_LIST_TASKS, listTasks }}
+
 }
 
 const getNumberOfIncomingMessages = (user) => {
-   
+
     return dispatch => {
         return fetch(`${indexConstants.ENPOINT_SOCKET}get-number-of-incoming-messages`, {
             method: "POST",
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
             body: JSON.stringify({ user })
         })
-        .then(response => response.json()
-            .then(data => {
-                dispatch(success(data.number));
-            })
-        )
+            .then(response => response.json()
+                .then(data => {
+                    dispatch(success(data.number));
+                })
+            )
     }
 
-    function success(number) { return { type: indexConstants.NUMBER_OF_INCOMING_MESSAGES, number }}
+    function success(number) { return { type: indexConstants.NUMBER_OF_INCOMING_MESSAGES, number } }
 }
 
 export const indexActions = {

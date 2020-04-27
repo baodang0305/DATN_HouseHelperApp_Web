@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import FormItem from 'antd/lib/form/FormItem';
-import { Form, Input, Button, Checkbox, Modal } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox, Modal, Spin } from 'antd';
 
 import './Login.css';
 import { memberActions } from '../../actions/member.actions';
@@ -86,7 +86,6 @@ class Login extends React.Component {
 
     render() {
 
-        const { loggingIn } = this.props;
         const { email, password, emailResetPass, visible, stateEmailResetPass, errorEmailResetPass } = this.state;
 
         return (
@@ -139,8 +138,8 @@ class Login extends React.Component {
 
                     <Form.Item style={{ textAlign: "center" }}>
                         <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost> Log in </Button>
-                        {loggingIn &&
-                            <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        {this.props.loggingIn && !this.props.loggedIn &&
+                            <Spin tip="Loading..." />
                         }
                     </Form.Item>
 
@@ -158,17 +157,16 @@ class Login extends React.Component {
 };
 
 const mapStateToProps = (state) => {
-
-    const { loggingIn } = state.authentication;
-    return { loggingIn };
-
+    const { loggingIn, loggedIn } = state.authentication;
+    return { 
+        loggedIn,
+        loggingIn 
+    };
 }
 
 const actionCreators = {
-
     login: memberActions.login,
     requestResetPassword: memberActions.requestResetPassword
-    
 }
 
 export default connect(mapStateToProps, actionCreators)(Login);

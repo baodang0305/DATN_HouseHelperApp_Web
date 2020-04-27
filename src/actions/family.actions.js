@@ -7,6 +7,7 @@ import { familyConstants } from "../constants/family.constants";
 const createFamily = (inforCreate) => {
 
     return dispatch => {
+        dispatch(request());
         return fetch(`${apiUrlTypes.heroku}/users/register-family`, {
             method: "POST",
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
@@ -16,19 +17,48 @@ const createFamily = (inforCreate) => {
                 .then(data => {
                     const { message, status } = data;
                     if (status === "failed") {
-                        dispatch(failure(message));
+                        dispatch(failure());
                         dispatch(alertActions.error(message));
                     } else {
+                        dispatch(success());
                         history.push("/login");
-                        dispatch(success(message));
                         dispatch(alertActions.success(message));
                     }
                 })
             );
     }
 
-    function success(message) { return { type: familyConstants.CREATE_FAMILY_SUCCESS, message } };
-    function failure(message) { return { type: familyConstants.CREATE_FAMILY_FAILURE, message } };
+    function request() { return { type: familyConstants.CREATE_FAMILY_REQUEST } };
+    function success() { return { type: familyConstants.CREATE_FAMILY_SUCCESS } };
+    function failure() { return { type: familyConstants.CREATE_FAMILY_FAILURE } };
+}
+
+const activeAccount = ({ code, aaID }) => {
+
+    return dispatch => {
+        dispatch(request());
+        return fetch(`${apiUrlTypes.heroku}/users/activate-account`, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify({ code, aaID })
+        })
+        .then (response => response.json() 
+            .then (data => {
+                if (data.status === "success") {
+                    dispatch(success());
+                    history.push("/login");
+                    dispatch(alertActions.success(data.message));
+                } else {
+                    dispatch(failure());
+                    dispatch(alertActions.error(data.message));
+                }
+            })
+        )
+    }
+
+    function request() { return { type: familyConstants.ACTIVE_ACCOUNT_REQUEST } }
+    function failure() { return { type: familyConstants.ACTIVE_ACCOUNT_FAILURE } }
+    function success() { return { type: familyConstants.ACTIVE_ACCOUNT_SUCCESS } }
 }
 
 const getAllMembers = () => {
@@ -90,6 +120,7 @@ const changePasswordFamily = ({ oldPassword, newPassword }) => {
     const { token } = inforLogin;
 
     return dispatch => {
+        dispatch(request());
         return fetch(`${apiUrlTypes.heroku}/change-family-password`, {
             method: "POST",
             headers: { "Accept": "application/json", "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
@@ -98,13 +129,20 @@ const changePasswordFamily = ({ oldPassword, newPassword }) => {
         .then( response => response.json()
             .then(data => {
                 if (data.status === "success") {
+                    dispatch(success());
                     dispatch(alertActions.success(data.message));
                 } else {
+                    dispatch(failure());
                     dispatch(alertActions.error(data.message));
                 }
             })
         )
     }
+
+    function request() { return { type: familyConstants.CHANGE_FAMILY_PASSWORD_REQUEST }};
+    function success() { return { type: familyConstants.CHANGE_FAMILY_PASSWORD_SUCCESS }};
+    function failure() { return { type: familyConstants.CHANGE_FAMILY_PASSWORD_FAILURE }}
+
 }
 
 const resetFamilyPassword = ({ fPassword, mID }) => {
@@ -127,12 +165,14 @@ const resetFamilyPassword = ({ fPassword, mID }) => {
             })
         )
     }
+
 }
 
 export const familyActions = {
     createFamily,
     updateFamily,
     getAllMembers,
+    activeAccount,
     resetFamilyPassword,
     changePasswordFamily
 }
