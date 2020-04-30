@@ -34,7 +34,7 @@ class Alert extends React.Component {
         const { alert } = this.props;
 
         return (
-            <div> { alert.message && this.notify() } </div>
+            <div> {alert.message && this.notify()} </div>
         );
 
     }

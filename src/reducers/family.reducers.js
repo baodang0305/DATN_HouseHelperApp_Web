@@ -41,10 +41,6 @@ function family(state = {}, action) {
             return { ...state, resetted: true, resetting: false }
         }
 
-        case memberConstants.GET_ALL_MEMBERS: {
-            return { ...state, members: action.members }
-        }
-
         case memberConstants.ADD_MEMBER_REQUEST: {
             return { ...state, addingMember: true, addedMember: false }
         }
@@ -79,6 +75,30 @@ function family(state = {}, action) {
 
         case familyConstants.CHANGE_FAMILY_PASSWORD_FAILURE: {
             return { ... state, changedFamilyPassword: true, changingFamilyPassword: false }
+        }
+
+        case familyConstants.GET_LIST_NEWS_REQUEST: {
+            return { ...state, gettingListNews: true, gotListNews: false }
+        }
+
+        case familyConstants.GET_LIST_NEWS_SUCCESS: {
+            return { ...state, gettingListNews: false, gotListNews: true, listNews: action.listNews }
+        }
+
+        case familyConstants.GET_LIST_NEWS_FAILURE: {
+            return { ...state, gettingListNews: false, gotListNews: true }
+        }
+
+        case familyConstants.GET_LIST_MEMBERS_REQUEST: {
+            return { ...state, gettingListMembers: true, gotListMembers: false }
+        }
+
+        case familyConstants.GET_LIST_MEMBERS_FAILURE: {
+            return { ...state, gettingListMembers: false, gotListMembers: true }
+        }
+
+        case familyConstants.GET_LIST_MEMBERS_SUCCESS: {
+            return { ...state, gettingListMembers: false, gotListMembers: true, listMembers: action.listMembers }
         }
 
         default: return state;

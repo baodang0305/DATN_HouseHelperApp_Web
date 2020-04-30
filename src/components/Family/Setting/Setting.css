@@ -1,4 +1,12 @@
+.header-setting-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
+.center-header-setting-container {
+    font-size: 22px;
+}
 
 .panel-container {
     background-color: white;

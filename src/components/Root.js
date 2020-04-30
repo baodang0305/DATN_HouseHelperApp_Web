@@ -12,7 +12,6 @@ import PrivateRoute from './PrivateRoute';
 import Calendar from './Calendar/Calendar';
 import Member from './Family/Member/Member';
 import Setting from './Family/Setting/Setting';
-import FormEditTask from './Task/AddTask/EditTask';
 import FormCreateTask from './Task/AddTask/AddTask';
 import AddEvent from "./Calendar/AddEvent/AddEvent";
 import MyAccount from './Family/MyAccount/MyAccount';
@@ -24,11 +23,13 @@ import ResetPassword from './Family/ResetPassword/ResetPassword';
 import RegisterFamily from './Register/RegisterFamily/RegisterFamily';
 import RegisterAccount from './Register/RegisterAccount/RegisterAccount';
 
+
 const Root = () => {
-    
+
     return (
         <div>
             <Alert />
+
             <Router history={history}>
                 <Switch>
                     <Route path="/login" component={Login} />
@@ -37,8 +38,12 @@ const Root = () => {
                     <Route path="/reset-password&:id" component={ResetPassword} />
                     <Route path="/activate-account&:id" component={ActiveAccount} />
 
-                    <PrivateRoute path="/edit-task" component={FormEditTask} />
-                    <PrivateRoute path='/tasks/add-task' component={FormCreateTask} />
+                    <PrivateRoute path="/tasks/edit-task">
+                        <FormCreateTask type="edit"></FormCreateTask>
+                    </PrivateRoute>
+                    <PrivateRoute path='/tasks/add-task'>
+                        <FormCreateTask type="add"></FormCreateTask>
+                    </PrivateRoute>
                     <PrivateRoute path="/tasks" component={Task} />
 
                     <PrivateRoute exact path="/family" component={Family} />

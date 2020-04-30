@@ -33,7 +33,7 @@ class Login extends React.Component {
 
             if (value === "") {
 
-                this.setState({ stateEmailResetPass: "error",  errorEmailResetPass: "Please input your email" });
+                this.setState({ stateEmailResetPass: "error",  errorEmailResetPass: "Vui lòng nhập email" });
 
             } else {
 
@@ -92,38 +92,38 @@ class Login extends React.Component {
 
             <div className="container-login">
 
-                <div className="title-login">  Your Account </div>
+                <div className="title-login">  Đăng Nhập </div>
 
                 <Form onFinish={this.handleSubmit} initialValues={{ remember: true }}>
 
-                    <Form.Item name="email" rules={[{ required: true, message: 'Please input your email!' }]} >
+                    <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]} >
                         <Input
                             name="email" value={email} onChange={this.handleChangeInput}
                             prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" type="text"
                         />
                     </Form.Item>
 
-                    <Form.Item name="password" rules={[{ required: true, message: 'Please input your Password!' }]} >
+                    <Form.Item name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]} >
                         <Input
                             name="password" value={password} onChange={this.handleChangeInput}
                             prefix={<LockOutlined className="site-form-item-icon" />}
-                            type="password" placeholder="Password" size="large"
+                            type="password" placeholder="Mật khẩu" size="large"
                         />
                     </Form.Item>
 
                     <Form.Item>
                         <Form.Item name="remember" valuePropName="checked" noStyle>
-                            <Checkbox onChange={this.handleChangeRemember}>Remember me</Checkbox>
+                            <Checkbox onChange={this.handleChangeRemember}>Ghi nhớ!</Checkbox>
                         </Form.Item>
-                        <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Forgot password </div>
+                        <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
                         <Modal
                             onOk={this.handleSend}
                             onCancel={this.handleCancel}
                             closable={false} visible={visible}
                             title="Please input email to reset password!"
                             footer={[
-                                <Button key="back" onClick={this.handleCancel}> Cancel </Button>,
-                                <Button key="submit" type="primary" onClick={this.handleSend}> Submit </Button>
+                                <Button key="back" onClick={this.handleCancel}> Đóng </Button>,
+                                <Button key="submit" type="primary" onClick={this.handleSend}> Gửi </Button>
                             ]}
                         >
                             <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
@@ -137,14 +137,14 @@ class Login extends React.Component {
                     </Form.Item>
 
                     <Form.Item style={{ textAlign: "center" }}>
-                        <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost> Log in </Button>
+                        <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost> Đăng nhập </Button>
                         {this.props.loggingIn && !this.props.loggedIn &&
                             <Spin tip="Loading..." />
                         }
                     </Form.Item>
 
                     <FormItem className="register-link">
-                        <Link to="/create-family">Create family now!</Link>
+                        <Link to="/create-family">Tạo gia đình!</Link>
                     </FormItem>
 
                 </Form>

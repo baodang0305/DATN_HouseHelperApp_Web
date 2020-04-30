@@ -18,16 +18,16 @@ const ActiveAccount = (props) => {
 
         <div className="container-active-account">
 
-            <div className="title-active-account"> Active Account </div>
+            <div className="title-active-account"> Kích Hoạt Tài Khoản </div>
 
             <Form onFinish={handleSubmit} size="large" >
 
-                <Form.Item name="code" rules={[{ required: true, message: 'Please input your code!' }]} >
+                <Form.Item name="code" rules={[{ required: true, message: 'Vui lòng nhập mã code!' }]} >
                     <Input type="text" placeholder="Code" />
                 </Form.Item>
 
                 <Form.Item style={{ textAlign: "center" }}>
-                    <Button type="primary" htmlType="submit" className="login-form-button"> Submit </Button>
+                    <Button type="primary" htmlType="submit" className="login-form-button"> Xác Nhận </Button>
                     {props.activating && !props.activated &&
                         <Spin tip="Loading..." />
                     }

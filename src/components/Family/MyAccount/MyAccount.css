@@ -1,3 +1,13 @@
+.header-my-account-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-header-my-account-container {
+    font-size: 22px;
+}
+
 .delete-button,
 .save-button {
     width: 100%;

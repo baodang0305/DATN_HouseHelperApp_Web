@@ -1,46 +1,59 @@
 .container-add-task {
-	padding: 20px auto;
+	padding: 0;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 }
 .container-form-add-task {
-	width: 800px;
+	width: 100%;
 }
 
-.list-avatar-member {
+.list-avatar-member,
+.list-task-cate {
+	margin-top: 5px;
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: space-between;
 	align-items: center;
 }
 
+.task-cate-item,
 .container-avatar-member {
 	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
+	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	margin-right: 15px;
 }
 
-.avatar-member {
+.avatar-member,
+.avatar-task-cate {
 	display: flex;
 	position: relative;
 }
 
-.icon-avatar-member {
+.icon-avatar-member,
+.icon-avatar-task-cate {
+	width: 40px;
+	height: 40px;
+	border-radius: 50% !important;
+	position: relative;
+	border: 1px solid rgba(175, 172, 172, 0.533);
+	cursor: pointer;
+}
+.icon-avatar-member-checked,
+.icon-avatar-task-cate-checked {
 	width: 40px;
 	height: 40px;
 	border-radius: 50% !important;
 	position: relative;
 	border: 1px solid rgba(161, 156, 156, 0.533);
 	cursor: pointer;
-}
-.icon-avatar-member::before {
-	width: unset !important;
+	opacity: 0.7;
+	filter: opacity(0.7);
 }
 
-.icon-check-assign-member {
+.icon-check-assign-member,
+.icon-check-assign-task-cate {
 	color: rgb(50, 230, 33);
 	font-size: 30px;
 	position: absolute;
@@ -48,6 +61,7 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	cursor: pointer;
+	z-index: 999;
 }
 
 .icon-avatar-member:hover {
@@ -75,4 +89,131 @@
 	flex-direction: row;
 	justify-content: flex-end;
 	align-items: center;
+}
+
+.add-task-list-img {
+	width: 100%;
+	height: max-content;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	position: relative;
+}
+
+.show-upload-img {
+	min-width: 100px;
+	min-height: 100px;
+	position: relative;
+	border: groove thin;
+	object-fit: contain;
+}
+
+.add-task-img {
+	width: 30%;
+	height: 30%;
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	transform: translate(-40%, -50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.input-add-task-img {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	top: 0;
+}
+.upload-img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+.tt-upload-img {
+	width: max-content;
+}
+.after-upload-img {
+	width: 100%;
+	height: 100%;
+	object-fit: fill;
+}
+/* custom again form add task */
+.form-item-add {
+	margin: 10px 0;
+	padding: 10px 30px;
+	border-radius: 2px;
+	background-color: hsl(0, 0%, 100%);
+	background-position: 50% 50%;
+	box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
+}
+.input-item-add-task {
+	border: none;
+	font-size: 18px;
+	text-align: center;
+}
+
+/* css for select point and time in tab add task */
+.custom-select-add-task,
+.custom-select-date-add-task {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	height: 45px;
+	border-radius: 2px;
+	cursor: pointer;
+}
+.custom-select-date-add-task {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.custom-select-add-task:hover {
+	border-color: #40a9ff;
+	border-right-width: 1px !important;
+}
+.present-select-add-task {
+	width: 100%;
+	height: 100%;
+	background-color: lightslategrey;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	position: relative;
+	padding: 0 30px;
+	cursor: pointer;
+}
+
+.present-select-date-add-task {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	position: relative;
+	padding: 0;
+	cursor: pointer;
+}
+.select-item-add-task {
+	position: absolute;
+	top: 0;
+	opacity: 0;
+	filter: opacity(0);
+	z-index: 1;
+	cursor: pointer;
+}
+.show-data-select {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 18px;
+	color: white;
+}
+.ant-picker-input > input:hover {
+	cursor: pointer;
 }

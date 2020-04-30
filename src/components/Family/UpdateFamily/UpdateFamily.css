@@ -1,3 +1,13 @@
+.header-update-family-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-header-update-family-container {
+    font-size: 22px;
+}
+
 .family-account-container {
     display: flex;
     height: 100%;

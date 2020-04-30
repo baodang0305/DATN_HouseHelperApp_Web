@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Layout, Row, Col, Button, List, Skeleton, Avatar } from "antd";
 import { LeftOutlined, EditOutlined, StarOutlined, LikeOutlined, MessageOutlined } from "@ant-design/icons";
 
+import "./Member.css";
 import history from "../../../helpers/history";
 import { indexActions } from "../../../actions/index.actions";
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
@@ -40,34 +41,35 @@ class Member extends React.Component {
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="site-layout-background" >
-                        <Row >
-                            <Col span={9} className="header-part-left">
-                                <Button onClick={this.handleClickBack} size="large" > <LeftOutlined /> </Button>
-                            </Col>
-                            <Col span={6} className="header-title"> {member.mName}</Col>
-                            <Col span={9} className="header-part-right">
+                    <Header className="header-container" >
+                        <div className="header-member-container">
+                            <Button onClick={this.handleClickBack} size="large" >
+                                <LeftOutlined />
+                            </Button>
+                            <div className="center-header-member-container"> {member.mName}</div>
+                            <div>
                                 {(inforLogin.user.mIsAdmin || (inforLogin.user._id === member._id)) &&
                                     <Button size="large">
-                                        <Link to={{ pathname: "/family/setting/my-account", state: { member } }} > 
-                                            <EditOutlined className="size-icon" /> 
+                                        <Link to={{ pathname: "/family/setting/my-account", state: { member } }} >
+                                            <EditOutlined />
                                         </Link>
                                     </Button>
                                 }
-                            </Col>
-                        </Row>
+                            </div>
+                        </div>
                     </Header>
                     <Content  >
-                        <div style={{ display: "flex", justifyContent: "center", margin: "10px 0px" }}>
-                            <img src={member.mAvatar.image} style={{backgroundColor: member.mAvatar.color, width: 70, height: 70, borderRadius: "50%"}}/>
-                            <div style={{ margin: "auto 10px" }}>
-                                <div style={{ fontSize: 25 }}> {member.mPoints} </div>
+                        <div className="first-row-member-content-container">
+                            <Avatar src={member.mAvatar.image} style={{ backgroundColor: member.mAvatar.color}} size={70}/>
+                            &emsp;
+                            <div >
+                                <div className="font-size-20"> {member.mPoints} </div>
                                 <div>Points bank</div>
                             </div>
                         </div>
-                        <div className="site-layout-background" style={{ width: "98%", margin: "0px auto"}}>
+                        <div className="second-row-member-content-container" >
                             <div style={{ height: "200px" }}>
-                                  
+
                             </div>
                             <List
                                 dataSource={listTasks}
@@ -80,7 +82,7 @@ class Member extends React.Component {
                                             <IconText icon={LikeOutlined} text="0" key="list-vertical-like-o" />,
                                             <IconText icon={MessageOutlined} text="0" key="list-vertical-message" />,
                                         ]}
-                                        extra={ item.photo && <img className="image-task" alt="logo" src={item.photo} /> }
+                                        extra={item.photo && <img className="image-task" alt="logo" src={item.photo} />}
                                     >
                                         <Skeleton avatar title={false} loading={item.loading} active>
                                             <Row gutter={30} >

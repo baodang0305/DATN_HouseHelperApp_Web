@@ -67,9 +67,9 @@ const addMember = (userInfor) => {
             )
     }
 
-    function request() { return { type: memberConstants.ADD_MEMBER_REQUEST }}
-    function success() { return { type: memberConstants.ADD_MEMBER_SUCCESS }}
-    function failure() { return { type: memberConstants.ADD_MEMBER_FAILURE }}
+    function request() { return { type: memberConstants.ADD_MEMBER_REQUEST } }
+    function success() { return { type: memberConstants.ADD_MEMBER_SUCCESS } }
+    function failure() { return { type: memberConstants.ADD_MEMBER_FAILURE } }
 
 }
 
@@ -108,7 +108,7 @@ const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar, isSetPass, 
                             if (inforLogin.user.mEmail === member.mEmail) {
                                 localStorage.removeItem("inforLogin");
                                 inforLogin.user = { ...inforLogin.user, mName, mEmail, mRole, mAge, mIsAdmin, mAvatar }
-                                console.log(inforLogin)
+
                                 localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
                                 dispatch(success(inforLogin));
                             }
@@ -163,9 +163,9 @@ const changePassword = ({ oldPassword, newPassword }) => {
             )
     }
 
-    function request() { return { type: memberConstants.CHANGE_PASSWORD_REQUEST }};
-    function success() { return { type: memberConstants.CHANGE_PASSWORD_SUCCESS }};
-    function failure() { return { type: memberConstants.CHANGE_PASSWORD_FAILURE }};
+    function request() { return { type: memberConstants.CHANGE_PASSWORD_REQUEST } };
+    function success() { return { type: memberConstants.CHANGE_PASSWORD_SUCCESS } };
+    function failure() { return { type: memberConstants.CHANGE_PASSWORD_FAILURE } };
 
 }
 
@@ -181,7 +181,7 @@ const deleteMember = (mID) => {
         })
             .then(response => response.json()
                 .then(data => {
-                    console.log(data)
+
                     if (data.status === "success") {
                         if (inforLogin.user._id === mID || !mID) {
                             dispatch(logout());
@@ -240,19 +240,66 @@ const resetPassword = ({ newPassword, rpID }) => {
             )
     }
 
-    function request() { return { type: memberConstants.RESET_PASSWORD_REQUEST }};
-    function success() { return { type: memberConstants.RESET_PASSWORD_SUCCESS }};
-    function failure() { return { type: memberConstants.RESET_PASSWORD_FAILURE }};
+    function request() { return { type: memberConstants.RESET_PASSWORD_REQUEST } };
+    function success() { return { type: memberConstants.RESET_PASSWORD_SUCCESS } };
+    function failure() { return { type: memberConstants.RESET_PASSWORD_FAILURE } };
 
+}
+
+const updateInforFamilyOfUser = () => {
+
+    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+
+    return dispatch => {
+        return fetch(`${apiUrlTypes.heroku}/get-family`, {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${inforLogin.token}` }
+        })
+            .then(response => response.json()
+                .then(data => {
+                    console.log(data)
+                    if (data.status === "success") {
+                        localStorage.removeItem("inforLogin");
+                        inforLogin.user = { ...inforLogin.user, "fName": data.familyInfo.fName, "fImage": data.familyInfo.fImage }
+                        localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
+                        dispatch(success(inforLogin));
+                    }
+                })
+            )
+    }
+    function success(inforLogin) { return { type: memberConstants.LOGIN_SUCCESS, inforLogin } }
+}
+
+const deleteNew = ({ nID }) => {
+    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+    console.log(nID)
+    return dispatch => {
+        return fetch(`${apiUrlTypes.heroku}/delete-news`, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json", "Authorization": `Bearer ${inforLogin.token}` },
+            body: JSON.stringify({ nID })
+        })
+            .then(response => response.json()
+                .then(data => {
+                    if (data.status === "success") {
+                        dispatch(alertActions.success(data.message));
+                    } else {
+                        dispatch(alertActions.error(data.message));
+                    }
+                })
+            )
+    }
 }
 
 export const memberActions = {
     login,
     logout,
     addMember,
+    deleteNew,
     editMember,
     deleteMember,
     resetPassword,
     changePassword,
-    requestResetPassword
+    requestResetPassword,
+    updateInforFamilyOfUser
 }

@@ -19,5 +19,4 @@ export const memberConstants = {
 
     LOGOUT: "MEMBER_LOGOUT",
 
-    GET_ALL_MEMBERS: "GET_ALL_MEMBERS"
 }

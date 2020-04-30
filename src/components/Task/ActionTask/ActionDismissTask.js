@@ -13,36 +13,32 @@ class DismissTaskForm extends Component {
         super(props);
     }
 
-    componentWillReceiveProps(next) {
-        next.messageType === 'error' ? message.error({ content: next.messageAlert, duration: 2 }) :
-            message.success({ content: next.messageAlert, duration: 2 })
-    }
     handleClickOk = () => {
-        const { idTask, deleteTask } = this.props;
-        deleteTask(idTask);
+        const { idTask, dismissTask } = this.props;
+        dismissTask(idTask);
     }
     render() {
-        const { idTask, memberDismiss, nameTask } = this.props
+        const { idTask, memberDismiss } = this.props
         return (
             <div>
                 <div className="action-task-title">
                     <ExclamationCircleOutlined style={{ color: '#F8DA74', fontSize: 20, marginRight: 10 }} />
-                    <span>Do you want to dismiss this task?</span>
+                    <span>Bạn có muốn bỏ qua công việc đã chọn?</span>
                 </div>
 
                 <div >
                     <div>
-                        <div className="action-task-label">Dismissed by</div>
+                        <div className="action-task-label">Thành viên bỏ qua:</div>
                         <div className="action-task-detail-data">
                             <div className="avatar-member">
-                                <Avatar className="icon-avatar-member" src={memberDismiss.member.mAvatar} />
+                                <Avatar className="icon-avatar-member" src={memberDismiss.mAvatar.image} />
                             </div>
-                            <div className='name-avatar-member'>{memberDismiss.member.mName}</div>
+                            <div className='name-avatar-member'>{memberDismiss.mName}</div>
                         </div>
                     </div>
 
                     <div>
-                        <div className="action-task-label">Dismissed at</div>
+                        <div className="action-task-label">Thời điểm bỏ qua:</div>
                         <div className="action-task-detail-data" style={{ color: '#38589E', fontSize: 14, fontWeight: 500 }}>{moment().format('MMMM Do YYYY, h:mm:ss a')}</div>
                     </div>
                     <div style={{ width: '100%' }}>
@@ -50,9 +46,9 @@ class DismissTaskForm extends Component {
                         <div className="action-task-form-btn">
                             <Button type='default'
                                 style={{ marginRight: 15 }}
-                                onClick={() => { Modal.destroyAll() }}>Cancel</Button>
+                                onClick={() => { Modal.destroyAll() }}>Hủy</Button>
                             <Button type="primary"
-                                onClick={this.handleClickOk}>Dismiss</Button>
+                                onClick={this.handleClickOk}>Bỏ qua</Button>
                         </div>
                     </div>
                 </div>
@@ -65,7 +61,7 @@ const mapStateToProps = (state) => ({
     messageAlert: state.alert.message
 })
 const actionCreators = {
-    deleteTask: taskActions.deleteTask
+    dismissTask: taskActions.dismissTask
 }
 
 export default connect(mapStateToProps, actionCreators)(DismissTaskForm);

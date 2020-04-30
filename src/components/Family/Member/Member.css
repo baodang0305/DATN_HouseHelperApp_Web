@@ -1,0 +1,28 @@
+.header-member-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-header-member-container {
+    font-size: 22px;
+}
+
+.first-row-member-content-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0px;
+
+}
+
+.font-size-20 {
+    font-size: 20px;
+}
+
+.second-row-member-content-container {
+    background-color: white;
+    margin: 20px;
+}
+
+/* style={{ width: "98%", margin: "0px auto" }} */

@@ -61,25 +61,6 @@ const activeAccount = ({ code, aaID }) => {
     function success() { return { type: familyConstants.ACTIVE_ACCOUNT_SUCCESS } }
 }
 
-const getAllMembers = () => {
-
-    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
-    const { user, token } = inforLogin;
-
-    return dispatch => {
-        return fetch(`${apiUrlTypes.heroku}/list-member`, {
-            method: "GET",
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-            .then(response => response.json()
-                .then(data => {
-                    dispatch(success(data.listMembers));
-                })
-            );
-    }
-    function success(members) { return { type: memberConstants.GET_ALL_MEMBERS, members } }
-}
-
 const updateFamily = ({ fName, fImage }) => {
 
     let inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
@@ -98,7 +79,6 @@ const updateFamily = ({ fName, fImage }) => {
                     dispatch(alertActions.success(data.message));
                     localStorage.removeItem("inforLogin");
                     inforLogin.user = {...inforLogin.user, fName, fImage }
-                    console.log(inforLogin)
                     localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
                     dispatch(success(inforLogin));
                     history.push("/family/setting");
@@ -165,14 +145,68 @@ const resetFamilyPassword = ({ fPassword, mID }) => {
             })
         )
     }
+}
+
+const getListMembers = () => {
+
+    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+
+    return dispatch => {
+        dispatch(request());
+        return fetch(`${apiUrlTypes.heroku}/list-member`, {
+            method: "GET",
+            headers: { 'Authorization': `Bearer ${inforLogin.token}` }
+        })
+            .then(response => response.json()
+                .then(data => {
+                    if(data.status === "success"){
+                        dispatch(success(data.listMembers));
+                    } else {
+                        dispatch(failure());
+                    }
+                })
+            );
+    }
+
+    function request() { return { type: familyConstants.GET_LIST_MEMBERS_REQUEST }};
+    function failure() { return { type: familyConstants.GET_LIST_MEMBERS_FAILURE }};
+    function success(listMembers) { return { type: familyConstants.GET_LIST_MEMBERS_SUCCESS, listMembers }};
+
+}
+
+const getListNews = () => {
+
+    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+
+    return dispatch => {
+        dispatch(request());
+        return fetch(`${apiUrlTypes.heroku}/list-news`, {
+            method: "GET",
+            headers: { "Authorization": `Bearer ${inforLogin.token}`}
+        })
+        .then(response => response.json()
+            .then(data => {
+                if (data.status === "success") {
+                    dispatch(success(data.listNews));
+                } else {
+                    dispatch(failure());
+                }
+            })
+        )
+    }
+
+    function request() { return { type: familyConstants.GET_LIST_NEWS_REQUEST }};
+    function success(listNews) { return { type: familyConstants.GET_LIST_NEWS_SUCCESS, listNews }};
+    function failure() { return { type: familyConstants.GET_LIST_NEWS_FAILURE }};
 
 }
 
 export const familyActions = {
+    getListNews,
     createFamily,
     updateFamily,
-    getAllMembers,
     activeAccount,
+    getListMembers,
     resetFamilyPassword,
     changePasswordFamily
 }

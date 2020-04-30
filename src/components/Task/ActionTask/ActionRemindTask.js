@@ -49,21 +49,22 @@ class RemindTaskForm extends Component {
             <div>
                 <div className="action-task-title">
                     <AlertOutlined style={{ color: 'orange', fontSize: 20, marginRight: 10 }} />
-                    <span>Do you want to remind assigned members?</span>
+                    <span>Bạn có muốn nhắc nhở các thành viên cho công việc?</span>
                 </div>
 
 
                 <div className="form-done-task">
 
                     <div className="action-task-label">
-                        Remind member
+                        Thành viên muốn nhắc nhở:
                     </div>
                     <div style={{ marginTop: 10 }} className="action-task-detail-data">
                         {assignedMembers.map(item =>
                             <div className="container-avatar-member">
                                 <div className="avatar-member"
                                     onClick={() => this.handledChangeAvatar(item.mID._id)}>
-                                    <Avatar className="icon-avatar-member" src={item.mID.mAvatar} />
+                                    <Avatar
+                                        className={checkedMembers.indexOf(item.mID._id) !== -1 ? "icon-avatar-member-checked" : "icon-avatar-member"} src={item.mID.mAvatar.image} />
                                     <CheckOutlined
                                         className="icon-check-assign-member"
                                         hidden={checkedMembers.indexOf(item.mID._id) !== -1 ? false : true} />
@@ -79,9 +80,9 @@ class RemindTaskForm extends Component {
                     <div className="action-task-form-btn">
                         <Button type='default'
                             style={{ marginRight: 15 }}
-                            onClick={() => { Modal.destroyAll() }}>Cancel</Button>
+                            onClick={() => { Modal.destroyAll() }}>Hủy</Button>
                         <Button type="primary"
-                            onClick={this.handleClickOk}>Remind</Button>
+                            onClick={this.handleClickOk}>Nhắc nhở</Button>
                     </div>
                 </div>
             </div>

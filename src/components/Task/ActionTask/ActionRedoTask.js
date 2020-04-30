@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { taskActions } from '../../../actions/task.actions';
 import moment from 'moment';
 
-class CompleteTaskForm extends Component {
+class RedoTaskForm extends Component {
     state = {
         checkedMembers: []
     }
@@ -25,27 +25,35 @@ class CompleteTaskForm extends Component {
     }
 
     handleClickOk = () => {
-        const { idTask, completeTask } = this.props;
-        const { checkedMembers } = this.state;
-        completeTask(idTask, checkedMembers[0]);
+        const { idTask, redoTask } = this.props;
+        redoTask(idTask);
     }
     render() {
 
         const { checkedMembers } = this.state;
 
         console.log('test', checkedMembers)
-        const { assignedMembers, idTask, nameTask } = this.props;
+        const { idTask, user } = this.props;
         return (
             <div>
                 <div className="action-task-title">
                     <CheckCircleOutlined style={{ color: '#9DCC80', fontSize: 20, marginRight: 10 }} />
-                    <span>Bạn có muốn hoàn thành công việc đã chọn?</span>
+                    <span>Ban muốn làm lại công việc đã chọn?</span>
                 </div>
 
                 <div className="form-done-task">
                     <div>
-                        <div className="action-task-label">
-                            Thành viên hoàn thành:
+                        <div>
+                            <div className="action-task-label">Thành viên tạo lại công việc:</div>
+                            <div className="action-task-detail-data">
+                                <div className="avatar-member">
+                                    <Avatar className="icon-avatar-member" src={user.mAvatar.image} />
+                                </div>
+                                <div className='name-avatar-member'>{user.mName}</div>
+                            </div>
+                        </div>
+                        {/* <div className="action-task-label">
+                            Completed by
                         </div>
                         <div style={{ marginTop: 10 }} className="list-avatar-member">
                             {assignedMembers.length !== 0 ? assignedMembers.map(item =>
@@ -58,13 +66,13 @@ class CompleteTaskForm extends Component {
                                             hidden={checkedMembers.indexOf(item.mID._id) !== -1 ? false : true} />
                                     </div>
                                     <div className='name-avatar-member'>{item.mID.mName}</div>
-                                </div>) : <div>Tất cả</div>}
-                        </div>
+                                </div>) : <div>All member can do</div>}
+                        </div> */}
                     </div>
 
                     <div>
                         <div className="action-task-label">
-                            Thời gian hoàn thành:
+                            Bạn có muốn chọn lại thời hạn?
                         </div>
                         <div className="action-task-detail-data">
                             <DatePicker
@@ -81,7 +89,7 @@ class CompleteTaskForm extends Component {
                             style={{ marginRight: 15 }}
                             onClick={() => { Modal.destroyAll() }}>Hủy</Button>
                         <Button type="primary" onClick={this.handleClickOk}
-                        >Hoàn thành</Button>
+                        >Làm lại</Button>
                     </div>
                 </div>
 
@@ -91,13 +99,13 @@ class CompleteTaskForm extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    user: state.authentication.user,
+    user: state.authentication.inforLogin.user,
     messageType: state.alert.type,
     messageAlert: state.alert.message
 })
 const actionCreators = {
-    completeTask: taskActions.completeTask
+    redoTask: taskActions.redoTask
 }
-export default connect(mapStateToProps, actionCreators)(CompleteTaskForm);
+export default connect(mapStateToProps, actionCreators)(RedoTaskForm);
 
 
