@@ -98,14 +98,16 @@ class Family extends React.Component {
 
     handleClickDeleteNew = (item) => {
         const { listNews } = this.state;
-        const { deleteNew } = this.props;
-        deleteNew({ "nID": item._id });
-        let indexNew = listNews.findIndex(element => element._id === item._id);
-        if (indexNew !== -1) {
-            let newListNews = [...listNews];
-            newListNews.splice(indexNew, 1);
-            this.setState({ listNews: newListNews });
+        const { deleteNew, user } = this.props;
+        if (user.mIsAdmin) {
+            let indexNew = listNews.findIndex(element => element._id === item._id);
+            if (indexNew !== -1) {
+                let newListNews = [...listNews];
+                newListNews.splice(indexNew, 1);
+                this.setState({ listNews: newListNews });
+            }
         }
+        deleteNew({ "nID": item._id });
     }
 
     render() {

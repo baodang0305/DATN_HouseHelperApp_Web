@@ -686,6 +686,9 @@ class ChatContainer extends React.Component {
             if (localStream) {
                 localStream.getAudioTracks()[0].stop();
                 localStream.getVideoTracks()[0].stop();
+                // localStream.getTracks().forEach(function (track) {
+                //     track.stop();
+                //});
             }
             if (peerConn) {
                 peerConn.removeStream(localStream)
@@ -701,6 +704,19 @@ class ChatContainer extends React.Component {
     handleMakeCall = async ({ mSocketID }) => {
 
         const { peerConn } = this.state;
+
+        const newLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        this.localVideo.current.srcObject = newLocalStream;
+        peerConn.addStream(newLocalStream);
+
+        this.setState({ localStream: newLocalStream });
+
+        peerConn.createOffer((offer) => {
+            peerConn.setLocalDescription(offer);
+            socket.emit("offer", { mSocketID, offer });
+        }, function (error) {
+            console.log("error when create an offer");
+        });
 
         peerConn.onaddstream = (e) => {
             this.remoteVideo.current.srcObject = e.stream;
@@ -725,6 +741,9 @@ class ChatContainer extends React.Component {
                 if (localStream) {
                     localStream.getAudioTracks()[0].stop();
                     localStream.getVideoTracks()[0].stop();
+                    // localStream.getTracks().forEach(function (track) {
+                    //     track.stop();
+                    //});
                 }
                 peerConn.removeStream(localStream);
                 peerConn.close();
@@ -734,18 +753,6 @@ class ChatContainer extends React.Component {
             }
         }
 
-        const newLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        this.localVideo.current.srcObject = newLocalStream;
-        peerConn.addStream(newLocalStream);
-
-        peerConn.createOffer((offer) => {
-            peerConn.setLocalDescription(offer);
-            socket.emit("offer", { mSocketID, offer });
-        }, function (error) {
-            console.log("error when create an offer");
-        });
-
-        this.setState({ localStream: newLocalStream });
     }
 
     handleOffer = async (mSocketID, offer) => {
@@ -775,6 +782,9 @@ class ChatContainer extends React.Component {
                 if (localStream) {
                     localStream.getAudioTracks()[0].stop();
                     localStream.getVideoTracks()[0].stop();
+                    // localStream.getTracks().forEach(function (track) {
+                    //     track.stop();
+                    // });
                 }
                 peerConn.removeStream(localStream);
                 peerConn.close();
@@ -845,6 +855,9 @@ class ChatContainer extends React.Component {
                 if (localStream) {
                     localStream.getAudioTracks()[0].stop();
                     localStream.getVideoTracks()[0].stop();
+                    // localStream.getTracks().forEach(function (track) {
+                    //     track.stop();
+                    // });
                 }
                 if (peerConn) {
                     peerConn.removeStream(localStream)

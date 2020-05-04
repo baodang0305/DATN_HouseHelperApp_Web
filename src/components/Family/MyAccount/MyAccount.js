@@ -49,7 +49,7 @@ class MyAccount extends React.Component {
     componentWillMount() {
         const { member } = this.props.location.state;
         const { itemsRole } = this.state;
-
+        console.log(member)
         const itemsRoleFilter = itemsRole.filter(element => {
             return element.toLowerCase().includes(member.mRole.toLowerCase());
         })
