@@ -6,6 +6,7 @@ import { CheckOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { taskActions } from '../../../actions/task.actions';
 import moment from 'moment';
+import 'moment/locale/vi';
 
 class CompleteTaskForm extends Component {
     state = {
@@ -49,10 +50,10 @@ class CompleteTaskForm extends Component {
                         </div>
                         <div style={{ marginTop: 10 }} className="list-avatar-member">
                             {assignedMembers.length !== 0 ? assignedMembers.map(item =>
-                                <div className="container-avatar-member">
+                                <div key={item.mID._id} className="container-avatar-member">
                                     <div className="avatar-member"
                                         onClick={() => this.handledChangeAvatar(item.mID._id)}>
-                                        <Avatar className="icon-avatar-member" src={item.mID.mAvatar.image} />
+                                        <Avatar className={checkedMembers.indexOf(item._id) === -1 ? "icon-avatar-member" : "icon-avatar-member-checked"} src={item.mID.mAvatar.image} />
                                         <CheckOutlined
                                             className="icon-check-assign-member"
                                             hidden={checkedMembers.indexOf(item.mID._id) !== -1 ? false : true} />

@@ -20,8 +20,23 @@ function clear() {
     }
 }
 
+function nudgeTaskNotification(data) {
+    return {
+        type: alertConstants.NUDGE_TASK_NOTIFICATION,
+        data
+    }
+}
+
+function remindTaskNotification(data) {
+    return {
+        type: alertConstants.REMIND_TASK_NOTIFICATION,
+        data
+    }
+}
 export const alertActions = {
     success,
     error,
-    clear   
+    clear,
+    nudgeTaskNotification,
+    remindTaskNotification
 }

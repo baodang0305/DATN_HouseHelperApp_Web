@@ -226,7 +226,35 @@ const resetPassword = ({ newPassword, rpID }) => {
     }
 }
 
+
+const getAllMembers = () => {
+    const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+    const { token } = inforLogin;
+
+    return dispatch => {
+        dispatch(request());
+
+        return fetch(`${apiUrlTypes.heroku}/list-member`, {
+            method: "GET",
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(res => res.json()
+                .then(data => {
+                    if (data.status === "success") {
+                        dispatch(success(data.listMembers));
+                    }
+                    else {
+                        dispatch(alertActions.error(data.message))
+                    }
+                })
+            )
+    }
+    function request() { return { type: memberConstants.getAllMembers.GET_ALL_MEMBERS_REQUEST } }
+    function success(allMembers) { return { type: memberConstants.getAllMembers.GET_ALL_MEMBERS_SUCCESS, allMembers } }
+}
+
 export const memberActions = {
+    getAllMembers,
     login,
     logout,
     addMember,

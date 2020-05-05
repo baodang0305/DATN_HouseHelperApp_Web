@@ -5,21 +5,22 @@ import firebase from "firebase";
 
 import {
     Form, Input, Button, Checkbox, DatePicker, Radio, Switch,
-    TimePicker, Row, Col, Select, Avatar, Divider, Layout, Tooltip,
+    TimePicker, Row, Col, Select, Avatar, Divider, Layout, Tooltip, Alert
 } from 'antd';
 import { connect } from 'react-redux';
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
 import {
     PlusOutlined,
     TeamOutlined,
-    LeftOutlined, ScheduleOutlined, RedoOutlined, AlertOutlined,
-    CheckOutlined, AppstoreOutlined, ClockCircleOutlined, StarOutlined, SnippetsOutlined
+    LeftOutlined, ScheduleOutlined, RedoOutlined, AlertOutlined, CloseCircleOutlined,
+    CheckOutlined, AppstoreOutlined, ClockCircleOutlined, StarOutlined, SnippetsOutlined, FrownOutlined
 } from '@ant-design/icons';
 
 import moment from 'moment';
+import 'moment/locale/vi';
 import axios from 'axios';
 import history from "../../../helpers/history";
-import token from '../../../helpers/token';
+
 import { taskActions } from '../../../actions/task.actions';
 import { indexConstants } from "../../../constants/index.constants";
 import { storage } from "../../../helpers/firebaseConfig";
@@ -30,16 +31,20 @@ const { Header, Content } = Layout;
 const { TextArea } = Input
 
 let index = 0;
+const checkDataInput = (data) => {
+    return data === '' || data.trim() === '' ? false : true
+
+}
 class FormCreateTask extends Component {
     constructor(props) {
         super(props);
+        const { idCommonTaskCate } = this.props;
         this.state = {
             itemsHowLong: [5, 10, 15, 20],
             itemsPoints: [5, 10, 15, 20],
-            listTaskCate: [],
+            itemsRemindTime: [20, 30, 40],
             dueTime: null,
             keyMember: [],
-            listMembers: [],
             nameTask: '',
             assignMemberTask: { mAssigns: [], isAll: false },
             dueDateTask: null,
@@ -47,14 +52,18 @@ class FormCreateTask extends Component {
             photoTask: null,
             timeTask: 0,
             pointsTask: 0,
-            tcIDTask: null,
+            tcIDTask: idCommonTaskCate,
             notesTask: '',
             penaltyTask: 0,
             repeatTask: null,
-            keyTaskCate: [],
+            typeRepeatTask: null,
+            startRepeatTask: null,
+            keyTaskCate: [idCommonTaskCate],
             currentUrlImg: indexConstants.UPLOAD_IMG,
             dataAddHowLong: '',
             dataAddPoint: '',
+            dataAddRemindTime: '',
+            onChangedData: false
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -81,46 +90,25 @@ class FormCreateTask extends Component {
                 dueDateTask: recentTask.dueDate,
                 penaltyTask: recentTask.penalty,
                 repeatTask: recentTask.repeat,
+                startRepeatTask: recentTask.repeat.start || null,
+                typeRepeatTask: repeatTask.repeat.type || null,
                 timeTask: recentTask.time,
                 pointsTask: recentTask.points,
                 tcIDTask: recentTask.tcID._id,
                 notesTask: recentTask.notes,
+                remindTimeTask: recentTask.reminder,
                 assignMemberTask: recentTask.assign !== null
                     ? { mAssigns: recentTask.assign.mAssigns.map(item => item.mID._id), isAll: recentTask.assign.isAll }
                     : null
             }) : null
             : null
-        axios.get(
-            'https://househelperapp-api.herokuapp.com/list-member', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(res => {
-                const data = res.data;
-                console.log(data);
-                this.setState({ listMembers: data.listMembers });
-            })
-            .catch(err => console.log(err));
-        axios.get(
-            'https://househelperapp-api.herokuapp.com/list-task-category', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-            .then(res => {
-                const data = res.data;
-                console.log(data);
-                const listTaskCate = data.listTaskCategories;
-                const idCommonCate = listTaskCate[listTaskCate.findIndex(item => item.name === 'Phổ biến')]._id;
-                this.setState({ listTaskCate: data.listTaskCategories, tcIDTask: idCommonCate, keyTaskCate: [idCommonCate] });
-            })
-            .catch(err => console.log(err));
+
     }
 
 
     handleInputChange(event) {
-        this.setState({ [event.target.name]: event.target.value });
+        this.setState({ [event.target.name]: event.target.value, onChangedData: true });
+
     }
 
 
@@ -138,9 +126,18 @@ class FormCreateTask extends Component {
             dataAddHowLong: event.target.value,
         });
     };
+    onAddRemindTimeChange = event => {
+        this.setState({
+            dataAddRemindTime: event.target.value,
+        });
+    };
 
     handleOnChangeSelectTypeRepeat = value => {
-        this.setState({ repeatTask: value || null })
+        const { startRepeatTask } = this.state;
+        this.setState({ typeRepeatTask: value }, () =>
+            this.setState({ repeatTask: { start: startRepeatTask || null, type: value || null } })
+        )
+
     }
 
     handleOnChangePenalty = value => {
@@ -151,6 +148,9 @@ class FormCreateTask extends Component {
         this.setState({ timeTask: Number(value) })
     };
 
+    handleOnChangeTimeRemind = value => {
+        this.setState({ remindTimeTask: Number(value) })
+    }
     handleOnChangeSelectPoint = value => {
         this.setState({ pointsTask: Number(value) })
     }
@@ -161,16 +161,32 @@ class FormCreateTask extends Component {
     }
     addItemHowLong = () => {
         console.log('addItem');
+
         const { itemsHowLong, dataAddHowLong } = this.state;
+
         let i = itemsHowLong.indexOf(Number(dataAddHowLong));
 
         i === -1 ?
             this.setState({
-                itemsHowLong: [...itemsHowLong, dataAddHowLong || `New item ${index++}`],
+                itemsHowLong: [...itemsHowLong, dataAddHowLong],
                 dataAddHowLong: '',
             }) : null;
 
-        console.log(this.state.itemsHowLong)
+
+    };
+
+    addItemRemindTime = () => {
+        console.log('addItem');
+        const { itemsRemindTime, dataAddRemindTime } = this.state;
+        let i = itemsRemindTime.indexOf(Number(dataAddRemindTime));
+
+        i === -1 ?
+            this.setState({
+                itemsRemindTime: [...itemsRemindTime, dataAddRemindTime],
+                dataAddRemindTime: '',
+            }) : null;
+
+
     };
 
     addItemPoints = () => {
@@ -214,27 +230,20 @@ class FormCreateTask extends Component {
 
     }
 
-    handleOnChangeTimePicker = (value, timeString) => {
-        this.setState({ remindTimeTask: new Date(timeString) || null })
+
+    handleOnChangeStartRepeatDate = (value, timeString) => {
+        const { typeRepeatTask } = this.state;
+        this.setState({ startRepeatTask: new Date(timeString) || null }
+            , () => this.setState({ repeatTask: { start: new Date(timeString), type: typeRepeatTask } }))
     }
 
     handleSubmit = () => {
         const {
             nameTask, assignMemberTask, dueDateTask, photoTask,
-            timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask
+            timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask, remindTimeTask
         } = this.state;
 
         const { addTask, editTask, type, recentTask } = this.props;
-        console.log(nameTask,
-            assignMemberTask,
-            dueDateTask,
-            photoTask,
-            timeTask,
-            pointsTask,
-            tcIDTask,
-            notesTask, penaltyTask, repeatTask)
-
-
 
         if (photoTask) {
             const uploadTask = storage.ref().child(`images/${photoTask.name}`).put(photoTask);
@@ -256,24 +265,36 @@ class FormCreateTask extends Component {
                     const photoTaskTemp = downloadURL;
                     console.log('photo', photoTaskTemp, downloadURL)
                     type === 'add'
-                        ? addTask(nameTask, assignMemberTask, dueDateTask, photoTaskTemp, timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask)
-                        : editTask(recentTask._id, nameTask, timeTask, pointsTask, assignMemberTask, photoTaskTemp, tcIDTask, notesTask, dueDateTask, penaltyTask, repeatTask);
+                        ? addTask(nameTask, assignMemberTask, dueDateTask, photoTaskTemp, timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask, remindTimeTask)
+                        : editTask(recentTask._id, nameTask, timeTask, pointsTask, assignMemberTask, photoTaskTemp, tcIDTask, notesTask, dueDateTask, penaltyTask, repeatTask, remindTimeTask);
                 });
             });
         }
         else {
             type === 'add'
-                ? addTask(nameTask, assignMemberTask, dueDateTask, photoTask, timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask)
-                : editTask(recentTask._id, nameTask, timeTask, pointsTask, assignMemberTask, recentTask.photo, tcIDTask, notesTask, dueDateTask, penaltyTask, repeatTask);
+                ? addTask(nameTask, assignMemberTask, dueDateTask, photoTask, timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask, remindTimeTask)
+                : editTask(recentTask._id, nameTask, timeTask, pointsTask, assignMemberTask, recentTask.photo, tcIDTask, notesTask, dueDateTask, penaltyTask, repeatTask, remindTimeTask);
         }
     }
+
+    allowTaskName = (taskName) => {
+        const { onChangedData } = this.state;
+
+        const { allTasks } = this.props;
+        const checkExist = allTasks.filter(item => item.state === 'todo' || item.state === 'upcoming').map(item => item.name.trim().toLowerCase()).indexOf(taskName.trim().toLowerCase());
+        if (onChangedData && (checkExist !== -1 || taskName === '' || taskName.trim() === '')) {
+            return false
+        }
+        return true
+    }
     render() {
-        const { itemsHowLong, itemsPoints, dataAddPoint, dataAddHowLong, listTaskCate, listMembers, keyMember, currentUrlImg,
+        const { itemsRemindTime, itemsHowLong, itemsPoints, dataAddPoint, dataAddHowLong, dataAddRemindTime,
+            keyMember, currentUrlImg,
             nameTask, assignMemberTask, penaltyTask, repeatTask, remindTimeTask,
             dueDateTask, photoTask, timeTask, pointsTask, tcIDTask, notesTask, keyTaskCate
         } = this.state;
 
-        const { type, recentTask } = this.props;
+        const { type, recentTask, allMembers, allTaskCates, loading } = this.props;
         console.log(nameTask,
             assignMemberTask,
             dueDateTask,
@@ -281,7 +302,7 @@ class FormCreateTask extends Component {
             timeTask,
             pointsTask,
             tcIDTask,
-            notesTask, penaltyTask, repeatTask)
+            notesTask, penaltyTask, repeatTask, remindTimeTask)
 
 
         let classNameForAssignMember = ["icon-avatar-member"];
@@ -313,12 +334,13 @@ class FormCreateTask extends Component {
                                 initialValues={{ remember: true }}>
 
                                 {/* Set up name of task - title of task */}
-                                <Form.Item className="form-item-add"
-                                    rules={[{ message: 'Please input your Username!' }]}>
+                                <Form.Item className="form-item-add" name="name-task"
+                                    rules={[{ message: <div style={{ width: '100%', textAlign: 'center' }}>Tên công việc không được để trống</div> }]}>
                                     <Input className="input-item-add-task" defaultValue={type === 'edit' ? recentTask.name : null}
-                                        name="nameTask" onChange={this.handleInputChange} size="large" placeholder="Tên công việc" />
+                                        name="nameTask" onChange={this.handleInputChange} size="large" placeholder="Tên công việc"
+                                    />
                                 </Form.Item>
-
+                                {this.allowTaskName(nameTask) === false ? <Alert message="Tên công việc không đúng hoặc đã tồn tại" type="error" showIcon closable /> : null}
                                 {/* Set up time and point*/}
                                 <Form.Item style={{ padding: 0, margin: '10px 0' }}
                                     rules={[{ required: true, message: 'Please input your username!' }]}>
@@ -332,19 +354,19 @@ class FormCreateTask extends Component {
                                                 <Select className="select-item-add-task"
                                                     onChange={this.handleOnChangeSelectHowLong}
                                                     size="large"
-
                                                     dropdownRender={menu => (
                                                         <div>
                                                             {menu}
                                                             <Divider style={{ margin: '4px 0' }} />
                                                             <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
-                                                                <Input style={{ flex: 'auto' }} value={dataAddHowLong} type="number"
+                                                                <Input style={{ flex: 'auto' }} value={dataAddHowLong} type="number" size="middle"
                                                                     placeholder="Number for minutes"
                                                                     onChange={this.onAddHowLongChange} />
-                                                                <a
-                                                                    style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
+                                                                <a className={checkDataInput(dataAddHowLong) ? null : 'disable-btn-add-task'}
+                                                                    style={{ flex: 'none', display: 'block', cursor: 'pointer', marginLeft: 5, padding: '3px' }}
                                                                     onClick={this.addItemHowLong}>
-                                                                    <PlusOutlined />Thêm</a>
+                                                                    <PlusOutlined />&nbsp;Thêm
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     )}
@@ -373,10 +395,11 @@ class FormCreateTask extends Component {
                                                             <Divider style={{ margin: '4px 0' }} />
                                                             <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
                                                                 <Input style={{ flex: 'auto' }}
-
+                                                                    size="middle"
                                                                     value={dataAddPoint} type="number"
                                                                     onChange={this.onAddPointChange} placeholder="Number for points" />
-                                                                <a style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
+                                                                <a className={checkDataInput(dataAddPoint) ? null : 'disable-btn-add-task'}
+                                                                    style={{ flex: 'none', padding: '3px', display: 'block', cursor: 'pointer' }}
                                                                     onClick={this.addItemPoints}>
                                                                     <PlusOutlined /> Thêm</a>
                                                             </div>
@@ -400,8 +423,8 @@ class FormCreateTask extends Component {
                                             : <div style={{ fontSize: 16 }}><AppstoreOutlined style={{ fontSize: 17 }} />&nbsp;Loại công việc</div>} >
                                     <div className="list-task-cate">
 
-                                        {listTaskCate.map(item =>
-                                            (<div className="task-cate-item">
+                                        {allTaskCates.map(item =>
+                                            (<div key={item._id || null} className="task-cate-item">
                                                 <div className="avatar-task-cate" onClick={(e) => {
                                                     this.handledChangeCate(item._id)
                                                 }
@@ -424,19 +447,19 @@ class FormCreateTask extends Component {
                                             <TeamOutlined style={{ fontSize: 17 }} />&nbsp;Thành viên phụ trách
 
                                            {keyMember.length > 1
-                                                ? <Tooltip placement="top" title="một người tùy chọn hay cùng nhau thực hiện">
-                                                    <Switch style={{ marginLeft: 15 }} onChange={this.onChangeSwitchTypeAssign}
+                                                ? <Tooltip placement="top" title="một người tùy chọn hay cùng nhau thực hiện" >
+                                                    <Switch style={{ marginLeft: 15, position: 'absolute', right: 0 }} onChange={this.onChangeSwitchTypeAssign}
                                                         checkedChildren="cùng làm" unCheckedChildren="tùy chọn" />
                                                 </Tooltip>
                                                 : null}
                                         </div>
-                                        : <div style={{ fontSize: 16 }}>
+                                        : <div style={{ fontSize: 16, width: '100%' }}>
                                             <TeamOutlined style={{ fontSize: 17 }} />&nbsp;Thành viên phụ trách
                                         </div>} >
 
                                     <div className="list-avatar-member">
-                                        {listMembers.map(item =>
-                                            <div className="container-avatar-member">
+                                        {allMembers.map(item =>
+                                            <div key={item._id} className="container-avatar-member">
                                                 <div className="avatar-member"
                                                     onClick={(e) => {
                                                         this.handledChangeAvatar(item._id)
@@ -458,16 +481,68 @@ class FormCreateTask extends Component {
                                 {/* Set up time of task */}
                                 <Form.Item className="form-item-add">
                                     <Row gutter={[30]}>
-                                        <Col span={12}>
+                                        <Col span={12} >
+                                            <div className="custom-select-date-add-task">
+                                                <Row style={{ width: '100%' }}>
+                                                    <Col span={10}>
+                                                        <div className="present-select-date-add-task">
+                                                            {repeatTask !== null
+                                                                ? <div style={{ fontSize: 16, color: '#2985ff' }}>
+                                                                    <RedoOutlined style={{ fontSize: 17 }} />&nbsp;Lặp lại
+                                                            </div>
+                                                                : <div style={{ fontSize: 16 }}><RedoOutlined style={{ fontSize: 17 }} />&nbsp;Lặp lại</div>
+                                                            }
+                                                        </div>
+                                                    </Col>
+                                                    <Col span={14}>
+                                                        <Select size="large" name="repeatTask"
+                                                            defaultValue={type === 'edit' ? recentTask.repeat : undefined}
+                                                            onChange={this.handleOnChangeSelectTypeRepeat}
+                                                            placeholder="Chọn kiểu lặp lại"
+                                                            style={{ width: '100%' }} allowClear>
+                                                            <Option key="norepeat" value={null}>Không lặp</Option>
+                                                            <Option key="daily" value="daily">Hằng ngày</Option>
+                                                            <Option key="weekly" value="weekly">Hằng tuần</Option>
+                                                        </Select></Col>
+                                                </Row>
+                                            </div>
+                                        </Col>
+                                        {repeatTask ? <Col span={12}>
+                                            <div className="custom-select-date-add-task">
+                                                <Row style={{ width: '100%' }}>
+                                                    <Col span={10}>
+                                                        <div className="present-select-date-add-task">
+                                                            {dueDateTask !== null
+                                                                ? <div style={{ fontSize: 16, color: '#2985ff' }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Thời gian bắt đầu</div>
+                                                                : <div style={{ fontSize: 16 }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Thời gian bắt đầu</div>
+                                                            }
+                                                        </div>
+                                                    </Col>
+                                                    <Col span={14}>
+                                                        <DatePicker
+                                                            defaultValue={type === 'edit'
+                                                                ? recentTask.repeat.start === null ? null : moment(`${recentTask.repeat.start}`, "YYYY-MM-DD HH:mm")
+                                                                : null
+                                                            }
+                                                            onChange={this.handleOnChangeStartRepeatDate}
+                                                            allowClear={true}
+                                                            size="large"
+                                                            name="dueDateTask" style={{ width: '100%' }}
+                                                            placeholder="Hạn cuối của công việc" showTime format="YYYY-MM-DD HH:mm:ss" />
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        </Col> : null}
+
+                                        <Col span={12} style={{ marginTop: repeatTask ? 5 : 0 }}>
                                             <div className="custom-select-date-add-task">
                                                 <Row style={{ width: '100%' }}>
                                                     <Col span={10}>
                                                         <div className="present-select-date-add-task">
                                                             {dueDateTask !== null
                                                                 ? <div style={{ fontSize: 16, color: '#2985ff' }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Hạn cuối</div>
-                                                                : <div style={{ fontSize: 16 }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Hạn cuối</div>
+                                                                : <div style={{ fontSize: 16 }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Hạn công việc</div>
                                                             }
-
                                                         </div>
                                                     </Col>
                                                     <Col span={14}>
@@ -484,85 +559,77 @@ class FormCreateTask extends Component {
                                                     </Col>
                                                 </Row>
                                             </div>
-                                        </Col>
-                                        <Col span={12}>
-                                            {dueDateTask !== null
-                                                ?
+                                        </Col>{dueDateTask !== null
+                                            ?
+                                            <Col span={12} style={{ marginTop: 5 }}>
+
                                                 <div className="custom-select-date-add-task">
                                                     <Row style={{ width: '100%' }}>
                                                         <Col span={10}>
                                                             <div className="present-select-date-add-task">
                                                                 {remindTimeTask !== null
-                                                                    ? <div style={{ fontSize: 16, color: '#2985ff' }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Thời gian nhắc nhở</div>
-                                                                    : <div style={{ fontSize: 16 }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Thời gian nhắc nhở</div>}
+                                                                    ? <div style={{ fontSize: 16, color: '#2985ff' }}><AlertOutlined style={{ fontSize: 17 }} />&nbsp;Nhắc nhở trước hạn</div>
+                                                                    : <div style={{ fontSize: 16 }}><AlertOutlined style={{ fontSize: 17 }} />&nbsp;Nhắc nhở trước hạn</div>}
                                                             </div>
                                                         </Col>
-                                                        <Col span={14}>
-                                                            <DatePicker showTime
+                                                        <Col span={14} >
+                                                            <Select
+                                                                onChange={this.handleOnChangeTimeRemind}
                                                                 size="large"
-                                                                allowClear={true}
-                                                                onChange={this.handleOnChangeTimePicker}
-                                                                style={{ width: '100%' }} placeholder="Thời gian báo trước" />
-                                                        </Col>
-                                                    </Row>
-                                                </div> : null}
-                                        </Col>
-                                        <Col span={12} style={{ marginTop: 5 }}>
-                                            <div className="custom-select-date-add-task">
-                                                <Row style={{ width: '100%' }}>
-                                                    <Col span={10}><div className="present-select-date-add-task">
-                                                        {repeatTask !== null
-                                                            ? <div style={{ fontSize: 16, color: '#2985ff' }}>
-                                                                <RedoOutlined style={{ fontSize: 17 }} />&nbsp;Lặp lại
-                                                            </div>
-                                                            : <div style={{ fontSize: 16 }}><RedoOutlined style={{ fontSize: 17 }} />&nbsp;Lặp lại</div>
-                                                        }
+                                                                placeholder="Chọn thời gian nhắc trước"
+                                                                defaultValue={remindTimeTask !== null ? remindTimeTask + ' phút' : undefined}
+                                                                dropdownRender={menu => (
+                                                                    <div>
+                                                                        {menu}
+                                                                        <Divider style={{ margin: '4px 0' }} />
+                                                                        <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
 
-                                                    </div></Col>
-                                                    <Col span={14}><Select size="large" name="repeatTask"
-                                                        defaultValue={type === 'edit' ? recentTask.repeat : null}
-                                                        onChange={this.handleOnChangeSelectTypeRepeat}
-                                                        placeholder="Chọn kiểu lặp lại"
-                                                        style={{ width: '100%' }} allowClear>
-                                                        <Option key="norepeat" value={null}>Không lặp</Option>
-                                                        <Option key="daily" value="daily">Hằng ngày</Option>
-                                                        <Option key="weekly" value="weekly">Hằng tuần</Option>
-                                                    </Select></Col>
-                                                </Row>
-                                            </div>
-                                        </Col>
-                                        <Col span={12} style={{ marginTop: 5 }}>
-                                            {repeatTask !== null
-                                                ? <div className="custom-select-date-add-task">
-                                                    <Row style={{ width: '100%' }}>
-                                                        <Col span={10}>
-                                                            <div className="present-select-date-add-task">
-                                                                {penaltyTask !== null
-                                                                    ? <div style={{ fontSize: 16, color: '#2985ff' }}>
-                                                                        <ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Điểm trừ</div>
-                                                                    : <div style={{ fontSize: 16 }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Điểm trừ</div>
-                                                                }
-
-                                                            </div>
-                                                        </Col>
-                                                        <Col span={14}>
-                                                            <Select size="large" name="penaltyTask"
-                                                                defaultValue={type === 'edit' ? recentTask.penalty + ' %' : "0"}
-                                                                placeholder="Chọn số điểm trừ" onChange={this.handleOnChangePenalty}
-                                                                style={{ width: '100%' }} allowClear>
-                                                                <Option key="0" value="0">Không trừ điểm</Option>
-                                                                <Option key="10" value="10">Trừ 10%</Option>
-                                                                <Option key="20" value="20">Trừ 20%</Option>
+                                                                            <Input style={{ flex: 'auto' }}
+                                                                                defaultValue={dataAddRemindTime ? dataAddRemindTime : null} type="number"
+                                                                                placeholder="Nhập thời gian nhắc nhở"
+                                                                                size="middle"
+                                                                                onChange={this.onAddRemindTimeChange} />
+                                                                            <a className={checkDataInput(dataAddRemindTime) ? null : 'disable-btn-add-task'}
+                                                                                style={{ flex: 'none', padding: '3px', display: 'block', cursor: 'pointer' }}
+                                                                                onClick={this.addItemRemindTime}>
+                                                                                <PlusOutlined style={{ marginLeft: 10 }} />Thêm</a>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            >
+                                                                {itemsRemindTime.map(item => (
+                                                                    <Option key={item}>{item} phút</Option>
+                                                                ))}
                                                             </Select>
                                                         </Col>
                                                     </Row>
+                                                </div>
+                                            </Col> : null}
 
-
-
-
-                                                </div> : null
-                                            }
-
+                                        <Col span={12} style={{ marginTop: 5 }}>
+                                            <div className="custom-select-date-add-task">
+                                                <Row style={{ width: '100%' }}>
+                                                    <Col span={10}>
+                                                        <div className="present-select-date-add-task">
+                                                            {penaltyTask !== null
+                                                                ? <div style={{ fontSize: 16, color: '#2985ff' }}>
+                                                                    <FrownOutlined style={{ fontSize: 17 }} />&nbsp;Điểm phạt</div>
+                                                                : <div style={{ fontSize: 16 }}><FrownOutlined style={{ fontSize: 17 }} />&nbsp;Điểm phạt</div>
+                                                            }
+                                                        </div>
+                                                    </Col>
+                                                    <Col span={14}>
+                                                        <Select size="large" name="penaltyTask"
+                                                            defaultValue={type === 'edit' ? recentTask.penalty + ' %' : "0"}
+                                                            placeholder="Chọn số điểm trừ" onChange={this.handleOnChangePenalty}
+                                                            style={{ width: '100%' }} allowClear>
+                                                            <Option key="0" value="0">Không trừ điểm</Option>
+                                                            <Option key="10" value="10">Trừ 10%</Option>
+                                                            <Option key="20" value="20">Trừ 20%</Option>
+                                                        </Select>
+                                                    </Col>
+                                                </Row>
+                                            </div>
                                         </Col>
                                     </Row>
 
@@ -603,9 +670,10 @@ class FormCreateTask extends Component {
                                 <Form.Item className="form-item-add">
                                     <div className="button-add-task-form">
                                         <Button type="default" size="large" style={{ marginRight: 10 }}>Hủy</Button>
-                                        <Button htmlType="submit" type="primary" size="large">{type === 'add' ? 'Thêm' : 'Cập nhật'}</Button>
+                                        <Button htmlType="submit" type="primary" size="large" disabled={!this.allowTaskName(nameTask)} loading={loading}>
+                                            {type === 'add' ? 'Thêm' : 'Cập nhật'}
+                                        </Button>
                                     </div>
-
                                 </Form.Item>
                             </Form>
 
@@ -623,7 +691,12 @@ class FormCreateTask extends Component {
 const mapStateToProps = (state) => ({
     user: state.authentication.user,
     messageAlert: state.alert.type,
-    recentTask: state.task.recentTask
+    recentTask: state.task.recentTask,
+    allTasks: state.task.allTasks,
+    allMembers: state.family.allMembers,
+    allTaskCates: state.taskCate.allTaskCates,
+    idCommonTaskCate: state.taskCate.idCommonTaskCate,
+    loading: state.task.loading,
 })
 const actionCreators = {
     addTask: taskActions.addTask,

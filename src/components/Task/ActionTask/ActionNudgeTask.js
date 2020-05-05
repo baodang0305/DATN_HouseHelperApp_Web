@@ -6,9 +6,10 @@ import { CheckOutlined, AlertOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { taskActions } from '../../../actions/task.actions'
 import moment from 'moment';
+import 'moment/locale/vi';
 
 let DataCheckedMembers = [];
-class RemindTaskForm extends Component {
+class NudgeTaskForm extends Component {
 
     constructor(props) {
         super(props);
@@ -31,9 +32,9 @@ class RemindTaskForm extends Component {
     }
 
     handleClickOk = () => {
-        const { idTask, deleteCC } = this.props;
-        alert('alo')
-        deleteCC(idTask);
+        const { idTask, nudgeTask } = this.props;
+        const { checkedMembers } = this.state;
+        nudgeTask(idTask, checkedMembers)
     }
     render() {
         const { checkedMembers } = this.state;
@@ -42,7 +43,7 @@ class RemindTaskForm extends Component {
         DataCheckedMembers = checkedMembers;
         console.log('test', idTask)
         const { assignedMembers } = this.props;
-
+        console.log(checkedMembers)
 
         return (
 
@@ -60,7 +61,7 @@ class RemindTaskForm extends Component {
                     </div>
                     <div style={{ marginTop: 10 }} className="action-task-detail-data">
                         {assignedMembers.map(item =>
-                            <div className="container-avatar-member">
+                            <div key={item.mID._id} className="container-avatar-member">
                                 <div className="avatar-member"
                                     onClick={() => this.handledChangeAvatar(item.mID._id)}>
                                     <Avatar
@@ -90,9 +91,16 @@ class RemindTaskForm extends Component {
     }
 }
 
+const mapStateToProps = (state) => ({
+    user: state.authentication.inforLogin.user,
+    messageType: state.alert.type,
+    messageAlert: state.alert.message
+})
+const actionCreators = {
+    nudgeTask: taskActions.nudgeTask
+}
 
 
-
-export default RemindTaskForm;
+export default connect(mapStateToProps, actionCreators)(NudgeTaskForm);
 
 

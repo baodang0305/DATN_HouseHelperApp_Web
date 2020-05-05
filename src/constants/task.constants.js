@@ -1,3 +1,9 @@
+const getAllTasks = {
+    GET_ALL_TASKS_REQUEST: "GET_ALL_TASKS_REQUEST",
+    GET_ALL_TASKS_SUCCESS: "GET_ALL_TASKS_SUCCESS"
+
+}
+
 const addTaskConstants = {
     ADD_TASK_REQUEST: "ADD_TASK_REQUEST",
     ADD_TASK_SUCCESS: "ADD_TASK_SUCCESS",
@@ -49,7 +55,17 @@ const getRecentTaskConstants = {
 const checkTaskToRemindConstants = {
     CHECK_TASK_TO_REMIND: "CHECK_TASK_TO_REMIND"
 }
+
+const nudgeTaskConstants = {
+    NUDGE_TASK_REQUEST: "NUDGE_TASK_REQUEST",
+    NUDGE_TASK_SUCCESS: "NUDGE_TASK_SUCCESS",
+}
+
+const getAndSetNotificationTask = {
+    GET_SET_NOTIFICATION_TASK: 'GET_SET_NOTIFICATION_TASK'
+}
 export const taskConstants = {
+    getAllTasks,
     editTaskConstants,
     addTaskConstants,
     deleteTaskConstants,
@@ -58,5 +74,7 @@ export const taskConstants = {
     dismissTaskConstants,
     redoTaskConstants,
     assignTaskConstants,
-    checkTaskToRemindConstants
+    checkTaskToRemindConstants,
+    nudgeTaskConstants,
+    getAndSetNotificationTask
 };
