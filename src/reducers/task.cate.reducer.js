@@ -10,6 +10,9 @@ function taskCate(state = { allTaskCates: [] }, actions) {
             return { ...state, loading: false, allTaskCates: actions.allTaskCates, idCommonTaskCate: actions.idCommonTaskCate }
         }
 
+        case taskCateConstants.taskCateFailure.TASK_CATE_FAILURE: {
+            return { ...state, loading: false }
+        }
         default: {
             return { ...state }
         }

@@ -1,3 +1,13 @@
+.header-add-member-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.center-header-add-member-container {
+  font-size: 22px;
+}
+
 .site-layout-background {
   background-color: white;
 }

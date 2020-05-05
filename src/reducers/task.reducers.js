@@ -57,13 +57,11 @@ function task(state = initialState, action) {
                 ...state, loading: false, actionTask: true,
             }
         }
-        case taskConstants.addTaskConstants.ADD_TASK_FAILURE:
-            {
-                return {
-                    ...state,
-                    loading: false
-                }
+        case taskConstants.addTaskConstants.ADD_TASK_FAILURE: {
+            return {
+                ...state, loading: false
             }
+        }
 
         case taskConstants.editTaskConstants.EDIT_TASK_REQUEST:
             {
@@ -93,15 +91,15 @@ function task(state = initialState, action) {
                 ...state, loading: false, actionTask: true
             }
         }
+        case taskConstants.dismissTaskConstants.DISMISS_FAILURE: {
+            return {
+                ...state, loading: false,
+            }
+        }
+
         case taskConstants.getRecentTaskConstants.GET_RECENT_TASK: {
             return {
                 ...state, recentTask: action.recentTask
-            }
-        }
-        case taskConstants.checkTaskToRemindConstants.CHECK_TASK_TO_REMIND: {
-            return {
-                ...state,
-                taskNeedRemind: action.taskNeedRemind
             }
         }
 
@@ -111,7 +109,6 @@ function task(state = initialState, action) {
                 ...state, loading: true,
             }
         }
-
         case taskConstants.assignTaskConstants.ASSIGN_SUCCESS: {
             return {
                 ...state, loading: false, actionTask: true,
@@ -128,6 +125,9 @@ function task(state = initialState, action) {
         }
         case taskConstants.nudgeTaskConstants.NUDGE_TASK_SUCCESS: {
             return { ...state, loading: false, actionTask: true }
+        }
+        case taskConstants.nudgeTaskConstants.NUDGE_TASK_FAILURE: {
+            return { ...state, loading: false }
         }
 
         case taskConstants.getAndSetNotificationTask.GET_SET_NOTIFICATION_TASK: {

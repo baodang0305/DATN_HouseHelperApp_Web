@@ -1,7 +1,6 @@
 import React from "react";
 import './Task.css';
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
-import axios from 'axios';
 import { connect } from 'react-redux';
 
 import TaskList from './TaskList/TaskList'
@@ -12,12 +11,15 @@ import FormCreateTask from "./AddTask/AddTask";
 import { Link } from "react-router-dom";
 import { taskActions } from "../../actions/task.actions";
 import { taskCateActions } from "../../actions/task.cate.actions";
-import { memberActions } from "../../actions/member.actions";
+import { familyActions } from "../../actions/family.actions";
 import { alertActions } from "../../actions/alert.actions";
+import socketIOClient from "socket.io-client";
+import apiUrlTypes from '../../helpers/apiURL'
+
 const { Panel } = Collapse;
 const { Search } = Input;
 const { Header, Content, Footer } = Layout;
-
+let socket;
 
 class Task extends React.Component {
     state = {
@@ -31,21 +33,75 @@ class Task extends React.Component {
         visiblePopover: false,
         filterBy: 'cate',
         isChanged: false,
+        message: "Message",
+        date: "NULL",
+        n: "NULL",
+        connect: "NULL"
+    }
+
+    componentDidMount() {
+        const { token } = this.props;
+        console.log('', token)
+        socket = socketIOClient(apiUrlTypes.heroku);
+
+        socket.on('connect', function () {
+            socket.emit('authenticate', { token });
+        });
+
+        socket.on("authenticate", (res) => {
+            this.setState({ connect: res.message });
+        });
+
+        //Change data of members
+        socket.on("Member", data => {
+
+            if (data) {
+                const { getListMembers } = this.props;
+                getListMembers();
+            }
+        })
+
+        //Change data of Task
+        socket.on("Task", data => {
+            console.log(' DU lieu socket', data);
+            if (data) {
+                const { getAllTasks } = this.props;
+                getAllTasks();
+            }
+        });
+
+        socket.on("reminder", data => {
+            console.log(data);
+            this.setState({ message: data.name });
+            const { remindTaskNotification } = this.props;
+            remindTaskNotification(data);
+        });
+
+        socket.on("nudge", data => {
+            console.log(data);
+            this.setState({ n: data.message });
+            const { getAndSetNotificationTask, nudgeTaskNotification } = this.props;
+            getAndSetNotificationTask(data);
+            nudgeTaskNotification(data);
+        });
     }
 
     componentWillMount() {
-        const { getAllTasks, getAllTaskCates, getAllMembers } = this.props;
+        const { getAllTasks, getAllTaskCates, getListMembers } = this.props;
         getAllTasks();
         getAllTaskCates();
-        getAllMembers();
+        getListMembers();
     }
+
     componentWillReceiveProps(nextProps) {
         const { getAllTasks } = this.props;
         nextProps.messageType === 'success' ? getAllTasks() : null
     }
+
     hidePopover = () => {
         this.setState({ visiblePopover: false })
     }
+
     handleVisibleChangePopover = visiblePopover => {
         this.setState({ visiblePopover });
     };
@@ -60,6 +116,7 @@ class Task extends React.Component {
             visibleFormCreateTask: false,
         });
     };
+
     handleCancel = e => {
 
         this.setState({
@@ -81,7 +138,7 @@ class Task extends React.Component {
     }
 
     handleChangeSelectFilterMember(idMember) {
-        const { allMembers, allTasks } = this.props;
+        const { listMembers, allTasks } = this.props;
 
         if (idMember === 'all') {
             this.setState({ idChosenMember: idMember, dataListTask: allTasks, isChanged: true });
@@ -93,7 +150,7 @@ class Task extends React.Component {
     }
 
     handleChangeFilterBy = (filterBy) => {
-        const { allMembers, allTasks, allTaskCates } = this.props;
+        const { listMembers, allTasks, allTaskCates } = this.props;
 
         const idChosenAll = 'all';
 
@@ -112,10 +169,11 @@ class Task extends React.Component {
         return true
     }
     render() {
-        const { dataListTask, isChanged, idChosenTaskCate, idChosenMember, filterBy } = this.state;
+        const { dataListTask, isChanged, idChosenTaskCate, idChosenMember, filterBy, connect } = this.state;
+        console.log(connect)
 
         const { user } = this.props;
-        const { allTasks, allMembers, allTaskCates } = this.props;
+        const { allTasks, listMembers, allTaskCates } = this.props;
 
         let tempDataTask = allTasks;
         if (isChanged === true) {
@@ -179,7 +237,7 @@ class Task extends React.Component {
                                                 <div>{item.name}</div>
                                             </div>))
                                         :
-                                        allMembers.map(item =>
+                                        listMembers.map(item =>
                                             (<div key={item._id} className="list-task-filter" onClick={(e) => this.handleChangeSelectFilterMember(item._id)}>
                                                 <Avatar src={item.mAvatar.image} className={idChosenMember === item._id ? "chosen-task-filter" : "task-filter"}></Avatar>
                                                 <div>{item.mName}</div>
@@ -253,13 +311,8 @@ class Task extends React.Component {
                                 <FormCreateTask />
                             </Modal>
                         </Content>
-
                     </Layout>
-
-
                 </Layout >
-
-
             </div>
         );
     }
@@ -272,7 +325,7 @@ const mapStateToProps = (state) => ({
     messageType: state.alert.type,
     messageAlert: state.alert.message,
     allTasks: state.task.allTasks,
-    allMembers: state.family.allMembers,
+    listMembers: state.family.listMembers,
     allTaskCates: state.taskCate.allTaskCates,
     loadingTask: state.task.loading,
     loadingGetAllTask: state.task.loadingGetAllTask,
@@ -284,8 +337,10 @@ const mapStateToProps = (state) => ({
 const actionCreators = {
     getAllTasks: taskActions.getAllTasks,
     getAllTaskCates: taskCateActions.getAllTaskCates,
-    getAllMembers: memberActions.getAllMembers,
+    getListMembers: familyActions.getListMembers,
     getAndSetNotificationTask: taskActions.getAndSetNotificationTask,
+    nudgeTaskNotification: alertActions.nudgeTaskNotification,
+    remindTaskNotification: alertActions.remindTaskNotification,
 }
 
 export default connect(mapStateToProps, actionCreators)(Task);

@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import FormItem from 'antd/lib/form/FormItem';
-import { Form, Input, Button, Checkbox, Modal } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox, Modal, Spin } from 'antd';
 
 import './Login.css';
 import { memberActions } from '../../actions/member.actions';
@@ -33,7 +33,7 @@ class Login extends React.Component {
 
             if (value === "") {
 
-                this.setState({ stateEmailResetPass: "error",  errorEmailResetPass: "Please input your email" });
+                this.setState({ stateEmailResetPass: "error",  errorEmailResetPass: "Vui lòng nhập email" });
 
             } else {
 
@@ -86,45 +86,44 @@ class Login extends React.Component {
 
     render() {
 
-        const { loggingIn } = this.props;
         const { email, password, emailResetPass, visible, stateEmailResetPass, errorEmailResetPass } = this.state;
 
         return (
 
             <div className="container-login">
 
-                <div className="title-login">  Your Account </div>
+                <div className="title-login">  Đăng Nhập </div>
 
                 <Form onFinish={this.handleSubmit} initialValues={{ remember: true }}>
 
-                    <Form.Item name="email" rules={[{ required: true, message: 'Please input your email!' }]} >
+                    <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]} >
                         <Input
                             name="email" value={email} onChange={this.handleChangeInput}
                             prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" type="text"
                         />
                     </Form.Item>
 
-                    <Form.Item name="password" rules={[{ required: true, message: 'Please input your Password!' }]} >
+                    <Form.Item name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]} >
                         <Input
                             name="password" value={password} onChange={this.handleChangeInput}
                             prefix={<LockOutlined className="site-form-item-icon" />}
-                            type="password" placeholder="Password" size="large"
+                            type="password" placeholder="Mật khẩu" size="large"
                         />
                     </Form.Item>
 
                     <Form.Item>
                         <Form.Item name="remember" valuePropName="checked" noStyle>
-                            <Checkbox onChange={this.handleChangeRemember}>Remember me</Checkbox>
+                            <Checkbox onChange={this.handleChangeRemember}>Ghi nhớ!</Checkbox>
                         </Form.Item>
-                        <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Forgot password </div>
+                        <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
                         <Modal
                             onOk={this.handleSend}
                             onCancel={this.handleCancel}
                             closable={false} visible={visible}
                             title="Please input email to reset password!"
                             footer={[
-                                <Button key="back" onClick={this.handleCancel}> Cancel </Button>,
-                                <Button key="submit" type="primary" onClick={this.handleSend}> Submit </Button>
+                                <Button key="back" onClick={this.handleCancel}> Đóng </Button>,
+                                <Button key="submit" type="primary" onClick={this.handleSend}> Gửi </Button>
                             ]}
                         >
                             <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
@@ -138,14 +137,14 @@ class Login extends React.Component {
                     </Form.Item>
 
                     <Form.Item style={{ textAlign: "center" }}>
-                        <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost> Log in </Button>
-                        {loggingIn &&
-                            <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                        <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost> Đăng nhập </Button>
+                        {this.props.loggingIn && !this.props.loggedIn &&
+                            <Spin tip="Loading..." />
                         }
                     </Form.Item>
 
                     <FormItem className="register-link">
-                        <Link to="/create-family">Create family now!</Link>
+                        <Link to="/create-family">Tạo gia đình!</Link>
                     </FormItem>
 
                 </Form>
@@ -158,17 +157,16 @@ class Login extends React.Component {
 };
 
 const mapStateToProps = (state) => {
-
-    const { loggingIn } = state.authentication;
-    return { loggingIn };
-
+    const { loggingIn, loggedIn } = state.authentication;
+    return { 
+        loggedIn,
+        loggingIn 
+    };
 }
 
 const actionCreators = {
-
     login: memberActions.login,
     requestResetPassword: memberActions.requestResetPassword
-    
 }
 
 export default connect(mapStateToProps, actionCreators)(Login);

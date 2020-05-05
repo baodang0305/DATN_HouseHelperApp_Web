@@ -34,6 +34,7 @@ const getAllTaskCates = () => {
                 }
                 else {
                     dispatch(alertActions.error(message));
+                    dispatch(failure())
                 }
             }
 
@@ -44,6 +45,7 @@ const getAllTaskCates = () => {
     function success(allTaskCates, idCommonTaskCate) {
         return { type: taskCateConstants.getAllTaskCate.GET_ALL_TASK_CATE_SUCCESS, allTaskCates, idCommonTaskCate }
     }
+    function failure() { return { type: taskCateConstants.taskCateFailure.TASK_CATE_FAILURE } }
 }
 
 export const taskCateActions = {

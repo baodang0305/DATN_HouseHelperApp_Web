@@ -1,186 +1,79 @@
-.container-member {
+.header-container {
+    padding: 0px 20px;
+    background-color: white;
+}
+
+.header-family-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-header-family-container {
+    font-size: 22px;
+}
+
+.icon-header-family {
+    font-size: 19px;
+}
+
+.first-row-family-content-container,
+.second-row-family-content-container {
+    margin: 20px;
+    background-color: white;
+}
+
+.title-first-row-family-content,
+.title-second-row-family-content {
+    font-size: 18px;
+}
+
+.spin-get-list-members,
+.spin-get-list-news {
+    width: 100%;
     text-align: center;
-    position: relative;
-    cursor: pointer
-}
-.img-member {
-    border-radius: 50%;
-    border: groove thin;
 }
 
-.badge {
-    border-radius: 50%;
-    background-color: red;
-    color: white;
-    font-weight: bold;
+.list-members-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px 49px;
+    justify-content: center;
+}
+
+.member-item-container {
+    cursor: pointer;
+    width: 200px;
     text-align: center;
-    vertical-align: middle;
-    position: absolute;
+    margin: 10px 0px;
 }
 
-.ant-list-pagination {
-    text-align: center;
+.title-second-row-family-content-container,
+.title-first-row-family-content-container {
+    display: flex;
+    padding: 15px;
+    align-items: center;
+    font-size: 18px;
 }
 
-.size-member-name {
-    margin-top: 5px;
+.list-item-new-family-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.head-example {
-    display: inline-block;
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    border: groove thin #f0f0f0;
+.left-list-item-family-container {
+    display: flex;
 }
 
-/* big tablets to 1200px */
-@media only screen and (min-width: 1450px) {
-    .size-icon {
-        font-size: 20px !important;
-    }
-
-    .container-member,
-    .img-member {
-        width: 80px;
-        height: 80px;
-    }
-
-    .size-member-name {
-        font-size: 12px;
-    }
-    
-    .badge {
-        width: 28px ;
-        height: 28px ;
-        font-size: 15px;
-        line-height: 27px;
-        top: 6px;
-        left: 60px;
-    }
+.first-col-content-list-item-family {
+    margin-right: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-@media only screen and (min-width: 1222px) and (max-width: 1449px) {
-    .size-icon {
-        font-size: 17px !important;
-    }
-
-    .container-member,
-    .img-member {
-        width: 75px;
-        height: 75px;
-    }
-
-    .size-member-name {
-        font-size: 11px;
-    }
-    
-    .badge {
-        width: 25px ;
-        height: 25px ;
-        font-size: 12px;
-        line-height: 25px;
-        top: 5px;
-        left: 55px;
-    }
-}
-
-@media only screen and (min-width: 995px) and (max-width: 1221px) {
-    .size-icon{
-        font-size: 15px !important;
-    }
-
-    .container-member,
-    .img-member {
-        width: 70px;
-        height: 70px;
-    }
-
-    .size-member-name {
-        font-size: 11px;
-    }
-    
-    .badge {
-        width: 24px ;
-        height: 24px ;
-        font-size: 11px;
-        line-height: 24px;
-        top: 4px;
-        left: 50px;
-    }
-}
-
-@media only screen and (min-width: 768px) and (max-width: 994px) {
-    .size-icon {
-        font-size: 13px !important;
-    }
-
-    .container-member,
-    .img-member {
-        width: 65px;
-        height: 65px;
-    }
-
-    .size-member-name {
-        font-size: 10px;
-    }
-    
-    .badge {
-        width: 22px ;
-        height: 22px ;
-        font-size: 12px;
-        line-height: 22px;
-        top: 5px;
-        left: 45px;
-    }
-}
-
-/* small phones to small tablets */
-@media only screen and (min-width: 480px) and ( max-width: 767px) {
-    .size-icon,
-    .size-member-name {
-        font-size: 9px !important;
-    }
-
-    .container-member,
-    .img-member {
-        width: 60px;
-        height: 60px;
-    }
-    
-    .badge {
-        width: 20px ;
-        height: 20px ;
-        font-size: 9px;
-        line-height: 20px;
-        top: 7px;
-        left: 43px;
-    }
-}
-
-/* small phones from 0 - 480px */
-@media only screen and (min-width: 0px) and (max-width: 479px) {
-    a,
-    .size-icon {
-        font-size: 9px !important;
-    }
-
-    .container-member,
-    .img-member {
-        width: 55px;
-        height: 55px;
-    }
-
-    .size-member-name {
-        font-size: 10px;
-    }
-    
-    .badge {
-        width: 20px ;
-        height: 20px ;
-        font-size: 10px;
-        line-height: 22px;
-        top: 9px;
-        left: 42px;
-    }
+.right-list-item-family-container {
+    cursor: pointer;
 }

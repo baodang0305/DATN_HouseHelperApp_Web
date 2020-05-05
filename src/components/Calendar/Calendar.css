@@ -1,0 +1,43 @@
+.header-calendar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.icon-header-calendar {
+    font-size: 19px;
+}
+
+.center-header-calendar-container {
+    font-size: 22px;
+}
+
+.first-row-content-calendar-container {
+    display: flex;
+    margin: 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list-user-calendar-container {
+    display: flex;
+    overflow-x: hidden;
+}
+
+.user-calendar-container{
+    text-align: center;
+}
+
+.name-user-calendar {
+    font-size: 15px;
+}
+
+.avatar-event-container {
+    width: 260px;
+}
+
+.pre-icon-calendar,
+.next-icon-calendar {
+    font-size: 25px;
+}
+

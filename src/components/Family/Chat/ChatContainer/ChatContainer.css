@@ -1,3 +1,13 @@
+.header-chat-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-header-chat-container {
+    font-size: 22px;
+}
+
 .chat-container {
     width: 100%;
     height: 75vh;
@@ -9,7 +19,7 @@
 .header-message-container {
     height: 8vh;
     border-bottom: groove thin;
-    border-right: groove thin;
+    border-radius: 10px;
     padding: 10px;
     align-items: center;
 }
@@ -26,7 +36,6 @@
     padding: 0px 40px;
     align-items: center;
     width: 100%;
-    border-right: groove thin;
 }
 
 .name-header-chat-list {
@@ -99,7 +108,7 @@
 }
 
 .message-under-name-chat-list {
-    width: "80%";
+    width: "50%";
     overflow: "hidden";
     text-overflow: "ellipsis";
     line-height: 15px;
@@ -109,8 +118,61 @@
     line-height: 30px;
 }
 
-.content-message-container {
-    border-right: groove thin;
+#remote-video {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+#local-video {
+    position: absolute;
+    width: 20%;
+    height: auto;
+    left: 10px;
+}
+
+.caller-name,
+.callee-name {
+    text-align: center;
+    margin: 20px 0px;
+}
+
+.video-call-title {
+    text-align: center;
+    font-size: 17px;
+    margin: 10px 0px;
+}
+
+.green-btn,
+.green-btn:hover {
+    background-color: rgb(66, 183, 42);
+}
+
+.red-btn,
+.red-btn:hover {
+    background-color: #fa4444;
+}
+
+.color-btn:hover{
+    color: white;
+}
+
+.cancel-btn,
+.accept-btn{
+    width: 60px;
+    height: 30px;
+    position: relative;
+    border-radius: 40px;
+    animation: 1.2s animation-btn;
+    animation-iteration-count: infinite;
+}
+
+@keyframes animation-btn {
+    100%{
+        opacity: 1;
+        transition: all 10s;
+        transform: scaleX(1.4) scaleY(1.2);
+    }
 }
 
 /* big tablets to 1200px */

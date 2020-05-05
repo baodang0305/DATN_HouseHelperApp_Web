@@ -4,10 +4,6 @@ import { taskConstants } from "../constants/task.constants";
 import { alertActions } from "../actions/alert.actions";
 import history from "../helpers/history";
 import axios from 'axios';
-import { indexConstants } from "../constants/index.constants";
-import { message } from "antd";
-
-
 
 const getAllTasks = () => {
     return dispatch => {
@@ -27,6 +23,7 @@ const getAllTasks = () => {
                 }
                 else {
                     dispatch(alertActions.error(message));
+                    dispatch(failure());
                 }
             }
 
@@ -35,7 +32,7 @@ const getAllTasks = () => {
     }
     function request() { return { type: taskConstants.getAllTasks.GET_ALL_TASKS_REQUEST } }
     function success(allTasks) { return { type: taskConstants.getAllTasks.GET_ALL_TASKS_SUCCESS, allTasks } }
-
+    function failure() { return { type: taskConstants.getAllTasks.GET_ALL_TASKS_FAILURE } }
 }
 
 const deleteTask = (idTask) => {
@@ -165,6 +162,7 @@ const dismissTask = (idTask) => {
                 }
                 else {
                     dispatch(alertActions.error(message));
+                    dispatch(failure())
                 }
             }
 
@@ -173,6 +171,7 @@ const dismissTask = (idTask) => {
     }
     function request() { return { type: taskConstants.dismissTaskConstants.DISMISS_REQUEST } }
     function success() { return { type: taskConstants.dismissTaskConstants.DISMISS_SUCCESS } }
+    function failure() { return { type: taskConstants.dismissTaskConstants.DISMISS_FAILURE } }
 }
 
 
@@ -200,9 +199,7 @@ const editTask = (_id, name, time, points, assign, photo, tcID, notes, dueDate, 
                     dispatch(alertActions.error(message));
                 }
             }
-
             )
-
     }
     function request() { return { type: taskConstants.editTaskConstants.EDIT_TASK_REQUEST } }
     function success() { return { type: taskConstants.editTaskConstants.EDIT_TASK_SUCCESS } }
@@ -228,14 +225,15 @@ const redoTask = (tID) => {
                 }
                 else {
                     dispatch(alertActions.error(message));
+                    dispatch(failure())
                 }
             }
 
             )
-
     }
     function request() { return { type: taskConstants.redoTaskConstants.REDO_REQUEST } }
     function success() { return { type: taskConstants.redoTaskConstants.REDO_SUCCESS } }
+    function failure() { return { type: taskConstants.redoTaskConstants.REDO_FAILURE } }
 }
 
 const assignTask = (tID) => {
@@ -290,7 +288,7 @@ const nudgeTask = (tID, members) => {
                 }
                 else {
                     dispatch(alertActions.error(message));
-
+                    dispatch(failure())
                 }
             }
 
@@ -299,6 +297,7 @@ const nudgeTask = (tID, members) => {
     }
     function request() { return { type: taskConstants.nudgeTaskConstants.NUDGE_TASK_REQUEST } }
     function success() { return { type: taskConstants.nudgeTaskConstants.NUDGE_TASK_SUCCESS } }
+    function failure() { return { type: taskConstants.nudgeTaskConstants.NUDGE_TASK_FAILURE } }
 }
 
 const getAndSetNotificationTask = (data) => {

@@ -1,0 +1,68 @@
+.form-item-add-event {
+    margin: 10px;
+    background-color: white;
+}
+
+.name-event-input {
+    font-size: 20px;
+    text-align: center;
+}
+
+.pre-icon-add-event {
+    margin: 0px 5px 20px 0px;
+    font-size: 25px;
+    color: hsl(0, 1%, 68%);
+}
+
+.next-icon-add-event {
+    margin: 0px 5px 20px 0px;
+    font-size: 25px;
+    color: hsl(0, 1%, 68%);
+}
+
+.list-users-asign-add-event-container {
+    width: 600px;
+    display: flex;
+    overflow-x: hidden;
+    justify-content: space-between;
+}
+
+.user-add-event-container {
+    text-align: center;
+    position: relative;
+}
+
+.avatar-add-event-container {
+    width: 150px;
+    
+}
+
+.check-asign-add-event {
+    position: absolute;
+    font-size: 20px;
+    left: 44%;
+    top: 23%;
+}
+
+.icon-input-add-event,
+.title-input-add-event {
+    font-size: 18px;
+}
+
+.icon-input-add-event {
+    margin: 0px 5px 0px 20px;
+}
+
+.row-form-item-add-event {
+    align-items: center;
+    margin: 20px 0px;
+}
+
+.col-form-item-add-event {
+    text-align: center;
+}
+
+.width-70-percent {
+    width: 70%;
+}
+

@@ -18,7 +18,6 @@ import {
 
 import moment from 'moment';
 import 'moment/locale/vi';
-import axios from 'axios';
 import history from "../../../helpers/history";
 
 import { taskActions } from '../../../actions/task.actions';
@@ -294,7 +293,7 @@ class FormCreateTask extends Component {
             dueDateTask, photoTask, timeTask, pointsTask, tcIDTask, notesTask, keyTaskCate
         } = this.state;
 
-        const { type, recentTask, allMembers, allTaskCates, loading } = this.props;
+        const { type, recentTask, listMembers, allTaskCates, loading } = this.props;
         console.log(nameTask,
             assignMemberTask,
             dueDateTask,
@@ -458,7 +457,7 @@ class FormCreateTask extends Component {
                                         </div>} >
 
                                     <div className="list-avatar-member">
-                                        {allMembers.map(item =>
+                                        {listMembers.map(item =>
                                             <div key={item._id} className="container-avatar-member">
                                                 <div className="avatar-member"
                                                     onClick={(e) => {
@@ -693,7 +692,7 @@ const mapStateToProps = (state) => ({
     messageAlert: state.alert.type,
     recentTask: state.task.recentTask,
     allTasks: state.task.allTasks,
-    allMembers: state.family.allMembers,
+    listMembers: state.family.listMembers,
     allTaskCates: state.taskCate.allTaskCates,
     idCommonTaskCate: state.taskCate.idCommonTaskCate,
     loading: state.task.loading,

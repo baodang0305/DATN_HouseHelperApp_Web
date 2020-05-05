@@ -32,7 +32,7 @@ class RegisterFamily extends Component {
 	}
 
 	handleClickBack = () => {
-		history.goBack();
+		history.push("/login");
 	}
 
 	handleSubmit = () => {
@@ -57,7 +57,7 @@ class RegisterFamily extends Component {
 				});
 			}
 		} else {
-			this.setState({ statusConfirmPass: "error", confirmPassValidate: "confirm password is invalid" });
+			this.setState({ statusConfirmPass: "error", confirmPassValidate: "Mật khẩu xác nhận không đúng!" });
 		}
 	}
 
@@ -71,7 +71,7 @@ class RegisterFamily extends Component {
 
 				<div className="container-create-family">
 
-					<div className="title-form-create-family">Create Family</div>
+					<div className="title-form-create-family">Đăng Kí Gia Đình</div>
 
 					<Form onFinish={this.handleSubmit} size="large" className="form-create-family" >
 						
@@ -82,16 +82,16 @@ class RegisterFamily extends Component {
 							</div>
 						</Form.Item>
 
-						<Form.Item name="name" rules={[{ required: true, message: 'Please input your family name!' }]} >
+						<Form.Item name="name" rules={[{ required: true, message: 'Vui lòng nhập tên!' }]} >
 							<Input 
 								name="fName" value={fName} onChange={this.handleChangeInput}
-								placeholder="Name your family"  prefix={<UserOutlined className="site-form-item-icon" />} 
+								placeholder="Tên gia đình"  prefix={<UserOutlined className="site-form-item-icon" />} 
 							/>
 						</Form.Item>
 
-						<Form.Item name="password" rules={[ { required: true, message: 'Please input your password!' }]}>
+						<Form.Item name="password" rules={[ { required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
 							<Input
-								type="password" placeholder="Set family password"
+								type="password" placeholder="Mật khẩu"
 								prefix={<LockOutlined className="site-form-item-icon" />}
 								name="fPassword" value={fPassword} onChange={this.handleChangeInput}
 							/>
@@ -100,10 +100,10 @@ class RegisterFamily extends Component {
 						<Form.Item 
 							validateStatus={statusConfirmPass}
 							help={confirmPassValidate}
-							name="confirm" rules={[{ required: true , message: "Please input your confirm password!" }]} 
+							name="confirm" rules={[{ required: true , message: "Vui lòng nhập mật khẩu xác nhận!" }]} 
 						>
 							<Input
-								type="password" placeholder="Confirm family password"
+								type="password" placeholder="Mật khẩu xác nhận"
 								prefix={<LockOutlined className="site-form-item-icon" />}
 								name="fConfirmPassword" value={fConfirmPassword} onChange={this.handleChangeInput}
 							/>
@@ -111,8 +111,8 @@ class RegisterFamily extends Component {
 
 						<Form.Item >
 							<Row>
-								<Col span={11}> <Button onClick={this.handleClickBack} className="button-back" > Back </Button> </Col>
-								<Col span={11} offset={2}> <Button className="button-next" type="primary" htmlType="submit"> Next </Button> </Col>
+								<Col span={11}> <Button onClick={this.handleClickBack} className="button-back" > Quay lại </Button> </Col>
+								<Col span={11} offset={2}> <Button className="button-next" type="primary" htmlType="submit"> Tiếp theo </Button> </Col>
 							</Row>
 						</Form.Item> 
 

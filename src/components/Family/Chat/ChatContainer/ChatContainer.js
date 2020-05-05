@@ -1,9 +1,12 @@
 import React from "react";
 import { Picker } from "emoji-mart";
 import { connect } from "react-redux";
+import { Prompt } from "react-router-dom";
 import socketIoClient from "socket.io-client";
 import { LeftOutlined } from "@ant-design/icons";
-import { Layout, Row, Col, Button, Input, Tabs, Menu } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Layout, Row, Col, Button, Input, Tabs, Menu, Modal } from "antd";
+import { faPhone, faPhoneSlash } from "@fortawesome/free-solid-svg-icons";
 
 import "./ChatContainer.css";
 import "emoji-mart/css/emoji-mart.css";
@@ -12,11 +15,10 @@ import history from "../../../../helpers/history";
 import DashboardMenu from "../../../DashboardMenu/DashboardMenu";
 import { indexConstants } from "../../../../constants/index.constants";
 
+let socket;
 const { Search } = Input;
 const { TabPane } = Tabs;
 const { Header, Content, Footer } = Layout;
-
-let socket;
 
 class ChatContainer extends React.Component {
 
@@ -24,14 +26,15 @@ class ChatContainer extends React.Component {
         super(props);
         this.state = {
             message: "",
-            caller: null,
+            peerConn: null,
             searchInput: "",
             usersActive: [],
             usersRecent: [],
+            userOffer: null,
+            userIsOffer: null,
             isAccepted: false,
-            showCamera: false,
+            localStream: null,
             familyGroup: null,
-            receiverCall: null,
             isShowEmojis: false,
             activeTab: "active",
             receiverActive: null,
@@ -40,29 +43,51 @@ class ChatContainer extends React.Component {
             filteredUsersRecent: [],
             userIsEnteringGroup: null,
             userIsEnteringSingle: null,
-            enpoint: "http://localhost:3001",
+            enpoint: indexConstants.ENPOINT_SOCKET,
+
+            lastLocation: null,
+            modalVisible: false,
+            confirmedNavigation: false
+
         }
+
+        this.localVideo = React.createRef();
+        this.remoteVideo = React.createRef();
+        this.toggleContainer = React.createRef();
+        this.ringtone = new Audio(indexConstants.CALL_RINGTONE_COME_IN);
+        this.outgoingCallingBell = new Audio(indexConstants.OUTGOING_CALLING_BELL);
     }
 
     handleClickBack = () => {
-
         history.push("/family");
-        socket.emit("leave-chat");
-
     }
 
     handleChange = (e) => {
-
         const { name, value } = e.target;
         this.setState({ [name]: value });
-
     }
 
     handleTabClick = (key) => {
         this.setState({ activeTab: key });
     }
 
-    componentDidMount() {
+    getIceServers = async () => {
+        let o = { format: "urls", "expire": "6000" };
+        let bodyString = JSON.stringify(o);
+        const response = await fetch(`https://global.xirsys.net/_turn/video-call-chanel`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Content-Length": bodyString.length,
+                "Authorization": "Basic " + Buffer.from("BaoDang:17f07744-8566-11ea-8d7b-0242ac130006").toString("base64")
+            }
+        })
+
+        const data = await response.json();
+        return data.v;
+    }
+
+    async componentDidMount() {
 
         const { user } = this.props;
         const { enpoint } = this.state;
@@ -71,88 +96,74 @@ class ChatContainer extends React.Component {
 
         socket.emit("join", user);
 
-        // const config = { host: "chat-video-with-peer-server.herokuapp.com", port: 443, secure: true, key: "peerjs" }
-        // peer = new Peer(user._id, config);
-
-        // peer.on("call", call => {
-        //     console.log("ta đã vào")
-        //     if (call) {
-        //         this.setState({ receiverCall: call });
-        //     }
-        // });
-
-        // peer.on("close", () => {
-        //     console.log("người gọi đã đóng kết nối");
-        // });
-
         socket.on("server-send-user-active", (userActive) => {
-
             const { usersActive, usersRecent } = this.state;
 
             // thêm user active vào usersActive
             let newUsersActive = [...usersActive];
             newUsersActive = [...newUsersActive, userActive];
-            this.setState({ usersActive: newUsersActive, receiverActive: newUsersActive[0], filteredUsersActive: newUsersActive });
+            this.setState({
+                usersActive: newUsersActive,
+                receiverActive: newUsersActive[0],
+                filteredUsersActive: newUsersActive
+            });
 
             // cập nhật mSocketID cho usersRecent (nếu có)
             if (usersRecent.length !== 0) {
-
-                let newUsersRecent = [...usersRecent];
-                const indexRecent = newUsersRecent.findIndex(element => element.mID === userActive.mID);
-
+                const indexRecent = usersRecent.findIndex(element => element.mID === userActive.mID);
                 if (indexRecent !== -1) {
-
+                    let newUsersRecent = [...usersRecent];
                     newUsersRecent[indexRecent].mSocketID = userActive.mSocketID;
                     this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
-
+                } else {
+                    let newUsersRecent = [...usersRecent, userActive];
+                    this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
                 }
-
+            } else {
+                this.setState({ usersRecent: [...userActive], filteredUsersRecent: [...userActive] });
             }
-
         });
 
-        socket.on("server-send-list-user-active", (usersActive) => {
-
+        socket.on("server-send-list-users-active", (usersActive) => {
             if (usersActive.length !== 0) {
-
-                this.setState({ usersActive: usersActive, receiverActive: usersActive[0], filteredUsersActive: usersActive });
+                this.setState({
+                    usersActive,
+                    receiverActive: usersActive[0],
+                    filteredUsersActive: usersActive
+                });
 
             }
-
         });
 
-        socket.on("server-response-list-user-recent", (usersRecent) => {
-
+        socket.on("server-send-list-users-recent", (usersRecent) => {
             if (usersRecent.length !== 0) {
-
-                this.setState({ usersRecent: usersRecent, receiverRecent: usersRecent[0], filteredUsersRecent: usersRecent });
-
+                this.setState({ usersRecent, receiverRecent: usersRecent[0], filteredUsersRecent: usersRecent });
             }
-
         });
 
-        socket.on("server-send-user-leave", ({ mSocketID }) => {
+        socket.on("server-send-user-leave", async ({ mSocketID }) => {
 
-            const { usersActive, usersRecent } = this.state;
+            const { usersActive, usersRecent, userOffer, userIsOffer } = this.state;
 
             if (mSocketID) {
 
-                //Xóa user active đã rời khỏi
+                if (userIsOffer && userIsOffer.mSocketID === mSocketID) {
+                    this.outgoingCallingBell.pause();
+                    this.setState({ userIsOffer: null });
+                } else if (userOffer && userOffer.mSocketID === mSocketID) {
+                    this.ringtone.pause();
+                    this.setState({ userOffer: null });
+                }
+
+                // Xóa user active đã rời khỏi
                 let newUsersActive = [...usersActive];
                 const indexActive = newUsersActive.findIndex(element => element.mSocketID === mSocketID);
-
                 if (indexActive !== -1) {
-
                     newUsersActive.splice(indexActive, 1);
-
                     if (newUsersActive.length === 0) {
-
                         this.setState({ usersActive: [], receiverActive: null, filteredUsersActive: [] });
-
                     } else {
-
                         this.setState({ usersActive: newUsersActive, receiverActive: newUsersActive[0], filteredUsersActive: newUsersActive });
-
                     }
                 }
 
@@ -161,14 +172,10 @@ class ChatContainer extends React.Component {
                 let indexRecent = newUsersRecent.findIndex(element => element.mSocketID === mSocketID);
 
                 if (indexRecent !== -1) {
-
                     newUsersRecent[indexRecent].mSocketID = "";
                     this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
-
                 }
-
             }
-
         });
 
         socket.on("server-response-message-chat-single", ({ sender, messageContainer }) => {
@@ -226,23 +233,19 @@ class ChatContainer extends React.Component {
             const { activeTab, receiverActive, receiverRecent } = this.state;
 
             if (activeTab === "recent") {
-
-                if (sender.mID === receiverRecent.mID) {
-
-                    this.setState({ userIsEnteringSingle: sender });
-
+                if (receiverRecent) {
+                    if (sender.mID === receiverRecent.mID) {
+                        this.setState({ userIsEnteringSingle: sender });
+                    }
                 }
 
             } else if (activeTab === "active") {
-
-                if (sender.mID === receiverActive.mID) {
-
-                    this.setState({ userIsEnteringSingle: sender });
-
+                if (receiverActive) {
+                    if (sender.mID === receiverActive.mID) {
+                        this.setState({ userIsEnteringSingle: sender });
+                    }
                 }
-
             }
-
         });
 
         socket.on("server-response-user-is-stoped-entering-to-partner", (sender) => {
@@ -307,17 +310,13 @@ class ChatContainer extends React.Component {
 
         });
 
-
         socket.on("server-send-family-group", (familyGroup) => {
 
             const newFamilyGroup = { ...familyGroup }
 
             if (familyGroup) {
-
                 this.setState({ familyGroup: newFamilyGroup });
-
             }
-
         });
 
         socket.on("server-response-messages-chat-group", (messageContainer) => {
@@ -335,17 +334,61 @@ class ChatContainer extends React.Component {
         });
 
         socket.on("server-response-user-is-entering-to-group", (sender) => {
-
             this.setState({ userIsEnteringGroup: sender });
-
         });
 
         socket.on("server-response-user-is-stoped-entering-to-group", (sender) => {
-
             this.setState({ userIsEnteringGroup: null });
-
         });
 
+        socket.on("offer-a-call", (userOffer) => {
+            if (!this.state.userOffer && !this.state.userIsOffer) {
+                this.ringtone.play();
+                this.ringtone.loop = true;
+                this.setState({ userOffer });
+            } else {
+                socket.emit("answer-offer-a-call", { "receiver": userOffer, "content": { "accept": false, "message": "đang bận" } });
+            }
+        });
+
+        socket.on("cancel-offer-a-call", () => {
+            this.ringtone.pause();
+            this.setState({ userOffer: null });
+        });
+
+        socket.on("answer-offer-a-call", async ({ sender, content }) => {
+            this.outgoingCallingBell.pause();
+            if (!content.accept) {
+                alert(`${sender.mName} ${content.message}`);
+                this.setState({ userIsOffer: null });
+            } else {
+                const newConfig = await this.getIceServers();
+                const newPeerConn = new RTCPeerConnection(newConfig);
+                this.setState({ peerConn: newPeerConn, isAccepted: true });
+                this.handleMakeCall({ "mSocketID": sender.mSocketID });
+            }
+        });
+
+        socket.on("offer", ({ mSocketID, offer }) => {
+            this.handleOffer(mSocketID, offer)
+        });
+
+        socket.on("answer", ({ mSocketID, answer }) => {
+            this.handleAnswer(mSocketID, answer);
+        });
+
+        socket.on("candidate", ({ mSocketID, candidate }) => {
+            this.handleCandidate(mSocketID, candidate);
+        });
+
+        window.addEventListener("click", this.onClickOutsideHandler);
+
+    }
+
+    onClickOutsideHandler = (event) => {
+        if (this.state.isShowEmojis && !this.toggleContainer.current.contains(event.target)) {
+            this.setState({ isShowEmojis: false });
+        }
     }
 
     handleClickMenuActive = (e) => {
@@ -420,58 +463,37 @@ class ChatContainer extends React.Component {
                 }
 
                 if (activeTab === "family-group") {
-
                     let member = { ...user, "mID": user._id };
                     delete member._id;
                     socket.emit("client-send-message-to-chat-group", { member, messageContainer });
-
                 } else {
-
                     let receiver;
-
                     if (activeTab === "active") {
                         receiver = { ...receiverActive };
-
                     } else {
                         receiver = { ...receiverRecent };
-
                     }
-
                     delete receiver.messages;
-
                     let sender = { ...user, "mID": user._id };
                     delete sender._id;
                     socket.emit("client-send-message", { "receiver": receiver, sender, messageContainer });
-
                     if (usersActive) {
-
                         const indexActive = usersActive.findIndex(element => element.mID === receiver.mID);
-
                         if (indexActive !== -1) {
-
                             let newUsersActive = [...usersActive];
                             newUsersActive[indexActive].messages = [...newUsersActive[indexActive].messages, messageContainer]
                             this.setState({ usersActive: newUsersActive, filteredUsersActive: newUsersActive });
-
                         }
                     }
-
                     if (usersRecent) {
-
                         const indexRecent = usersRecent.findIndex(element => element.mID === receiver.mID);
-
                         if (indexRecent !== -1) {
-
                             let newUsersRecent = [...usersRecent];
                             newUsersRecent[indexRecent].messages = [...newUsersRecent[indexRecent].messages, messageContainer];
                             this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
-
                         }
-
                     }
-
                 }
-
                 this.setState({ message: "", isShowEmojis: false });
             }
         }
@@ -525,9 +547,7 @@ class ChatContainer extends React.Component {
                     socket.emit("message-has-seen", { sender, receiver, "messageContainer": lastMessage });
                 }
             }
-
             this.setState({ message: "", receiverRecent: newUsersRecent[indexRecent] });
-
         }
     }
 
@@ -537,41 +557,25 @@ class ChatContainer extends React.Component {
         const { usersRecent, usersActive, activeTab } = this.state;
 
         if (activeTab === "recent") {
-
             const filteredUsersRecent = usersRecent.filter(element => {
                 return element.mName.toLowerCase().includes(value.toLowerCase());
             });
-
             if (filteredUsersRecent.length === 0) {
-
                 this.setState({ receiverRecent: null, filteredUsersRecent: [] });
-
             } else {
-
                 this.setState({ filteredUsersRecent, receiverRecent: filteredUsersRecent[0] });
-
             }
-
         } else {
-
             const filteredUsersActive = usersActive.filter(element => {
                 return element.mName.toLowerCase().includes(value.toLowerCase());
             });
-
             if (filteredUsersActive.length === 0) {
-
                 this.setState({ receiverActive: null, filteredUsersActive: null });
-
             } else {
-
                 this.setState({ filteredUsersActive, receiverActive: filteredUsersActive[0] });
-
             }
-
         }
-
         this.setState({ [name]: value });
-
     }
 
     handleOnFocus = () => {
@@ -632,165 +636,309 @@ class ChatContainer extends React.Component {
 
     showEmojis = e => {
         this.setState({ isShowEmojis: !this.state.isShowEmojis });
+    }
+
+    handleOfferCall = () => {
+
+        const { userIsOffer, userOffer, receiverActive } = this.state;
+
+        if (!userIsOffer && !userOffer) {
+            this.outgoingCallingBell.play();
+            this.outgoingCallingBell.loop = true;
+            const userIsOffer = { ...receiverActive };
+            delete userIsOffer.messages;
+            socket.emit("offer-a-call", userIsOffer);
+            this.setState({ userIsOffer });
+        } else {
+            alert("Bạn không thể gọi 1 lúc 2 người");
+        }
+
+    }
+
+    handleAccept = async () => {
+
+        const { userOffer } = this.state;
+
+        this.ringtone.pause();
+        const newConfig = await this.getIceServers();
+        const newPeerConn = new RTCPeerConnection(newConfig);
+        this.setState({ peerConn: newPeerConn, isAccepted: true });
+        socket.emit("answer-offer-a-call", { "receiver": userOffer, "content": { "accept": true } });
+
+    }
+
+    handleClose = async () => {
+
+        const { isAccepted, userIsOffer, userOffer, localStream, peerConn } = this.state;
+
+        if (!isAccepted) {
+            if (userIsOffer) {
+                this.outgoingCallingBell.pause();
+                this.setState({ userIsOffer: null });
+                socket.emit("cancel-offer-a-call", { "receiver": userIsOffer });
+            } else if (userOffer) {
+                this.ringtone.pause();
+                this.setState({ userOffer: null });
+                socket.emit("answer-offer-a-call", { "receiver": userOffer, "content": { "accept": false, "message": "từ chối cuộc gọi" } });
+            }
+
+        } else {
+            if (localStream) {
+                localStream.getAudioTracks()[0].stop();
+                localStream.getVideoTracks()[0].stop();
+                // localStream.getTracks().forEach(function (track) {
+                //     track.stop();
+                //});
+            }
+            if (peerConn) {
+                peerConn.removeStream(localStream)
+                peerConn.close();
+            }
+            this.localVideo.current.srcObject = null;
+            this.remoteVideo.current.srcObject = null;
+            this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
+        }
+
+    }
+
+    handleMakeCall = async ({ mSocketID }) => {
+
+        const { peerConn } = this.state;
+
+        const newLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        this.localVideo.current.srcObject = newLocalStream;
+        peerConn.addStream(newLocalStream);
+
+        this.setState({ localStream: newLocalStream });
+
+        peerConn.createOffer((offer) => {
+            peerConn.setLocalDescription(offer);
+            socket.emit("offer", { mSocketID, offer });
+        }, function (error) {
+            console.log("error when create an offer");
+        });
+
+        peerConn.onaddstream = (e) => {
+            this.remoteVideo.current.srcObject = e.stream;
+        };
+
+        peerConn.onicecandidate = (event) => {
+            const cand = event.candidate;
+            if (cand) {
+                const { userOffer, userIsOffer } = this.state;
+                if (userOffer) {
+                    socket.emit("candidate", { "mSocketID": userOffer.mSocketID, "candidate": cand });
+                } else if (userIsOffer) {
+                    socket.emit("candidate", { "mSocketID": userIsOffer.mSocketID, "candidate": cand });
+                }
+            }
+
+        };
+
+        peerConn.onconnectionstatechange = async (event) => {
+            if (peerConn.connectionState === "disconnected") {
+                const { localStream } = this.state;
+                if (localStream) {
+                    localStream.getAudioTracks()[0].stop();
+                    localStream.getVideoTracks()[0].stop();
+                    // localStream.getTracks().forEach(function (track) {
+                    //     track.stop();
+                    //});
+                }
+                peerConn.removeStream(localStream);
+                peerConn.close();
+                this.localVideo.current.srcObject = null;
+                this.remoteVideo.current.srcObject = null;
+                this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
+            }
+        }
+
+    }
+
+    handleOffer = async (mSocketID, offer) => {
+
+        const { peerConn } = this.state;
+
+        peerConn.onaddstream = (e) => {
+            this.remoteVideo.current.srcObject = e.stream;
+        };
+
+        peerConn.onicecandidate = (event) => {
+            const cand = event.candidate;
+            if (cand) {
+                const { userOffer, userIsOffer } = this.state;
+                if (userOffer) {
+                    socket.emit("candidate", { "mSocketID": userOffer.mSocketID, "candidate": cand });
+                } else if (userIsOffer) {
+                    socket.emit("candidate", { "mSocketID": userIsOffer.mSocketID, "candidate": cand });
+                }
+            }
+
+        };
+
+        peerConn.onconnectionstatechange = async (event) => {
+            if (peerConn.connectionState === "disconnected") {
+                const { localStream } = this.state;
+                if (localStream) {
+                    localStream.getAudioTracks()[0].stop();
+                    localStream.getVideoTracks()[0].stop();
+                    // localStream.getTracks().forEach(function (track) {
+                    //     track.stop();
+                    // });
+                }
+                peerConn.removeStream(localStream);
+                peerConn.close();
+                this.localVideo.current.srcObject = null;
+                this.remoteVideo.current.srcObject = null;
+                this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
+            }
+        }
+
+        peerConn.setRemoteDescription(new RTCSessionDescription(offer));
+
+        const newLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        this.localVideo.current.srcObject = newLocalStream;
+        peerConn.addStream(newLocalStream);
+
+        peerConn.createAnswer((answer) => {
+            peerConn.setLocalDescription(answer);
+            socket.emit("answer", { mSocketID, answer });
+
+        }, function (error) {
+            console.log("error when create an answer");
+        });
+
+        this.setState({ localStream: newLocalStream });
+
+    }
+
+    handleAnswer = (mSocketID, answer) => {
+        const { peerConn } = this.state;
+        peerConn.setRemoteDescription(new RTCSessionDescription(answer));
+    }
+
+    handleCandidate = (mSocketID, candidate) => {
+        const { peerConn } = this.state;
+        peerConn.addIceCandidate(new RTCIceCandidate(candidate)).catch(error => {
+            console.log(error);
+        });
+    }
+
+    showModal = location => this.setState({ modalVisible: true, lastLocation: location });
+
+    closeModal = (callback = () => { }) => this.setState({ modalVisible: false }, callback);
+
+    handleBlockedNavigation = nextLocation => {
+        const { confirmedNavigation } = this.state;
+        if (!confirmedNavigation) {
+            this.showModal(nextLocation);
+            return false;
+        }
+        return true;
     };
 
-    // handleClickCamera = () => {
+    handleConfirmNavigationClick = () => {
 
-    //     try {
-    //         let receiver;
-    //         const { receiverActive, receiverRecent, activeTab } = this.state;
-    //         if (activeTab === "active") {
-    //             if (receiverActive) {
-    //                 receiver = { ...receiverActive };
-    //             }
+        const { isAccepted, userOffer, userIsOffer, localStream, peerConn } = this.state;
+        if (userIsOffer || userOffer) {
+            if (!isAccepted) {
+                if (userIsOffer) {
+                    this.outgoingCallingBell.pause();
+                    socket.emit("cancel-offer-a-call", { "receiver": userIsOffer });
+                } else if (userOffer) {
+                    this.ringtone.pause();
+                    socket.emit("answer-offer-a-call", { "receiver": userOffer, "content": { "accept": false, "message": "từ chối cuộc gọi" } });
+                }
+                this.setState({ userOffer: null, userIsOffer: null });
 
-    //         } else if (activeTab === "recent") {
+            } else {
+                if (localStream) {
+                    localStream.getAudioTracks()[0].stop();
+                    localStream.getVideoTracks()[0].stop();
+                    // localStream.getTracks().forEach(function (track) {
+                    //     track.stop();
+                    // });
+                }
+                if (peerConn) {
+                    peerConn.removeStream(localStream)
+                    peerConn.close();
+                }
+                this.localVideo.current.srcObject = null;
+                this.remoteVideo.current.srcObject = null;
+                this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
+            }
+        }
 
-    //             if (receiverRecent && !receiverRecent.mSocketID) {
-    //                 receiver = { ...receiverRecent };
-    //             }
-    //         }
-
-    //         if (receiver) {
+        socket.emit("leave-chat");
 
 
-    //             navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    //                 .then(function (stream) {
-                        
-    //                 })
-    //                 .catch(function (err) {
-    //                     console.log(err)
-    //                 });
-
-    //             navigator.mediaDevices.getUserMedia({ video: true, audio: true }, function (stream) {
-    //                 const call = peer.call(receiver.mID, stream);
-    //                 console.log(call)
-    //                 call.on('stream', function (remoteStream) {
-    //                     // Show stream in some video/canvas element.
-    //                 });
-    //             }, function (err) {
-    //                 console.log('Failed to get local stream', err);
-    //             })
-
-    //             navigator.mediaDevices.getUserMedia({ video: true, audio: true }, function (stream) {
-    //                 console.log(stream)
-    //                 const call = peer.call(receiver.mID, stream);
-    //                 console.log(call)
-    //                 call.on("stream", remoteStream => {
-
-    //                     const video = document.getElementById("localVideo");
-    //                     video.srcObject = remoteStream;
-    //                     video.onloadedmetadata = function () {
-    //                         video.play();
-    //                     }
-    //                 });
-
-    //                 this.setState({ caller: call, isAccepted: false });
-    //             })
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
-
-    // handleClickAccept = () => {
-
-    //     const { receiverCall } = this.state;
-
-    //     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    //         .then(stream => {
-    //             receiverCall.answer(stream);
-    //             receiverCall.on("stream", remoteStream => {
-    //                 const video = document.getElementById("localVideo");
-    //                 video.srcObject = remoteStream;
-    //                 video.onloadedmetadata = function () {
-    //                     video.play();
-    //                 }
-    //             });
-    //         });
-
-    //     this.setState({ isAccepted: true });
-    // }
-
-    // callerClickClose = () => {
-    //     const { caller } = this.state;
-    //     const stream = caller.localStream;
-    //     console.log(stream)
-    //     if (stream) {
-    //         stream.getTracks().forEach(function (track) { track.stop(); });
-    //     }
-    //     caller.close();
-    //     this.setState({ caller: null, receiverClickClose: null });
-    // }
-
-    // receiverClickClose = () => {
-    //     const { receiverCall } = this.state;
-    //     const streamLocal = receiverCall.localStream;
-    //     const streamRemote = receiverCall.remoteStream;
-
-    //     if (streamLocal) {
-    //         streamLocal.getTracks().forEach(function (track) { track.stop(); });
-    //     }
-    //     if (streamRemote) {
-    //         streamRemote.getTracks().forEach(function (track) { track.stop(); });
-    //     }
-    //     receiverCall.close();
-    //     this.setState({ receiverCall: null, caller: null });
-    // }
+        this.closeModal(() => {
+            const { lastLocation } = this.state;
+            if (lastLocation) {
+                this.setState({ confirmedNavigation: true },
+                    () => history.push(lastLocation.pathname)
+                );
+            }
+        });
+    }
 
     render() {
 
         const {
             message,
             activeTab,
+            userOffer,
+            isAccepted,
+            userIsOffer,
             searchInput,
             familyGroup,
+            modalVisible,
             receiverActive,
             receiverRecent,
             userIsEnteringGroup,
             filteredUsersActive,
             filteredUsersRecent,
-            userIsEnteringSingle
-        } = this.state;
+            userIsEnteringSingle,
 
+        } = this.state;
         const { user } = this.props;
 
         const toolBar = () => (
-
-            <Row className="tool-bar-container">
-                <Col>
-                    <i onClick={this.handleClickCamera} style={{ cursor: "pointer" }} className="fa fa-camera fa-lg"></i> &ensp;
-                    <i className="fa fa-microphone fa-lg" ></i> &ensp;
-                    <i className="fa fa-image fa-lg"></i> &ensp;
-                </Col>
-                <Col flex="auto">
-                    <Input
-                        name="message"
-                        value={message}
-                        onBlur={this.handleOnBlur}
-                        style={{ borderRadius: 5 }}
-                        onChange={this.handleChange}
-                        onFocus={this.handleOnFocus}
-                        placeholder="Type a message..."
-                        onPressEnter={this.handleKeyPressMessage}
-                        suffix={[
-                            <div onClick={this.showEmojis} style={{ width: 20, cursor: "pointer" }}>
-                                {String.fromCodePoint(0x1f60a)}
-                            </div>
-                        ]}
-                    />
-                </Col>
-
-                {this.state.isShowEmojis &&
-                    <Picker
-                        onSelect={this.addEmoji}
-                        style={{ position: 'absolute', bottom: '50px', right: '20px' }}
-                    />
-                }
-
-            </Row>
-
+            <div ref={this.toggleContainer}>
+                <Row className="tool-bar-container" >
+                    <Col>
+                        {activeTab === "active" &&
+                            <i onClick={this.handleOfferCall} style={{ cursor: "pointer" }} className="fa fa-camera fa-lg" />
+                        }
+                        &ensp;
+                        <i className="fa fa-microphone fa-lg" ></i> &ensp;
+                        <i className="fa fa-image fa-lg"></i> &ensp;
+                    </Col>
+                    <Col flex="auto">
+                        <Input
+                            name="message"
+                            value={message}
+                            onBlur={this.handleOnBlur}
+                            style={{ borderRadius: 5 }}
+                            onChange={this.handleChange}
+                            onFocus={this.handleOnFocus}
+                            placeholder="Nhập tin nhắn..."
+                            onPressEnter={this.handleKeyPressMessage}
+                            suffix={[
+                                <div onClick={this.showEmojis} style={{ width: 20, cursor: "pointer" }}>
+                                    {String.fromCodePoint(0x1f60a)}
+                                </div>
+                            ]}
+                        />
+                    </Col>
+                    {this.state.isShowEmojis &&
+                        <Picker
+                            onSelect={this.addEmoji}
+                            style={{ position: 'absolute', bottom: '50px', right: '20px' }}
+                        />
+                    }
+                </Row>
+            </div>
         );
 
         const showToolBar = () => {
@@ -877,47 +1025,26 @@ class ChatContainer extends React.Component {
         const showMessages = () => {
 
             if (activeTab === "family-group") {
-
                 if (familyGroup) {
-
                     if (userIsEnteringGroup && userIsEnteringGroup.mID !== user._id) {
-
                         return <Messages messages={familyGroup.messages} userIsEntering={userIsEnteringGroup} mID={user._id} />
-
                     }
-
                     return <Messages messages={familyGroup.messages} mID={user._id} />
-
                 }
-
             } else if (activeTab === "active") {
-
                 if (receiverActive) {
-
                     if (userIsEnteringSingle && userIsEnteringSingle.mID !== receiverActive.mID) {
-
                         return <Messages messages={receiverActive.messages} mID={user._id} />
-
                     } else {
-
                         return <Messages messages={receiverActive.messages} userIsEntering={userIsEnteringSingle} mID={user._id} />
-
                     }
-
                 }
-
             } else {
-
                 if (receiverRecent) {
-
                     if (userIsEnteringSingle && userIsEnteringSingle.mID !== receiverRecent.mID) {
-
                         return <Messages messages={receiverRecent.messages} mID={user._id} />
-
                     } else {
-
                         return <Messages messages={receiverRecent.messages} userIsEntering={userIsEnteringSingle} mID={user._id} />
-
                     }
 
                 }
@@ -927,28 +1054,35 @@ class ChatContainer extends React.Component {
         }
 
         return (
-
             <Layout style={{ minHeight: "100vh" }}>
+                <Prompt when={true} message={this.handleBlockedNavigation} />
+                <Modal
+                    title={"Alert"}
+                    visible={modalVisible}
+                    onCancel={() => this.closeModal(() => { })}
+                    onOk={this.handleConfirmNavigationClick}
+                >
+                    {!userIsOffer && !userOffer ?
+                        <p>Bạn muốn muốn rời khỏi trang hiện tại?</p>
+                        :
+                        <p>Bạn muốn rời khỏi kết thúc cuộc gọi hiện tại?</p>
+                    }
 
+                </Modal>
                 <DashboardMenu menuItem="1" />
-
                 <Layout className="site-layout">
-
-                    <Header className="site-layout-background" >
-
-                        <Row style={{ textAlign: "center" }}>
-                            <Col style={{ marginLeft: "10px" }}>
-                                <Button onClick={this.handleClickBack} size="large"> <LeftOutlined /> </Button>
-                            </Col>
-                            <Col flex="auto"> <div className="title-header"> Message </div> </Col>
-                        </Row>
-
+                    <Header className="header-container" >
+                        <div className="header-chat-container">
+                            <Button onClick={this.handleClickBack} size="large">
+                                <LeftOutlined />
+                            </Button>
+                            <div className="center-header-chat-container"> Tin Nhắn </div>
+                            <div></div>
+                        </div>
                     </Header>
-
                     <Content style={{ margin: 20 }}>
-
                         <Row className="chat-container">
-                            <Col span={8} style={{ borderRight: "groove thin" }}>
+                            <Col span={6}>
                                 <Row className="header-chat-list-container">
                                     <img
                                         src={user.mAvatar.image}
@@ -961,73 +1095,71 @@ class ChatContainer extends React.Component {
                                     <Search
                                         name="searchInput" value={searchInput}
                                         onChange={this.handleChangeSearchInput}
-                                        style={{ borderRadius: 5 }} placeholder="search messenger"
+                                        style={{ borderRadius: 5 }} placeholder="Tìm kiếm"
                                     />
                                 </Row>
                                 <Row style={{ padding: 10 }} >
 
                                     <Tabs defaultActiveKey={activeTab} onTabClick={this.handleTabClick} style={{ width: "100%" }}>
 
-                                        <TabPane tab="Active" key="active">
+                                        <TabPane tab="Hoạt động" key="active">
                                             {receiverActive &&
                                                 <Menu
                                                     style={{ borderRight: "none" }}
                                                     onClick={this.handleClickMenuActive}
                                                     selectedKeys={[receiverActive.mSocketID]}
                                                 >
-                                                    {filteredUsersActive.length !== 0 && filteredUsersActive.map((item) => {
-                                                        return (
-                                                            <Menu.Item className="menu-item-container" key={item.mSocketID}>
-                                                                <Row align="middle" justify="start">
-                                                                    <div className="img-chat-list-container">
-                                                                        <img
-                                                                            src={item.mAvatar.image}
-                                                                            className="img-chat-list"
-                                                                            style={{ backgroundColor: item.mAvatar.color }}
-                                                                        />
-                                                                        <div className="icon-active" />
-                                                                    </div>
-                                                                    <div style={{ float: "right", marginLeft: 10 }} >
-                                                                        {item.messages.length === 0 ?
-                                                                            <div className="name-item-chat-list">{item.mName}</div>
-                                                                            :
-                                                                            <>
-                                                                                {user.mName === item.messages[item.messages.length - 1].name ?
+                                                    {filteredUsersActive.length !== 0 && filteredUsersActive.map((item, index) =>
+                                                        <Menu.Item className="menu-item-container" key={item.mSocketID}>
+                                                            <Row align="middle" justify="start">
+                                                                <div className="img-chat-list-container">
+                                                                    <img
+                                                                        src={item.mAvatar.image}
+                                                                        className="img-chat-list"
+                                                                        style={{ backgroundColor: item.mAvatar.color }}
+                                                                    />
+                                                                    <div className="icon-active" />
+                                                                </div>
+                                                                <div style={{ float: "right", marginLeft: 10 }} >
+                                                                    {item.messages.length === 0 ?
+                                                                        <div className="name-item-chat-list">{item.mName}</div>
+                                                                        :
+                                                                        <>
+                                                                            {user.mName === item.messages[item.messages.length - 1].name ?
+                                                                                <>
+                                                                                    <div className="name-item-chat-list">{item.mName}</div>
+                                                                                    <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                                </>
+                                                                                :
+                                                                                item.messages[item.messages.length - 1].seen ?
                                                                                     <>
                                                                                         <div className="name-item-chat-list">{item.mName}</div>
-                                                                                        <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                                        <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
                                                                                     </>
                                                                                     :
-                                                                                    item.messages[item.messages.length - 1].seen ?
-                                                                                        <>
-                                                                                            <div className="name-item-chat-list">{item.mName}</div>
-                                                                                            <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
-                                                                                        </>
-                                                                                        :
-                                                                                        <>
-                                                                                            <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
-                                                                                            <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
-                                                                                        </>
-                                                                                }
-                                                                            </>
-                                                                        }
-                                                                    </div>
-                                                                </Row>
-                                                            </Menu.Item>
-                                                        )
-                                                    })}
+                                                                                    <>
+                                                                                        <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
+                                                                                        <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
+                                                                                    </>
+                                                                            }
+                                                                        </>
+                                                                    }
+                                                                </div>
+                                                            </Row>
+                                                        </Menu.Item>
+                                                    )}
                                                 </Menu>
                                             }
                                         </TabPane>
 
-                                        <TabPane tab="Recent" key="recent">
+                                        <TabPane tab="Gần đây" key="recent">
                                             {receiverRecent &&
                                                 <Menu
                                                     style={{ borderRight: "none" }}
                                                     onClick={this.handleClickMenuRecent}
                                                     selectedKeys={[receiverRecent.mID]}
                                                 >
-                                                    {filteredUsersRecent && filteredUsersRecent.map((item) =>
+                                                    {filteredUsersRecent && filteredUsersRecent.map((item, index) =>
                                                         <Menu.Item className="menu-item-container" key={item.mID}>
                                                             <Row align="middle" justify="start">
 
@@ -1072,7 +1204,7 @@ class ChatContainer extends React.Component {
                                             }
                                         </TabPane>
 
-                                        <TabPane tab="Family Group" key="family-group">
+                                        <TabPane tab="Gia đình" key="family-group">
                                             {familyGroup &&
                                                 <Menu style={{ borderRight: "none" }} selectedKeys={["group"]}>
                                                     <Menu.Item className="menu-item-container" key="group">
@@ -1092,32 +1224,43 @@ class ChatContainer extends React.Component {
                                     </Tabs>
                                 </Row>
                             </Col>
-                            <Col flex="auto">
+                            <Col span={10} style={{ borderRight: "groove thin", borderLeft: "groove thin", borderRadius: 10 }}>
                                 <Row className="header-message-container"> {headerBodyMessage()} </Row>
-                                <Row className="content-message-container"> {showMessages()} </Row>
+                                <Row > {showMessages()} </Row>
                                 {showToolBar()}
                             </Col>
-                            {/* {this.state.caller &&
-                                <Col span={8} style={{ display: "block" }}>
-                                    <video style={{ width: "100%", height: "auto" }} id="localVideo" controls />
-                                    <Button onClick={this.callerClickClose}> Close </Button>
-                                </Col>
-                            }
-                            {this.state.receiverCall &&
-                                <Col span={8} style={{ display: "block" }}>
-                                    <video style={{ width: "100%", height: "auto" }} id="localVideo" controls />
-                                    <Button onClick={this.receiverClickClose}> Close </Button>
-                                    {!this.state.isAccepted ? <Button onClick={this.handleClickAccept}> Accept Call </Button> : null}
-                                </Col>
-                            } */}
+                            <Col span={8} style={{ padding: 10 }}>
+
+                                <div className="video-call-title"> Video Call </div>
+
+                                <video ref={this.remoteVideo} id="remote-video" autoPlay controls />
+                                <video ref={this.localVideo} id="local-video" autoPlay controls />
+
+                                {userOffer && <div className="caller-name"> {`${userOffer.mName} contacting...`} </div>}
+
+                                {userIsOffer && <div className="callee-name"> {`${userIsOffer.mName} contacting...`} </div>}
+
+                                <Row justify="center" >
+
+                                    {userOffer && !isAccepted &&
+                                        <Button onClick={this.handleAccept} className="accept-btn green-btn color-btn">
+                                            <FontAwesomeIcon icon={faPhone} size="lg" />
+                                        </Button>
+                                    }
+
+                                    &emsp;&emsp;&emsp;
+
+                                    {(userIsOffer || userOffer) &&
+                                        <Button onClick={this.handleClose} className="cancel-btn red-btn color-btn">
+                                            <FontAwesomeIcon icon={faPhoneSlash} size="lg" />
+                                        </Button>
+                                    }
+                                </Row>
+                            </Col>
                         </Row>
-
                     </Content>
-
                     <Footer style={{ textAlign: 'center' }}> </Footer>
-
                 </Layout>
-
             </Layout>
         );
     }

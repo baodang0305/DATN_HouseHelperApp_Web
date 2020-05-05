@@ -2,7 +2,7 @@ import React from "react";
 import firebase from "firebase/app";
 import { connect } from "react-redux";
 import { LeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Layout, Row, Col, Button, Form, Input, Checkbox, Modal } from "antd";
+import { Layout, Row, Col, Button, Form, Input, Checkbox, Modal, Spin } from "antd";
 
 import "./UpdateFamily.css";
 import history from "../../../helpers/history";
@@ -72,7 +72,7 @@ class UpdateFamily extends React.Component {
         if (name === "currentPass") {
             if (value === "") {
                 stateCurrentPass = "error";
-                errorCurrentPass = "Please input your current pass";
+                errorCurrentPass = "Vui lòng nhập mật khẩu hiện tại";
                 this.setState({ stateCurrentPass, errorCurrentPass, currentPass: value });
             } else {
                 this.setState({ stateCurrentPass: "", errorCurrentPass: null, currentPass: value });
@@ -82,7 +82,7 @@ class UpdateFamily extends React.Component {
         if (name === "newPass") {
             if (value === "") {
                 stateNewPass = "error";
-                errorNewPass = "Please input your new pass";
+                errorNewPass = "Vui lòng nhập mật khẩu mới";
                 this.setState({ stateNewPass, errorNewPass, newPass: value });
             } else {
                 this.setState({ stateNewPass: "", errorNewPass: null, newPass: value });
@@ -94,7 +94,7 @@ class UpdateFamily extends React.Component {
             const { newPass } = this.state;
             if (value === "" || value !== newPass) {
                 stateConfirmPass = "error";
-                errorConfirmPass = "Please input your confirm pass";
+                errorConfirmPass = "Vui lòng nhập mật khẩu xác nhận";
                 this.setState({ stateConfirmPass, errorConfirmPass, confirmPass: value });
             } else {
                 this.setState({ stateConfirmPass: "", errorConfirmPass: null, confirmPass: value });
@@ -105,7 +105,7 @@ class UpdateFamily extends React.Component {
             if (value !== "") {
                 this.setState({ emailResetPass: value, stateEmailResetPass: "", errorEmailResetPass: null });
             } else {
-                this.setState({ emailResetPass: value, stateEmailResetPass: "error", errorEmailResetPass: "Please input your email" });
+                this.setState({ emailResetPass: value, stateEmailResetPass: "error", errorEmailResetPass: "Vui lòng nhập email" });
             }
         }
     }
@@ -134,16 +134,16 @@ class UpdateFamily extends React.Component {
     }
 
     handleChangeImg = (e) => {
-        this.setState({ 
-            fImage: e.target.files[0], 
-            currentUrlImg: URL.createObjectURL(e.target.files[0]) 
+        this.setState({
+            fImage: e.target.files[0],
+            currentUrlImg: URL.createObjectURL(e.target.files[0])
         });
     }
 
     handleSubmit = (fieldsValue) => {
 
-        const { fImage, isSetPass, stateNewPass, stateCurrentPass, stateConfirmPass } = this.state;
         const { updateFamily, alertError } = this.props;
+        const { fImage, isSetPass, stateNewPass, stateCurrentPass, stateConfirmPass } = this.state;
         const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
         const { user } = inforLogin;
 
@@ -186,7 +186,7 @@ class UpdateFamily extends React.Component {
     render() {
 
         const {
-           
+
             newPass,
             visible,
             isSetPass,
@@ -202,7 +202,7 @@ class UpdateFamily extends React.Component {
             errorConfirmPass,
             stateEmailResetPass,
             errorEmailResetPass,
-            
+
         } = this.state;
 
         const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
@@ -212,24 +212,21 @@ class UpdateFamily extends React.Component {
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="site-layout-background">
-                        <Row style={{ textAlign: "center" }}>
-                            <Col flex="30px">
-                                <Button onClick={this.handleClickBack} size="large" style={{ marginLeft: "10px" }} > <LeftOutlined /> </Button>
-                            </Col>
-                            <Col flex="auto">
-                                <div className="title-header">Family Account</div>
-                            </Col>
-                        </Row>
+                    <Header className="header-container">
+                        <div className="header-update-family-container">
+                            <Button onClick={this.handleClickBack} size="large" >
+                                <LeftOutlined /> 
+                            </Button>
+                            <div className="center-header-update-family-container"> Tài Khoản Gia Đình </div>
+                            <div></div>
+                        </div>
                     </Header>
-                    <Content className="site-layout-background" style={{ margin: 40 }}>
+                    <Content className="site-layout-background" style={{ margin: 20 }}>
                         <div className="family-account-container">
                             <div className="form-family-account">
                                 <Row justify="center" align="middle">
                                     <Col span={24}>
-
                                         <Form initialValues={{ "fName": user.fName }} size="large" onFinish={this.handleSubmit} >
-
                                             <Form.Item style={{ textAlign: "center", marginTop: 20 }}>
                                                 <div className="container-family-img">
                                                     {currentUrlImg === "" ? <img src={user.fImage} className="family-img" /> : <img src={currentUrlImg} className="family-img" />}
@@ -237,47 +234,47 @@ class UpdateFamily extends React.Component {
                                                 </div>
                                             </Form.Item>
 
-                                            <Form.Item name="fName" rules={[{ required: true, message: 'Please input family name!' }]}>
+                                            <Form.Item name="fName" rules={[{ required: true, message: 'Vui lòng nhập tên gia đình!' }]}>
                                                 <Input prefix={<i className="fa fa-user" aria-hidden="true"></i>} type="text" />
                                             </Form.Item>
 
                                             <Form.Item >
                                                 <Checkbox onChange={this.handleClickSetPassword}>
-                                                    <span style={{ fontSize: "18px" }}> <LockOutlined /> Set family password </span>
+                                                    <span style={{ fontSize: "18px" }}> <LockOutlined /> Đặt lại mật khẩu gia đình </span>
                                                 </Checkbox>
                                             </Form.Item>
 
                                             <Form.Item validateStatus={stateCurrentPass} help={errorCurrentPass} >
                                                 <Input
                                                     name="currentPass" value={currentPass} onChange={this.handleChangeInput}
-                                                    placeholder="current password" type="password" disabled={!isSetPass}
+                                                    placeholder="Mật khẩu hiện tại" type="password" disabled={!isSetPass}
                                                 />
                                             </Form.Item>
 
                                             <Form.Item validateStatus={stateNewPass} help={errorNewPass} >
                                                 <Input
                                                     name="newPass" value={newPass} onChange={this.handleChangeInput}
-                                                    placeholder="new password" type="password" disabled={!isSetPass}
+                                                    placeholder="Mật khẩu mới" type="password" disabled={!isSetPass}
                                                 />
                                             </Form.Item>
 
                                             <Form.Item validateStatus={stateConfirmPass} help={errorConfirmPass}>
                                                 <Input
                                                     name="confirmPass" value={confirmPass} onChange={this.handleChangeInput}
-                                                    placeholder="confirm password" type="password" disabled={!isSetPass}
+                                                    placeholder="Mật khẩu xác nhận" type="password" disabled={!isSetPass}
                                                 />
                                             </Form.Item>
 
-                                            <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Forgot password </div>
-                                            
+                                            <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
+
                                             <Modal
                                                 onOk={this.handleSend}
                                                 onCancel={this.handleCancel}
                                                 closable={false} visible={visible}
                                                 title="Please input email to reset password!"
                                                 footer={[
-                                                    <Button key="back" onClick={this.handleCancel}> Cancel </Button>,
-                                                    <Button key="submit" type="primary" onClick={this.handleSend}> Submit </Button>
+                                                    <Button key="back" onClick={this.handleCancel}> Đóng </Button>,
+                                                    <Button key="submit" type="primary" onClick={this.handleSend}> Gửi </Button>
                                                 ]}
                                             >
                                                 <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
@@ -288,8 +285,11 @@ class UpdateFamily extends React.Component {
                                                 </Form.Item>
                                             </Modal>
                                             <br /><br />
-                                            <Form.Item>
-                                                <Button type="primary" htmlType="submit" className="login-form-button"> Save </Button>
+                                            <Form.Item style={{ textAlign: "center" }}>
+                                                <Button type="primary" htmlType="submit" className="login-form-button"> Lưu </Button>
+                                                {this.props.changingFamilyPassword && !this.props.changedFamilyPassword &&
+                                                    <Spin tip="Đang xử lý..." />
+                                                }
                                             </Form.Item>
                                         </Form>
                                     </Col>
@@ -304,6 +304,13 @@ class UpdateFamily extends React.Component {
     }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        changedFamilyPassword: state.family.changedFamilyPassword,
+        changingFamilyPassword: state.family.changingFamilyPassword
+    }
+}
+
 const actionCreators = {
     alertError: alertActions.error,
     updateFamily: familyActions.updateFamily,
@@ -311,4 +318,4 @@ const actionCreators = {
     requestResetPassword: memberActions.requestResetPassword
 }
 
-export default connect(null, actionCreators)(UpdateFamily);
+export default connect(mapStateToProps, actionCreators)(UpdateFamily);
