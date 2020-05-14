@@ -34,11 +34,11 @@ class Setting extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="header-setting-container">
-                            <Button onClick={this.handleClickBack} size="large"> 
+                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}> 
                                 <LeftOutlined /> 
                             </Button>
                             <div className="center-header-setting-container">Cài Đặt</div>
-                            <div></div>
+                            <div style={{width: "5%"}}></div>
                         </div>
                     </Header>
                     <Content >

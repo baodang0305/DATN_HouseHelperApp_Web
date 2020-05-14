@@ -1,6 +1,8 @@
 .form-item-add-event {
-    margin: 10px;
-    background-color: white;
+    margin: 10px 20px;
+    border-radius: 2px;
+    background-color: hsl(0, 0%, 100%);
+    box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
 }
 
 .name-event-input {
@@ -21,7 +23,7 @@
 }
 
 .list-users-asign-add-event-container {
-    width: 600px;
+    width: 800px;
     display: flex;
     overflow-x: hidden;
     justify-content: space-between;
@@ -33,32 +35,33 @@
 }
 
 .avatar-add-event-container {
-    width: 150px;
+    width: 160px;
     
 }
 
 .check-asign-add-event {
+    color: #52c41a;
     position: absolute;
-    font-size: 20px;
-    left: 44%;
-    top: 23%;
+    font-size: 30px;
+    left: 42%;
+    top: 12%;
 }
 
 .icon-input-add-event,
 .title-input-add-event {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .icon-input-add-event {
-    margin: 0px 5px 0px 20px;
+    margin: 0px 4px 0px 20px;
 }
 
 .row-form-item-add-event {
-    align-items: center;
     margin: 20px 0px;
+    align-items: center;
 }
 
-.col-form-item-add-event {
+.col-form-item-add-event {  
     text-align: center;
 }
 
@@ -66,3 +69,104 @@
     width: 70%;
 }
 
+.name-user-add-event {
+    margin-top: 4px;
+	display: inline-block;
+	background-color: #f2f3f5;
+	color: #385898;
+	padding: 5px 10px;
+	font-weight: 600;
+	border-radius: 10px;
+}
+
+.upload-img-add-calendar-container {
+    display: flex;
+    justify-content: center;
+}
+
+.upload-img-ui-add-canlendar{
+    position: relative;
+    cursor: pointer;
+    border: groove thin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 35px;
+}
+
+.input-file-add-calendar {
+    width: 150px;
+    height: 35px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    position: absolute;
+}
+
+.delete-img-button {
+    margin-left: 5px;
+    margin-top: 5px;
+    width: 150px;
+    height: 35px; 
+    border: groove thin; 
+    display: flex;
+    align-items: center; 
+    justify-content: center;
+    cursor: pointer;
+}
+
+.repeat-col-add-event {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-repeat-type-container {
+    display: flex;
+    flex-direction: row;
+    width: 70%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tags-day-of-week-container {
+    border-width: thin;
+    border-style: solid;
+    border-color: #d9d9d9;
+    margin-top: 5px;
+    width: 70%;
+    padding: 8px 2px;
+    justify-content: center;
+    background-color: #385898;
+}
+
+.tag-add-event {
+    background-color: rgb(250, 250, 250);
+    padding: 0px 5px;
+    border-radius: 2px;
+    margin-right: 10px;
+}
+
+.title-tag-add-event {
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.close-icon-tag-add-event {
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.icon-loading-add-event {
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}

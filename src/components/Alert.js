@@ -7,6 +7,7 @@ import { alertActions } from "../actions/alert.actions";
 import history from "../helpers/history";
 import moment from 'moment';
 import 'moment/locale/vi';
+import { calendarActions } from "../actions/calendar.actions";
 
 class Alert extends React.Component {
 
@@ -14,6 +15,11 @@ class Alert extends React.Component {
         super(props);
         history.listen((location, action) => { this.props.clearAlerts(); });
         this.notify = this.notify.bind(this);
+    }
+
+    onClose = () => {
+        const { stopRemindEventNotification } = this.props;
+        stopRemindEventNotification();
     }
 
     notify = () => {
@@ -30,13 +36,14 @@ class Alert extends React.Component {
                     <div>{moment(taskNotification.dueDate).calendar()}</div>
                 </div>
                 : alert.message, {
-            autoClose: alert.type === "remindTaskNotification" || alert.type === "nudgeTaskNotification" ? false : 2000,
-            type: alert.type === "remindTaskNotification" || alert.type === "nudgeTaskNotification" ? "error" : alert.type,
+            autoClose: alert.type === "remindTaskNotification" || alert.type === "nudgeTaskNotification" || alert.type === "remindEventNotification" ? false : 2000,
+            type: alert.type === "remindTaskNotification" || alert.type === "nudgeTaskNotification" || alert.type === "remindEventNotification" ? "error" : alert.type,
             closeButton: true,
             newestOnTop: true,
             transition: Bounce,
-            position: alert.type === "remindTaskNotification" || alert.type === "nudgeTaskNotification" ? 'bottom-right' : 'top-center',
-            containerId: 'MainPage'
+            position: alert.type === "remindTaskNotification" || alert.type === "nudgeTaskNotification" || alert.type === "remindEventNotification" ? 'bottom-right' : 'top-center',
+            containerId: 'MainPage',
+            onClose: alert.type === "remindEventNotification" ? this.onClose : false
         });
 
     }
@@ -53,17 +60,13 @@ class Alert extends React.Component {
 
 }
 
-function mapStateToProps(state) {
-
-    const { alert } = state;
-    return { alert };
-
-}
+const mapStateToProps = (state) => ({
+    alert: state.alert
+});
 
 const actionCreators = {
-
-    clearAlerts: alertActions.clear
-
+    clearAlerts: alertActions.clear,
+    stopRemindEventNotification: calendarActions.stopRemindEventNotification
 };
 
 export default connect(mapStateToProps, actionCreators)(Alert);

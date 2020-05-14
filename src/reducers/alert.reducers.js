@@ -31,6 +31,12 @@ function alert(state = {}, action) {
                 data: action.data
             }
         }
+        case alertConstants.REMIND_EVENT_NOTIFICATION: {
+            return {
+                type: 'remindEventNotification',
+                message: action.data.message
+            }
+        }
         default: return state;
     }
 }

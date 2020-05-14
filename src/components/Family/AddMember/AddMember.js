@@ -124,11 +124,11 @@ class AddMember extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="header-add-member-container">
-                            <Button onClick={this.handleClickBack} size="large" >
+                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}>
                                 <LeftOutlined />
                             </Button>
                             <div className="center-header-add-member-container"> Tạo Thông Tin Thành Viên </div>
-                            <div></div>
+                            <div style={{width: "5%"}}></div>
                         </div>
                     </Header>
                     <Content className="site-layout-background" style={{ margin: 20 }}>
@@ -137,14 +137,12 @@ class AddMember extends React.Component {
                                 <Form onFinish={this.handleSubmit} size="large" initialValues={{ remember: true }} >
                                     <Form.Item style={{ textAlign: "center" }}>
                                         {avatarType === "camera" ?
-                                            (
-                                                <div className="container-profile-img">
-                                                    <img src={currentUrlImg} className="img-profile" />
-                                                    <input onChange={this.handleChangeImg} type="file" className="input-profile-img" />
-                                                </div>
-                                            ) : (
-                                                <img src={profileImg} className="img-profile" style={{ backgroundColor: avatarType }} />
-                                            )
+                                            <div className="container-profile-img">
+                                                <img src={currentUrlImg} className="img-profile" />
+                                                <input onChange={this.handleChangeImg} type="file" className="input-profile-img" />
+                                            </div>
+                                            :
+                                            <img src={profileImg} className="img-profile" style={{ backgroundColor: avatarType }} />
                                         }
                                     </Form.Item>
 

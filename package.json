@@ -49,7 +49,7 @@
     "antd": "^4.0.2",
     "axios": "^0.19.2",
     "emoji-mart": "^3.0.0",
-    "firebase": "^7.13.1",
+    "firebase": "^7.14.3",
     "history": "^4.10.1",
     "moment": "^2.24.0",
     "peerjs": "^1.2.0",

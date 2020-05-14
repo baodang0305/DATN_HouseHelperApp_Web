@@ -27,27 +27,27 @@ class DashboardMenu extends React.Component {
 
                     <Menu.Item key="1" >
                         <HomeOutlined className="size-icon" />
-                        <Link to="/family">Family</Link>
+                        <Link to="/family">Gia Đình</Link>
                     </Menu.Item>
 
                     <Menu.Item key="2">
                         <CalendarOutlined className="size-icon" />
-                        <Link to="/calendar">Calendar</Link>
+                        <Link to="/calendar">Lịch</Link>
                     </Menu.Item>
 
                     <Menu.Item key="3">
                         <CheckOutlined className="size-icon" />
-                        <Link to="/tasks">Tasks</Link>
+                        <Link to="/tasks">Công Việc</Link>
                     </Menu.Item>
 
                     <Menu.Item key="4">
                         <GiftOutlined className="size-icon" />
-                        <Link to="#">Rewards</Link>
+                        <Link to="#">Phần Thưởng</Link>
                     </Menu.Item>
 
                     <Menu.Item key="5">
                         <ShoppingCartOutlined className="size-icon" />
-                        <Link to="#">Groceries</Link>
+                        <Link to="#">Tạp Hóa</Link>
                     </Menu.Item>
 
                 </Menu>

@@ -55,8 +55,12 @@ const Root = () => {
                     <PrivateRoute exact path="/family/setting/update-family" component={UpdateFamily} />
 
                     <PrivateRoute exact path="/calendar" component={Calendar} />
-                    <PrivateRoute exact path="/calendar/add-event" component={AddEvent} />
-
+                    <PrivateRoute exact path="/calendar/add-event">
+                        <AddEvent type="add"/>
+                    </PrivateRoute>
+                    <PrivateRoute exact path="/calendar/edit-event">
+                        <AddEvent type="edit"/>
+                    </PrivateRoute>
                     <Route exact path="/" component={Home} />
                 </Switch>
             </Router>

@@ -43,11 +43,11 @@ class Member extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="header-member-container">
-                            <Button onClick={this.handleClickBack} size="large" >
+                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}>
                                 <LeftOutlined />
                             </Button>
-                            <div className="center-header-member-container"> {member.mName}</div>
-                            <div>
+                            <div className="center-header-member-container" > {member.mName}</div>
+                            <div style={{width: "5%"}}>
                                 {(inforLogin.user.mIsAdmin || (inforLogin.user._id === member._id)) &&
                                     <Button size="large">
                                         <Link to={{ pathname: "/family/setting/my-account", state: { member } }} >
@@ -68,9 +68,6 @@ class Member extends React.Component {
                             </div>
                         </div>
                         <div className="second-row-member-content-container" >
-                            <div style={{ height: "200px" }}>
-
-                            </div>
                             <List
                                 dataSource={listTasks}
                                 pagination={{ onChange: page => { console.log(page); }, pageSize: 3, }}

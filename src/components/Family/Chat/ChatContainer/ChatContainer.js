@@ -385,6 +385,10 @@ class ChatContainer extends React.Component {
 
     }
 
+    componentWillUnmount() {
+        socket && socket.connected && socket.close();
+    }
+
     onClickOutsideHandler = (event) => {
         if (this.state.isShowEmojis && !this.toggleContainer.current.contains(event.target)) {
             this.setState({ isShowEmojis: false });
@@ -686,9 +690,6 @@ class ChatContainer extends React.Component {
             if (localStream) {
                 localStream.getAudioTracks()[0].stop();
                 localStream.getVideoTracks()[0].stop();
-                // localStream.getTracks().forEach(function (track) {
-                //     track.stop();
-                //});
             }
             if (peerConn) {
                 peerConn.removeStream(localStream)
@@ -741,9 +742,6 @@ class ChatContainer extends React.Component {
                 if (localStream) {
                     localStream.getAudioTracks()[0].stop();
                     localStream.getVideoTracks()[0].stop();
-                    // localStream.getTracks().forEach(function (track) {
-                    //     track.stop();
-                    //});
                 }
                 peerConn.removeStream(localStream);
                 peerConn.close();
@@ -782,9 +780,6 @@ class ChatContainer extends React.Component {
                 if (localStream) {
                     localStream.getAudioTracks()[0].stop();
                     localStream.getVideoTracks()[0].stop();
-                    // localStream.getTracks().forEach(function (track) {
-                    //     track.stop();
-                    // });
                 }
                 peerConn.removeStream(localStream);
                 peerConn.close();
@@ -855,9 +850,6 @@ class ChatContainer extends React.Component {
                 if (localStream) {
                     localStream.getAudioTracks()[0].stop();
                     localStream.getVideoTracks()[0].stop();
-                    // localStream.getTracks().forEach(function (track) {
-                    //     track.stop();
-                    // });
                 }
                 if (peerConn) {
                     peerConn.removeStream(localStream)
@@ -981,7 +973,6 @@ class ChatContainer extends React.Component {
                             </span>
                         </>
                     );
-
                 }
 
             } else if (activeTab === "recent") {
@@ -1003,11 +994,9 @@ class ChatContainer extends React.Component {
                             </span>
                         </>
                     );
-
                 }
 
             } else {
-
                 if (familyGroup) {
                     return (
                         <>
@@ -1015,15 +1004,10 @@ class ChatContainer extends React.Component {
                             <div style={{ fontWeight: "bold" }}>{familyGroup.fName}</div>
                         </>
                     );
-
                 }
-
             }
-
         }
-
         const showMessages = () => {
-
             if (activeTab === "family-group") {
                 if (familyGroup) {
                     if (userIsEnteringGroup && userIsEnteringGroup.mID !== user._id) {
@@ -1048,9 +1032,7 @@ class ChatContainer extends React.Component {
                     }
 
                 }
-
             }
-
         }
 
         return (
@@ -1063,21 +1045,20 @@ class ChatContainer extends React.Component {
                     onOk={this.handleConfirmNavigationClick}
                 >
                     {!userIsOffer && !userOffer ?
-                        <p>Bạn muốn muốn rời khỏi trang hiện tại?</p>
+                        <p>Bạn muốn rời khỏi?</p>
                         :
-                        <p>Bạn muốn rời khỏi kết thúc cuộc gọi hiện tại?</p>
+                        <p>Bạn muốn rời khỏi và kết thúc cuộc gọi hiện tại?</p>
                     }
-
                 </Modal>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="header-chat-container">
-                            <Button onClick={this.handleClickBack} size="large">
+                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}>
                                 <LeftOutlined />
                             </Button>
                             <div className="center-header-chat-container"> Tin Nhắn </div>
-                            <div></div>
+                            <div style={{width: "5%"}}></div>
                         </div>
                     </Header>
                     <Content style={{ margin: 20 }}>

@@ -6,7 +6,7 @@ import {
     CloseOutlined,
     SettingOutlined,
     MessageOutlined,
-    NotificationOutlined,
+    AlertOutlined  ,
     UsergroupAddOutlined
 } from "@ant-design/icons";
 import React from "react";
@@ -14,7 +14,7 @@ import moment from 'moment';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import socketIoClient from "socket.io-client";
-import { Layout, List, Avatar, Button, Skeleton, Badge, Spin } from "antd";
+import { Layout, List, Avatar, Button, Skeleton, Badge, Spin, Divider } from "antd";
 
 import "./Family.css";
 import history from "../../helpers/history";
@@ -24,6 +24,7 @@ import { indexActions } from "../../actions/index.actions";
 import { familyActions } from "../../actions/family.actions";
 import { memberActions } from "../../actions/member.actions";
 
+let socket;
 const { Header, Content, Footer } = Layout;
 
 class Family extends React.Component {
@@ -47,7 +48,7 @@ class Family extends React.Component {
         const { listNews, listMembers } = this.props;
         this.setState({ listNews, listMembers });
 
-        const socket = socketIoClient(apiUrlTypes.heroku);
+        socket = socketIoClient(apiUrlTypes.heroku);
 
         socket.on('connect', function () {
             socket.emit('authenticate', { token });
@@ -89,7 +90,10 @@ class Family extends React.Component {
                 this.setState({ listNews });
             }
         });
+    }
 
+    componentWillUnmount() {
+        socket && socket.connected && socket.close();
     }
 
     handleChooseMember = (member) => {
@@ -137,7 +141,7 @@ class Family extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="header-family-container" >
-                            <div>
+                            <div style={{width: "10%"}}>
                                 <Button size="large">
                                     <Link to="/family/setting">
                                         <SettingOutlined className="icon-header-family" />
@@ -153,7 +157,7 @@ class Family extends React.Component {
                                 </Button>
                             </div>
                             <div className="center-header-family-container">Gia Đình</div>
-                            <div>
+                            <div style={{width: "10%", display: 'flex', justifyContent: 'flex-end'}}>
                                 {user.mIsAdmin &&
                                     <Button size="large">
                                         <Link to="/family/add-member">
@@ -164,14 +168,12 @@ class Family extends React.Component {
                             </div>
                         </div>
                     </Header>
-
                     <Content >
-                        <div className="first-row-family-content-container">
-                            <div className="title-first-row-family-content-container">
-                                <UsergroupAddOutlined />
-                                &ensp;
-                                <div className="title-first-row-family-content"> Tất cả thành viên </div>
-                            </div>
+                        <div className="first-row-family-content-container" >
+                            <Divider orientation="left" style={{padding: "10px 20px", margin: 0}}>
+                                <UsergroupAddOutlined/> 
+                                &nbsp;TẤT CẢ THÀNH VIÊN
+                            </Divider>
                             {gettingListMembers && !gotListMembers &&
                                 <div className="spin-get-list-members"><Spin tip="Loading..." /> </div>
                             }
@@ -186,13 +188,10 @@ class Family extends React.Component {
                                 )}
                             </div>
                         </div>
-
-                        <div className="second-row-family-content-container">
-                            <div className="title-second-row-family-content-container">
-                                <NotificationOutlined />
-                                &ensp;
-                                <div className="title-second-row-family-content">Bảng tin gia đình</div>
-                            </div>
+                        <div className="second-row-family-content-container" >
+                            <Divider orientation="left" style={{padding: "10px 20px", margin: 0}}> 
+                                <AlertOutlined  /> &nbsp; BẢNG TIN GIA ĐÌNH
+                            </Divider>
                             {gettingListNews && !gotListNews &&
                                 <div className="spin-get-list-news"> <Spin tip="Loading..." /> </div>
                             }

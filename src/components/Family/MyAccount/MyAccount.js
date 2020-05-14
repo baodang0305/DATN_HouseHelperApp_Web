@@ -381,11 +381,11 @@ class MyAccount extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container">
                         <div className="header-my-account-container">
-                            <Button onClick={this.handleClickBack} size="large" >
+                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}>
                                 <LeftOutlined />
                             </Button>
                             <div className="center-header-my-account-container">Tài Khoản Của Tôi</div>
-                            <div></div>
+                            <div style={{width: "5%"}}></div>
                         </div>
                     </Header>
                     <Content className="site-layout-background" style={{ margin: 20 }}>

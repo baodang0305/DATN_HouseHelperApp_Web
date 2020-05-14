@@ -33,11 +33,51 @@
 }
 
 .avatar-event-container {
-    width: 260px;
+    width: 283px;
 }
 
 .pre-icon-calendar,
 .next-icon-calendar {
     font-size: 25px;
+}
+
+.left-header-calendar-container {
+    justify-content: center;
+}
+
+.border-avatar-calendar {
+    border: groove thin #2985ff;
+}
+
+.event-tag {
+    width: 100%;
+    white-space: nowrap;
+    height: 20;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 5px 10px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+
+.right-header-calendar-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 25%;
+}
+
+.remind-event-bell {
+    font-size: 19px;
+    animation: 1.2s remind-event-bell-animation;
+    animation-iteration-count: infinite;
+}
+
+@keyframes remind-event-bell-animation {
+    100% {
+        color: red;
+        transition: all 10s;
+        transform: scaleX(1.2) scaleY(1.2);
+    }
 }
 
