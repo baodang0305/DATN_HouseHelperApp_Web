@@ -4,7 +4,6 @@ import {
     LeftOutlined,
     TeamOutlined,
     BellOutlined,
-    CloseOutlined,
     CheckOutlined,
     RightOutlined,
     UploadOutlined,
@@ -18,7 +17,7 @@ import moment from "moment";
 import firebase from "firebase/app";
 import { connect } from "react-redux";
 import { storage } from "../../../helpers/firebaseConfig";
-import { Layout, Row, Col, Button, Form, Input, Avatar, DatePicker, Select, Spin, Alert } from "antd";
+import { Layout, Row, Col, Button, Form, Input, Avatar, DatePicker, Select, Spin, Alert, Modal, Divider } from "antd";
 
 import "./AddEvent.css";
 import history from "../../../helpers/history";
@@ -26,7 +25,6 @@ import DashboardMenu from "../../DashboardMenu/DashboardMenu";
 import { familyActions } from "../../../actions/family.actions";
 import { calendarActions } from "../../../actions/calendar.actions";
 
-const { Option } = Select;
 const { TextArea } = Input;
 const { Header, Content, Footer } = Layout;
 
@@ -41,14 +39,76 @@ class AddEvent extends React.Component {
             reminder: 0,
             image: null,
             error: false,
-            idCurrentItem: 1,
+            idScrollListMembers: 1,
+            idScrollDateOfMonth: 1,
             currentUrlImg: "",
-            repeat: { type: "no-repeat", end: null, day: [] },
+            repeatTypeOfMonth: 'day',
+            repeatTypeOfYear: 'day',
+            repeat: { type: "no-repeat", end: null, day: [], date: null, order: null, month: null },
             dateTime: { start: null, end: null },
-            itemsDayOfWeek: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"]
+
+            errorModalForm: "",
+            activeTabNestedRepeatType: 'day',
+            showRepeatModal: false,
         }
-        this.scrollBar = React.createRef();
+        this.scrollBarListMembers = React.createRef();
+        this.scrollBarDateOfmonth = React.createRef();
         this.inputFile = React.createRef();
+    }
+
+    mapRepeatEventEditToRepeatForm = () => {
+        let { repeat, repeatTypeOfMonth, repeatTypeOfYear, activeTabNestedRepeatType } = this.state;
+        const { event } = history.location.state;
+
+        if (event.repeat) {
+            repeat.end = event.repeat.end;
+            if (event.repeat.type === "day") {
+                repeat.type = "day";
+            }
+            else if (event.repeat.type === "week") {
+                repeat.type = "week";
+                repeat.day = event.repeat.day ? event.repeat.day : [];
+            }
+            else if (event.repeat.type === "month") {
+                repeat.type = "month";
+                if (event.repeat.date) {
+                    repeat.date = event.repeat.date;
+                    repeatTypeOfMonth = "date"
+                }
+                else {
+                    repeat.order = event.repeat.order;
+                    repeat.day = [...event.repeat.day];
+                    repeatTypeOfMonth = "day";
+                    activeTabNestedRepeatType = "day";
+                }
+            }
+            else if (event.repeat.type === "year") {
+                repeat.type = "year";
+                repeat.month = event.repeat.month;
+                if (event.repeat.date) {
+                    repeat.date = event.repeat.date;
+                    repeatTypeOfYear = "date";
+                    activeTabNestedRepeatType = "date";
+                }
+                else {
+                    repeatTypeOfYear = "day";
+                    repeat.order = event.repeat.order;
+                    repeat.day = [...event.repeat.day];
+                    activeTabNestedRepeatType = "day";
+                }
+            }
+        }
+        else {
+            repeat.type = "no-repeat"
+        }
+
+        this.setState({
+            repeat,
+            repeatTypeOfMonth,
+            repeatTypeOfYear,
+            activeTabNestedRepeatType,
+        });
+
     }
 
     componentDidMount() {
@@ -56,44 +116,12 @@ class AddEvent extends React.Component {
         getListMembers();
 
         if (type === "edit") {
-            let { itemsDayOfWeek, assign, repeat } = this.state;
+            let { assign } = this.state;
             const { event } = history.location.state;
-
-            event.repeat && event.repeat.type === "week" && event.repeat.day.length > 0 &&
-                event.repeat.day.forEach(element => {
-                    const convertElement =
-                        element == "1" && "Thứ 2" ||
-                        element == "2" && "Thứ 3" ||
-                        element == "3" && "Thứ 4" ||
-                        element == "4" && "Thứ 5" ||
-                        element == "5" && "Thứ 6" ||
-                        element == "6" && "Thứ 7" ||
-                        element == "0" && "Chủ nhật"
-                    const index = itemsDayOfWeek.findIndex(item => item === convertElement);
-                    index !== -1 && itemsDayOfWeek.splice(index, 1);
-                });
-
             event.assign && event.assign.length > 0 && event.assign.forEach(element => assign = [...assign, element._id]);
-
-            if (event.repeat) {
-                if (event.repeat.type === "day") {
-                    repeat.type = "day";
-                    repeat.end = event.repeat.end;
-                }
-                else if (event.repeat.type === "week") {
-                    repeat.type = "week";
-                    repeat.end = event.repeat.end;
-                    repeat.day = event.repeat.day;
-                }
-            }
-            else {
-                repeat.type = "no-repeat"
-            }
-
+            this.mapRepeatEventEditToRepeatForm();
             this.setState({
-                repeat,
-                assign: assign,
-                itemsDayOfWeek,
+                assign,
                 name: event.name,
                 notes: event.notes,
                 reminder: event.reminder,
@@ -107,36 +135,52 @@ class AddEvent extends React.Component {
         history.push("/calendar");
     }
 
-    handleClickPre = () => {
-        const { idCurrentItem } = this.state;
-        if (idCurrentItem > 1) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft - 160;
-            this.setState({ idCurrentItem: idCurrentItem - 1 })
+    handleClickMemberPre = () => {
+        const { idScrollListMembers } = this.state;
+        if (idScrollListMembers > 1) {
+            this.scrollBarListMembers.current.scrollLeft = this.scrollBarListMembers.current.scrollLeft - 160;
+            this.setState({ idScrollListMembers: idScrollListMembers - 1 })
         }
     }
 
-    handleClickNext = () => {
+    handleClickMemberNext = () => {
 
-        const { idCurrentItem } = this.state;
+        const { idScrollListMembers } = this.state;
         const { listMembers } = this.props;
         const numberOfMembers = listMembers ? listMembers.length : 0
 
-        if (idCurrentItem < numberOfMembers) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft + 160;
-            this.setState({ idCurrentItem: idCurrentItem + 1 });
+        if (idScrollListMembers < numberOfMembers) {
+            this.scrollBarListMembers.current.scrollLeft = this.scrollBarListMembers.current.scrollLeft + 160;
+            this.setState({ idScrollListMembers: idScrollListMembers + 1 });
+        }
+    }
+
+    handleClickDateOfMonthPre = () => {
+        const { idScrollDateOfMonth } = this.state;
+        if (idScrollDateOfMonth > 8) {
+            this.scrollBarDateOfmonth.current.scrollLeft = this.scrollBarDateOfmonth.current.scrollLeft - 350;
+            this.setState({ idScrollDateOfMonth: idScrollDateOfMonth - 8 })
+        }
+    }
+
+    handleClickDateOfMonthNext = () => {
+        const { idScrollDateOfMonth } = this.state;
+        if (idScrollDateOfMonth < 24) {
+            this.scrollBarDateOfmonth.current.scrollLeft = this.scrollBarDateOfmonth.current.scrollLeft + 350;
+            this.setState({ idScrollDateOfMonth: idScrollDateOfMonth + 8 });
         }
     }
 
     handleSelectStartDate = (date, dateString) => {
         const { dateTime } = this.state;
-        if (date) { dateTime.start = date._d }
+        if (dateString) { dateTime.start = new Date(dateString) }
         else { dateTime.start = null }
         this.setState({ dateTime });
     }
 
     handleSelectEndDate = (date, dateString) => {
         const { dateTime } = this.state;
-        if (date) { dateTime.end = date._d }
+        if (dateString) { dateTime.end = new Date(dateString) }
         else { dateTime.end = null }
         this.setState({ dateTime });
     }
@@ -162,42 +206,18 @@ class AddEvent extends React.Component {
         this.setState({ currentUrlImg: "", image: null });
     }
 
-    handleChangeRepeatType = (value) => {
-        const { repeat } = this.state;
-        repeat.type = value;
-        this.setState({ repeat });
-    }
-
     handleSelectDaysOfWeek = (value) => {
-        const { repeat, itemsDayOfWeek } = this.state;
-        const convertValue =
-            value === "Thứ 2" && "1" ||
-            value === "Thứ 3" && "2" ||
-            value === "Thứ 4" && "3" ||
-            value === "Thứ 5" && "4" ||
-            value === "Thứ 6" && "5" ||
-            value === "Thứ 7" && "6" ||
-            value === "Chủ nhật" && "0"
-
-        repeat.day = [...repeat.day, convertValue];
-        const index = itemsDayOfWeek.findIndex(element => element === value);
-        index !== -1 && itemsDayOfWeek.splice(index, 1);
-        this.setState({ itemsDayOfWeek, repeat });
-    }
-
-    handleDeleteDayOfWeek = (item) => {
-        const { repeat, itemsDayOfWeek } = this.state;
-        const convertItem =
-            item === "1" && "Thứ 2" ||
-            item === "2" && "Thứ 3" ||
-            item === "3" && "Thứ 4" ||
-            item === "4" && "Thứ 5" ||
-            item === "5" && "Thứ 6" ||
-            item === "6" && "Thứ 7" ||
-            item === "0" && "Chủ nhật"
-        const index = repeat.day.findIndex(element => element === item)
-        index !== -1 && repeat.day.splice(index, 1);
-        this.setState({ repeat, itemsDayOfWeek: [...itemsDayOfWeek, convertItem] });
+        const { repeat } = this.state;
+        const indexItem = (repeat && repeat.day && repeat.day.length > 0) ? repeat.day.findIndex(item => item === value) : -1;
+        if (indexItem === -1) {
+            repeat.type === "week"
+                ? repeat.day = [...repeat.day, value]
+                : repeat.day = [...value]
+        }
+        else {
+            repeat.day.splice(indexItem, 1);
+        }
+        this.setState({ repeat });
     }
 
     handleAssign = (mID) => {
@@ -212,17 +232,35 @@ class AddEvent extends React.Component {
 
     handleSubmit = async () => {
 
-        let { repeat } = this.state;
         const { addEvent, editEvent, type } = this.props;
-        const { name, assign, dateTime, reminder, image, notes, currentUrlImg } = this.state;
-
-        if (!repeat || repeat.type === "no-repeat") { repeat = null }
-        else if (repeat.type === "day") { delete repeat.day }
+        const { name, assign, dateTime, reminder, image, notes, currentUrlImg, repeatTypeOfMonth, repeatTypeOfYear, repeat } = this.state;
+        let newRepeat = repeat;
 
         if ((name && name.replace(/\s/g, '').length > 0) &&
             (assign.length !== 0) &&
             (dateTime.start !== null) &&
             (dateTime.end !== null)) {
+
+            if (!newRepeat || newRepeat.type === "no-repeat") { newRepeat = null }
+            else if (newRepeat.type === "day") { delete newRepeat.day }
+            else if (newRepeat.type === "week") { delete newRepeat.date; delete newRepeat.order; }
+            else if (newRepeat.type === "month") {
+                delete newRepeat.month;
+                if (repeatTypeOfMonth === "date") {
+                    delete newRepeat.day;
+                    delete newRepeat.order;
+                } else {
+                    delete newRepeat.date;
+                }
+            }
+            else if (newRepeat.type === "year") {
+                if (repeatTypeOfYear === "date") {
+                    delete newRepeat.day;
+                    delete newRepeat.order;
+                } else {
+                    delete newRepeat.date;
+                }
+            }
 
             if (image) {
                 const uploadTask = storage.ref().child(`images/${image.name}`).put(image);
@@ -242,12 +280,12 @@ class AddEvent extends React.Component {
                     return null;
                 }, function () {
                     uploadTask.snapshot.ref.getDownloadURL().then(function (photo) {
-                        
-                        if(type === "add"){
-                            addEvent({ name, assign, dateTime, reminder, repeat, photo, notes })
+
+                        if (type === "add") {
+                            addEvent({ name, assign, dateTime, reminder, repeat: newRepeat, photo, notes })
                         } else {
                             const { event } = history.location.state;
-                            editEvent({ "_id": event._id, name, assign, dateTime, reminder, repeat, photo, notes });
+                            editEvent({ "_id": event._id, name, assign, dateTime, reminder, repeat: newRepeat, photo, notes });
                         }
                     });
                 })
@@ -256,12 +294,12 @@ class AddEvent extends React.Component {
                 if (type === "edit") {
                     const { event } = history.location.state;
                     currentUrlImg ?
-                        editEvent({ "_id": event._id, name, assign, dateTime, reminder, repeat, photo: currentUrlImg, notes })
+                        editEvent({ "_id": event._id, name, assign, dateTime, reminder, repeat: newRepeat, photo: currentUrlImg, notes })
                         :
-                        editEvent({ "_id": event._id, name, assign, dateTime, reminder, repeat, notes })
+                        editEvent({ "_id": event._id, name, assign, dateTime, reminder, repeat: newRepeat, notes })
                 }
                 else {
-                    addEvent({ name, assign, dateTime, reminder, repeat, notes })
+                    addEvent({ name, assign, dateTime, reminder, repeat: newRepeat, notes })
                 }
             }
             this.setState({ error: false })
@@ -277,9 +315,185 @@ class AddEvent extends React.Component {
         deleteEvent({ "eID": event._id });
     }
 
+    renderOrderWeekOfMonth = () => {
+        const { repeat } = this.state
+        const children = [];
+        for (let i = 0; i <= 5; i++) {
+            children.push(
+                <div key={i} className="avatar-custom-container"
+                    onClick={() => {
+                        repeat.order === i
+                            ? repeat.order = null
+                            : repeat.order = i
+                        this.setState({ repeat })
+                    }}
+                >
+                    <Avatar size={30}
+                        style={{
+                            fontSize: 12, opacity: repeat.order === i ? 0.5 : 1,
+                            borderColor: repeat.order === i && '#1890ff',
+                            borderStyle: repeat.order === i && 'groove',
+                            borderWidth: repeat.order === i && 2,
+                        }} >{i}</Avatar>
+                    {repeat.order === i ? <CheckOutlined className="check-selected-day-of-week" /> : null}
+                </div>
+            )
+        }
+        return children;
+    }
+
+    convertDayOfWeek = (item) => {
+        const result =
+            item === 1 && "T2" ||
+            item === 2 && "T3" ||
+            item === 3 && "T4" ||
+            item === 4 && "T5" ||
+            item === 5 && "T6" ||
+            item === 6 && "T7" ||
+            item === 0 && "CN"
+        return result;
+    }
+
+    checkSelectedDayOfWeek = (value) => {
+        const { repeat } = this.state;
+        return repeat && repeat.day && repeat.day.length > 0 ? repeat.day.findIndex(item => item === value) : -1;
+    }
+
+    renderDayOfWeek = () => {
+        const children = [];
+        for (let i = 0; i <= 6; i++) {
+            children.push(
+                <div className="avatar-custom-container" onClick={() => this.handleSelectDaysOfWeek(i)} key={i} >
+                    <Avatar size={30}
+                        style={{
+                            fontSize: 12, opacity: this.checkSelectedDayOfWeek(i) !== -1 ? 0.5 : 1,
+                            borderColor: this.checkSelectedDayOfWeek(i) !== -1 && '#1890ff',
+                            borderStyle: this.checkSelectedDayOfWeek(i) !== -1 && 'groove',
+                            borderWidth: this.checkSelectedDayOfWeek(i) !== -1 && 2,
+                        }}
+                    >{this.convertDayOfWeek(i)}</Avatar>
+                    {this.checkSelectedDayOfWeek(i) !== -1 ? <CheckOutlined className="check-selected-day-of-week" /> : null}
+                </div>
+            )
+        }
+        return children;
+    }
+
+    renderDateOfMonth = () => {
+        const { repeat } = this.state;
+        const children = [];
+        for (let i = 0; i <= 31; i++) {
+            children.push(
+                <div style={{ textAlign: "center" }} key={i}>
+                    <div className="date-of-month-modal-item" >
+                        <Avatar
+                            size={30}
+                            style={{
+                                fontSize: 12, opacity: repeat.date === i ? 0.5 : 1,
+                                borderColor: repeat.date === i && '#1890ff',
+                                borderStyle: repeat.date === i && 'groove',
+                                borderWidth: repeat.date === i && 2,
+                            }}
+                            onClick={() => { repeat.date = i; this.setState({ repeat }); }}
+                        >{i}</Avatar>
+                        {repeat.date === i
+                            ? <CheckOutlined
+                                className="check-selected-date-of-month"
+                                onClick={() => { repeat.date = null; this.setState({ repeat }) }}
+                            />
+                            : null
+                        }
+                    </div>
+                </div>
+            )
+        }
+        return children;
+    }
+
+    renderMonthOfYear = () => {
+        const { repeat } = this.state;
+        const children = [];
+        for (let i = 0; i <= 11; i++) {
+            children.push(
+                <div className="avatar-custom-container"
+                    onClick={() => {
+                        repeat.month === i
+                            ? repeat.month = null
+                            : repeat.month = i
+                        this.setState({ repeat });
+                    }} key={i} >
+                    <Avatar size={30} key={i}
+                        style={{
+                            fontSize: 12, opacity: repeat.month === i ? 0.5 : 1,
+                            borderColor: repeat.month === i && '#1890ff',
+                            borderStyle: repeat.month === i && 'groove',
+                            borderWidth: repeat.month === i && 2,
+                        }}
+                    >T{i + 1}</Avatar>
+                    {repeat.month === i ? <CheckOutlined className="check-selected-day-of-week" /> : null}
+                </div>
+            )
+        }
+        return children;
+    }
+
+    handleRepeatCancelModal = () => {
+        const { type } = this.props;
+        const { repeat } = this.state;
+        if (type === "add") {
+            repeat.type = "no-repeat";
+            this.setState({ repeat, showRepeatModal: false });
+        }
+        else {
+            this.mapRepeatEventEditToRepeatForm();
+            this.setState({ showRepeatModal: false });
+        }
+    }
+
+    handleRepeatSaveModal = () => {
+        const { repeat, repeatTypeOfMonth, repeatTypeOfYear } = this.state;
+        let error = "";
+        if (repeat.type === "week") {
+            error = (!repeat.day || repeat.day.length <= 0) ? "Yêu cầu chọn: Thứ (lặp theo tuần thứ/tuần)" : ""
+        }
+        else if (repeat.type === "month") {
+            repeatTypeOfMonth === "day"
+                ?
+                (
+                    error = (!repeat.day || repeat.day.length <= 0) ? "Thứ" : "",
+                    error = (repeat.order === null || repeat.order === undefined) ? (error ? (error + ", Tuần Thứ") : "Tuần Thứ") : error,
+                    error = error ? ("Yêu cầu chọn: " + error + " (lặp theo tháng thứ/tuần/tháng)") : ""
+                )
+                :
+                (
+                    error = (repeat.date === null | repeat.date === undefined) ? "Ngày" : "",
+                    error = error ? ("Yêu cầu chọn: " + error + " (lặp theo tháng ngày/tháng)") : ""
+                )
+        }
+        else if (repeat.type === "year") {
+            repeatTypeOfYear === "day"
+                ? (
+                    error = (!repeat.day || repeat.day.length <= 0) ? "Thứ" : "",
+                    error = (repeat.order === null || repeat.order === undefined) ? (error ? (error + ", Tuần Thứ") : "Tuần Thứ") : error,
+                    error = (repeat.month === null || repeat.month === undefined) ? (error ? (error + ", Tháng") : "Tháng") : error,
+                    error = error ? ("Yêu cầu chọn: " + error + " (lặp theo năm thứ/tuần/tháng/năm)") : ""
+                )
+                :
+                (
+                    error = (repeat.date === null || repeat.date === undefined) ? "Ngày" : "",
+                    error = (repeat.month === null || repeat.month === undefined) ? (error ? (error + ", Tháng") : "Tháng") : error,
+                    error = error ? ("Yêu cầu chọn: " + error + " (lặp theo năm ngày/tháng/năm)") : ""
+                )
+        }
+        error ? this.setState({ errorModalForm: error }) : this.setState({ showRepeatModal: false, errorModalForm: "" });
+    }
+
     render() {
 
-        const { name, assign, dateTime, reminder, notes, error, currentUrlImg, itemsDayOfWeek, repeat } = this.state;
+        const { name, assign, dateTime, reminder, notes, error, currentUrlImg, repeat,
+            repeatTypeOfMonth, repeatTypeOfYear, activeTabNestedRepeatType, showRepeatModal, errorModalForm
+        } = this.state;
+
         const {
             listMembers, gettingListMembers, gotListMembers, addingEvent, addedEvent, type, edittingEvent, editedEvent,
             deletingEvent, deletedEvent
@@ -295,7 +509,12 @@ class AddEvent extends React.Component {
                     <div className="avatar-add-event-container">
                         <Avatar
                             size={50} src={item.mAvatar.image}
-                            style={{ backgroundColor: item.mAvatar.color, opacity: isSelectedMember(item._id) !== -1 && 0.5, border: "groove thin" }}
+                            style={{ 
+                                backgroundColor: item.mAvatar.color, 
+                                opacity: isSelectedMember(item._id) !== -1 && 0.5, 
+                                border: "groove thin",
+                                borderColor: isSelectedMember(item._id) !== -1 && "#1890ff"
+                            }}
                         />
                     </div>
                     {isSelectedMember(item._id) !== -1 && <CheckOutlined className="check-asign-add-event" />}
@@ -303,10 +522,58 @@ class AddEvent extends React.Component {
                 </div>
             )
 
-        const renderSpin = () => 
+        const renderSpin = () =>
             <div className="icon-loading-add-event">
                 <Spin style={{ color: 'white' }} size="large" indicator={antIcon} />
             </div>
+
+        const checkDayTabActive = () => {
+            if (
+                repeat.type === "week"
+                ||
+                (repeat.type === "month" && repeatTypeOfMonth === "day" && activeTabNestedRepeatType === "day")
+                ||
+                (repeat.type === "year" && repeatTypeOfYear === "day" && activeTabNestedRepeatType === "day")
+            ) return true;
+            else return false;
+        }
+
+        const checkOrderTabActive = () => {
+            if (
+                (repeat.type === "month" && repeatTypeOfMonth === "day" && activeTabNestedRepeatType === "order")
+                ||
+                (repeat.type === "year" && repeatTypeOfYear === "day" && activeTabNestedRepeatType === "order")
+            ) return true;
+            else return false;
+        }
+
+        const checkMonthTabActive = () => {
+            if (
+                (repeat.type === "year" && repeatTypeOfYear === "day" && activeTabNestedRepeatType === "month")
+                ||
+                (repeat.type === "year" && repeatTypeOfYear === "date" && activeTabNestedRepeatType === "month")
+            ) return true;
+            else return false;
+        }
+
+        const checkDateTabActive = () => {
+            if (
+                (repeat.type === "month" && repeatTypeOfMonth === "date")
+                ||
+                (repeat.type === "year" && repeatTypeOfYear === "date" && activeTabNestedRepeatType === 'date')
+            ) return true;
+            else return false;
+        }
+
+        const convertRepeatType = () => {
+            const result =
+                (repeat.type === "no-repeat" && "Không lặp")
+                || (repeat.type === "day" && "Mõi ngày")
+                || (repeat.type === "week" && "Tuần")
+                || (repeat.type === "month" && "Tháng")
+                || (repeat.type === "year" && "Năm")
+            return result;
+        }
 
         return (
             <Layout style={{ minHeight: '100vh' }}>
@@ -320,11 +587,30 @@ class AddEvent extends React.Component {
                                 </Button>
                             </div>
                             <div className="center-header-calendar-container"> {type === "add" ? "Thêm Sự Kiện" : "Cập Nhật Sự Kiện"} </div>
-                            <div></div>
+                            <div className="right-header-calendar-container"></div>
                         </div>
                     </Header>
                     <Content style={{ position: 'relative' }}>
                         <Form onFinish={this.handleSubmit} size="large">
+
+                            {error &&
+                                (!name ||
+                                    name.replace(/\s/g, '').length === 0 ||
+                                    assign.length === 0 ||
+                                    !dateTime.start ||
+                                    !dateTime.end) &&
+
+                                <Alert type="error" className="form-item-add-event alert-error-submit-form"
+                                    message={`
+                                                ${(!name || name.replace(/\s/g, '').length === 0) ? "Ten " : ""}
+                                                ${assign.length === 0 ? "ThanhVien " : ""}
+                                                ${!dateTime.start ? "ThoiGianBatDau " : ""}
+                                                ${!dateTime.end ? "ThoiGianKetThuc " : ""}
+                                                là bắt buộc.
+                                            `}
+                                />
+                            }
+
                             <Form.Item className="form-item-add-event">
                                 <Input
                                     name="name" value={name} onChange={this.handleChangeInput}
@@ -338,7 +624,7 @@ class AddEvent extends React.Component {
                                 />
                                 <span
                                     className="title-input-add-event"
-                                    style={{ color: assign.length > 0 ? "#096dd9" : "black"}}
+                                    style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
                                 > Thành Viên: </span>
                                 <Row align="middle" justify="center" style={{ marginBottom: 20 }}>
                                     {gettingListMembers && !gotListMembers ?
@@ -346,13 +632,13 @@ class AddEvent extends React.Component {
                                         :
                                         <>
                                             {listMembers && listMembers.length > 5 &&
-                                                <div onClick={this.handleClickPre} className="pre-icon-add-event"> <LeftOutlined /> </div>
+                                                <div onClick={this.handleClickMemberPre} className="pre-icon-add-event"> <LeftOutlined /> </div>
                                             }
-                                            <div ref={this.scrollBar} className="list-users-asign-add-event-container" >
+                                            <div ref={this.scrollBarListMembers} className="list-users-asign-add-event-container" >
                                                 {renderListMembers()}
                                             </div>
                                             {listMembers && listMembers.length > 5 &&
-                                                <div onClick={this.handleClickNext} className="next-icon-add-event"> <RightOutlined /> </div>
+                                                <div onClick={this.handleClickMemberNext} className="next-icon-add-event"> <RightOutlined /> </div>
                                             }
                                         </>
                                     }
@@ -363,7 +649,7 @@ class AddEvent extends React.Component {
                                     <Col span={4} className="title-input-add-event">
                                         <CalendarOutlined
                                             className="icon-input-add-event"
-                                            style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black"}}
+                                            style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }}
                                         />
                                         <span style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }}>Thời gian</span>
                                     </Col>
@@ -387,9 +673,9 @@ class AddEvent extends React.Component {
                                     <Col span={4} className="title-input-add-event">
                                         <BellOutlined
                                             className="icon-input-add-event"
-                                            style={{color: "#096dd9"}}
+                                            style={{ color: "#096dd9" }}
                                         />
-                                        <span style={{color: "#096dd9"}}>Nhắc nhở</span>
+                                        <span style={{ color: "#096dd9" }}>Nhắc nhở</span>
                                     </Col>
                                     <Col span={16} className="col-form-item-add-event">
                                         <Input
@@ -403,74 +689,252 @@ class AddEvent extends React.Component {
                                         <RedoOutlined className="icon-input-add-event" style={{ color: "#096dd9" }} />
                                         <span style={{ color: "#096dd9" }}>Lặp lại</span>
                                     </Col>
-                                    <Col span={16} className="col-form-item-add-event repeat-col-add-event" >
-                                        <div className="input-repeat-type-container">
-                                            <Select
-                                                value={repeat ? repeat.type : "no-repeat"} onChange={this.handleChangeRepeatType}
-                                                style={{
-                                                    width:
-                                                        repeat && repeat.type === "day" && "41%" ||
-                                                        repeat && repeat.type === "week" && "30%"
-                                                }}
-                                            >
-                                                <Option value="no-repeat">Không lặp</Option>
-                                                <Option value="day">Hằng ngày</Option>
-                                                <Option value="week">Tuần</Option>
-                                                <Option value="month">Tháng</Option>
-                                                <Option value="year">Năm</Option>
-
-                                            </Select>
-
-                                            {repeat && (repeat.type === "day" || repeat.type === "week") &&
-                                                <>
-                                                    <ArrowRightOutlined />
-                                                    <DatePicker
-                                                        value={repeat.end ? moment(repeat.end) : null}
-                                                        onChange={this.handleSelectEndtDateRepeat}
-                                                        style={{
-                                                            width:
-                                                                repeat.type === "day" && "41%" ||
-                                                                repeat.type === "week" && "30%"
-                                                        }} placeholder="Ngày kết thúc"
-                                                    />
-                                                    {repeat.type === "week" &&
-                                                        <>
-                                                            <ArrowRightOutlined />
-                                                            <Select
-                                                                style={{ width: "30%" }}
-                                                                placeholder="Thứ trong tuần"
-                                                                onChange={this.handleSelectDaysOfWeek}
-                                                            >
-                                                                {itemsDayOfWeek.map((item, index) => <Option value={item} key={index}>{item}</Option>)}
-                                                            </Select>
-                                                        </>
-                                                    }
-                                                </>
-                                            }
-                                        </div>
-
-                                        {repeat && repeat.type === "week" && repeat.day.length > 0 &&
-                                            <Row className="tags-day-of-week-container">
-                                                {repeat.day.map((item, index) =>
-                                                    <div className="tag-add-event" key={index}>
-                                                        <span className="title-tag-add-event">
-                                                            {
-                                                                item == "1" && "Thứ 2" ||
-                                                                item == "2" && "Thứ 3" ||
-                                                                item == "3" && "Thứ 4" ||
-                                                                item == "4" && "Thứ 5" ||
-                                                                item == "5" && "Thứ 6" ||
-                                                                item == "6" && "Thứ 7" ||
-                                                                item == "0" && "Chủ nhật"
-                                                            }
-                                                        </span>
-                                                        <CloseOutlined className="close-icon-tag-add-event" onClick={() => this.handleDeleteDayOfWeek(item)} />
-                                                    </div>
-                                                )}
-
-                                            </Row>
-                                        }
+                                    <Col span={16} className="col-form-item-add-event">
+                                        <Button className="width-70-percent" onClick={() => this.setState({ showRepeatModal: true })} >{convertRepeatType()}</Button>
                                     </Col>
+
+                                    <Modal width={450} closable={false} footer={null} title={null} visible={showRepeatModal} >
+                                        <div className="body-modal">
+                                            <div className="title-modal-container" >
+                                                <p className="title-repeat-modal">Lặp Lại</p>
+                                                {errorModalForm &&
+                                                    <Alert type="error" className="form-item-add-event alert-error-submit-form" message={errorModalForm} />
+                                                }
+                                                <div className="repeat-type-modal-container">
+                                                    <div
+                                                        className={`repeat-type-item-modal ${repeat.type === "no-repeat" && "repeat-type-item-modal-selected"} `}
+                                                        onClick={() => { repeat.type = "no-repeat"; this.setState({ repeat }); }}
+                                                    >Không</div>
+                                                    <div className={`repeat-type-item-modal ${repeat.type === "day" && "repeat-type-item-modal-selected"} `}
+                                                        onClick={() => {
+                                                            repeat.type = "day";
+                                                            repeat.day = [];
+                                                            repeat.order = null;
+                                                            repeat.month = null;
+                                                            repeat.date = null;
+                                                            this.setState({ repeat });
+                                                        }}
+                                                    >Ngày</div>
+                                                    <div className={`repeat-type-item-modal ${repeat.type === "week" && "repeat-type-item-modal-selected"} `}
+                                                        onClick={() => {
+                                                            repeat.type = "week";
+                                                            repeat.day = [];
+                                                            repeat.order = null;
+                                                            repeat.month = null;
+                                                            repeat.date = null;
+                                                            this.setState({ repeat });
+                                                        }}
+                                                    >Tuần</div>
+                                                    <div className={`repeat-type-item-modal ${repeat.type === "month" && "repeat-type-item-modal-selected"} `}
+                                                        onClick={() => {
+                                                            repeat.type = "month";
+                                                            repeat.day = [];
+                                                            repeat.order = null;
+                                                            repeat.month = null;
+                                                            repeat.date = null;
+                                                            this.setState({ repeat });
+                                                        }}
+                                                    >Tháng</div>
+                                                    <div className={`repeat-type-item-modal ${repeat.type === "year" && "repeat-type-item-modal-selected"} `}
+                                                        onClick={() => {
+                                                            repeat.type = "year";
+                                                            repeat.day = [];
+                                                            repeat.order = null;
+                                                            repeat.month = null;
+                                                            repeat.date = null;
+                                                            this.setState({ repeat });
+                                                        }}
+                                                    >Năm</div>
+                                                </div>
+                                            </div>
+
+                                            <Divider />
+
+                                            {repeat.type === "no-repeat"
+                                                ? null
+                                                : <DatePicker
+                                                    style={{ width: '80%' }}
+                                                    value={repeat.end ? moment(repeat.end) : null}
+                                                    onChange={this.handleSelectEndtDateRepeat}
+                                                    placeholder="Ngày kết thúc"
+                                                />
+                                            }
+
+                                            {(repeat.type === "month" || repeat.type === "year") &&
+                                                <div style={{ width: "80%", display: 'flex', justifyContent: 'space-between', margin: '10px 0px' }}>
+                                                    <Button
+                                                        style={{ width: "48%" }}
+                                                        type={
+                                                            (
+                                                                (repeat.type === "month" && repeatTypeOfMonth === "day")
+                                                                ||
+                                                                (repeat.type === "year" && repeatTypeOfYear === "day")
+                                                            ) ? "primary" : ""
+                                                        }
+                                                        ghost={
+                                                            (
+                                                                (repeat.type === "month" && repeatTypeOfMonth === "day")
+                                                                ||
+                                                                (repeat.type === "year" && repeatTypeOfYear === "day")
+                                                            ) ? true : false
+                                                        }
+                                                        onClick={() => {
+                                                            repeat.type === "month"
+                                                                ? this.setState({ repeatTypeOfMonth: "day" })
+                                                                : this.setState({ repeatTypeOfYear: "day" })
+                                                        }
+                                                        }>Theo thứ</Button>
+                                                    <Button
+                                                        style={{ width: "48%" }}
+                                                        type={
+                                                            (
+                                                                (repeat.type === "month" && repeatTypeOfMonth === "date")
+                                                                ||
+                                                                (repeat.type === "year" && repeatTypeOfYear === "date")
+                                                            ) ? "primary" : ""
+                                                        }
+                                                        ghost={
+                                                            (
+                                                                (repeat.type === "month" && repeatTypeOfMonth === "date")
+                                                                ||
+                                                                (repeat.type === "year" && repeatTypeOfYear === "date")
+                                                            ) ? true : false
+                                                        }
+                                                        onClick={() => {
+                                                            repeat.type === "month"
+                                                                ? this.setState({ repeatTypeOfMonth: "date" })
+                                                                : this.setState({ repeatTypeOfYear: "date" })
+                                                        }
+                                                        }>Theo ngày</Button>
+                                                </div>
+                                            }
+
+                                            < div className="nested-repeat-type-modal-container">
+                                                {(
+                                                    repeat.type === "week"
+                                                    ||
+                                                    (repeat.type === "month" && repeatTypeOfMonth === "day")
+                                                    ||
+                                                    (repeat.type === "year" && repeatTypeOfYear === "day")
+                                                ) && <div
+                                                    className="nested-repeat-type-item-modal"
+                                                    style={{
+                                                        color: checkDayTabActive() && "#1890ff",
+                                                        borderBottomColor: checkDayTabActive() && "#1890ff",
+                                                        fontWeight: checkDayTabActive() && 'bold'
+                                                    }}
+                                                    onClick={() => this.setState({ activeTabNestedRepeatType: 'day' })}> Thứ </div>}
+                                                {(
+                                                    (repeat.type === "month" && repeatTypeOfMonth === "day")
+                                                    ||
+                                                    (repeat.type === "year" && repeatTypeOfYear === "day")
+                                                ) && <div
+                                                    className="nested-repeat-type-item-modal"
+                                                    style={{
+                                                        color: checkOrderTabActive() && "#1890ff",
+                                                        borderBottomColor: checkOrderTabActive() && "#1890ff",
+                                                        fontWeight: checkOrderTabActive() && 'bold'
+                                                    }}
+                                                    onClick={() => this.setState({ activeTabNestedRepeatType: 'order' })}>Tuần Thứ</div>}
+                                                {(
+                                                    (repeat.type === "month" && repeatTypeOfMonth === "date")
+                                                    ||
+                                                    (repeat.type === "year" && repeatTypeOfYear === "date")
+                                                ) && <div
+                                                    className="nested-repeat-type-item-modal"
+                                                    style={{
+                                                        color: checkDateTabActive() && "#1890ff",
+                                                        borderBottomColor: checkDateTabActive() && "#1890ff",
+                                                        fontWeight: checkDateTabActive() && 'bold'
+                                                    }}
+                                                    onClick={() => this.setState({ activeTabNestedRepeatType: "date" })} >Ngày</div>
+                                                }
+                                                {(repeat.type === "year")
+                                                    && <div
+                                                        className="nested-repeat-type-item-modal"
+                                                        style={{
+                                                            color: checkMonthTabActive() && "#1890ff",
+                                                            borderBottomColor: checkMonthTabActive() && "#1890ff",
+                                                            fontWeight: checkMonthTabActive() && 'bold'
+                                                        }}
+                                                        onClick={() => this.setState({ activeTabNestedRepeatType: "month" })
+                                                        }>Tháng</div>
+                                                }
+                                            </div>
+
+                                            {
+                                                (
+                                                    (repeat.type === "month" && repeatTypeOfMonth === "day")
+                                                    ||
+                                                    (repeat.type === "year" && repeatTypeOfYear === "day")
+                                                )
+                                                && activeTabNestedRepeatType === "order" &&
+                                                <div className="order-week-of-month-modal-container">
+                                                    {this.renderOrderWeekOfMonth()}
+                                                </div>
+                                            }
+
+                                            {
+                                                (repeat.type === "week" ||
+                                                    (
+                                                        (
+                                                            (repeat.type === "month" && repeatTypeOfMonth === "day")
+                                                            ||
+                                                            (repeat.type === "year" && repeatTypeOfYear === "day")
+                                                        ) && activeTabNestedRepeatType === "day")
+                                                ) &&
+                                                <div className="day-of-week-modal-container">
+                                                    {this.renderDayOfWeek()}
+                                                </div>
+                                            }
+
+                                            {
+                                                (
+                                                    (repeat.type === "month" && repeatTypeOfMonth === "date")
+                                                    ||
+                                                    (
+                                                        repeat.type === "year"
+                                                        && repeatTypeOfYear === "date"
+                                                        && activeTabNestedRepeatType === "date"
+                                                    )
+                                                )
+                                                && <div className="date-of-month-modal-container">
+                                                    <LeftOutlined onClick={this.handleClickDateOfMonthPre} />
+                                                    <div ref={this.scrollBarDateOfmonth} className="date-of-month-modal">
+                                                        {this.renderDateOfMonth()}
+                                                    </div>
+                                                    <RightOutlined onClick={this.handleClickDateOfMonthNext} />
+                                                </div>
+                                            }
+
+                                            {repeat.type === "year" && activeTabNestedRepeatType === "month" &&
+                                                <div className="month-of-year-modal-container">
+                                                    {this.renderMonthOfYear()}
+                                                </div>
+                                            }
+                                            {(
+                                                (repeat.type === "month" && repeatTypeOfMonth === "day" && activeTabNestedRepeatType === "order")
+                                                ||
+                                                (repeat.type === "year" && repeatTypeOfYear === "day" && activeTabNestedRepeatType === "order")
+                                             )  &&  <div style={{margin: '20px 0px 0px 0px', color: '#1890ff'}}>Ghi chú: 0 là tuần cuối của tháng.</div>
+                                            }
+                                            {
+                                                (
+                                                    (repeat.type === "month" && repeatTypeOfMonth === "date" )
+                                                    ||
+                                                    (repeat.type === "year" &&  repeatTypeOfYear === "date" && activeTabNestedRepeatType === "date")
+                                                ) && <div style={{margin: '20px 0px 0px 0px', color: '#1890ff'}}>Ghi chú: 0 là ngày cuối cùng của tháng</div>
+                                            }
+                                            <Divider />
+
+                                            <div className="footer-modal">
+                                                <Button onClick={this.handleRepeatCancelModal} className="cancel-button-modal" ghost type="primary">Đóng</Button>
+                                                <Button onClick={this.handleRepeatSaveModal} className="save-button-modal" type="primary">Lưu Lại</Button>
+                                            </div>
+
+                                        </div>
+                                    </Modal>
+
                                 </Row>
                             </Form.Item>
                             <Form.Item className="form-item-add-event">
@@ -509,7 +973,7 @@ class AddEvent extends React.Component {
                                     </div>
                                     <TextArea
                                         name="notes" value={notes} onChange={this.handleChangeInput}
-                                        style={{ margin: "5px 20px 0px 20px"}} autoSize={{ minRows: 2 }}
+                                        style={{ margin: "5px 20px 0px 20px" }} autoSize={{ minRows: 2 }}
                                     />
                                 </Row>
                             </Form.Item>
@@ -526,30 +990,10 @@ class AddEvent extends React.Component {
                             </Form.Item>
                         </Form>
 
-                        {addingEvent && !addedEvent && renderSpin() }
-                        {edittingEvent && !editedEvent && renderSpin() }
-                        {deletingEvent && !deletedEvent && renderSpin() }
-                        
-                    </Content>
-                    <Footer style={{ textAlign: 'center', padding: "10px 0px", margin: "0px 20px" }}>
-                        { error && 
-                        (!name || 
-                        name.replace(/\s/g, '').length === 0 ||
-                        assign.length === 0 || 
-                        !dateTime.start ||
-                        !dateTime.end) &&
+                        {((addingEvent && !addedEvent) || (edittingEvent && !editedEvent) || (deletingEvent && !deletedEvent)) && renderSpin()}
 
-                            <Alert type="error" style={{ backgroundColor: "#ee7674", marginBottom: 10 }} message=
-                                {`
-                                    ${(!name || name.replace(/\s/g, '').length === 0) ? "Ten " : ""}
-                                    ${assign.length === 0 ? "ThanhVien " : ""}
-                                    ${!dateTime.start ? "ThoiGianBatDau " : ""}
-                                    ${!dateTime.end ? "ThoiGianKetThuc " : ""}
-                                    là bắt buộc.
-                                `}
-                            />
-                        }
-                    </Footer>
+                    </Content>
+                    <Footer style={{ textAlign: 'center', padding: "10px 0px", margin: "0px 20px" }}></Footer>
                 </Layout>
             </Layout >
 

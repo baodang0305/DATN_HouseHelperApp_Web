@@ -43,6 +43,7 @@
 
 .left-header-calendar-container {
     justify-content: center;
+    width: 25%;
 }
 
 .border-avatar-calendar {

@@ -42,12 +42,12 @@ class DashboardMenu extends React.Component {
 
                     <Menu.Item key="4">
                         <GiftOutlined className="size-icon" />
-                        <Link to="#">Phần Thưởng</Link>
+                        <Link to="/rewards">Phần Thưởng</Link>
                     </Menu.Item>
 
                     <Menu.Item key="5">
                         <ShoppingCartOutlined className="size-icon" />
-                        <Link to="#">Tạp Hóa</Link>
+                        <Link to="#">Mua Sắm</Link>
                     </Menu.Item>
 
                 </Menu>

@@ -63,15 +63,16 @@ class CalendarPage extends React.Component {
                 this.reminderBellAudio.play();
                 this.reminderBellAudio.loop = true;
             }
-            if (data.type === "addEvent" ||  data.type === "editEvent" || data.type === "deleteEvent"){
+            if (data.type === "addEvent" || data.type === "editEvent" || data.type === "deleteEvent") {
                 getListEvents({ "month": today.getMonth(), "year": today.getFullYear() });
             }
         });
-        
+
     }
 
     componentWillUnmount() {
         socket && socket.connected && socket.close();
+        this.reminderBellAudio.pause();
     }
 
     handleClickPre = () => {
@@ -110,9 +111,9 @@ class CalendarPage extends React.Component {
             const index = (y === date.y && m === date.m) ? listCalendar.findIndex(element => element.date === d) : -1;
             const listEvents = (index !== -1 && listCalendar[index].listEvents.length !== 0) && listCalendar[index].listEvents;
             return listEvents && listEvents.map((item, index) =>
-                <div onClick={() => this.handleClickEvent(item)} 
-                    key={index} className="event-tag" 
-                    style={{ backgroundColor: `#010${index+1}` }}
+                <div onClick={() => this.handleClickEvent(item)}
+                    key={index} className="event-tag"
+                    style={{ backgroundColor: `#010${index + 1}` }}
                 >
                     {index + 1}. {item.name}
                 </div>
@@ -139,8 +140,8 @@ class CalendarPage extends React.Component {
 
         const { isSelectedMember } = this.state;
         const { listMembers, remindingEventNotification, remindedEventNotification } = this.props;
-
-        remindedEventNotification && !remindingEventNotification && this.reminderBellAudio.pause();
+        
+        !remindingEventNotification && remindedEventNotification && this.reminderBellAudio.pause();
 
         const renderListMembers = () =>
             listMembers && listMembers.map((item, index) =>
@@ -166,11 +167,11 @@ class CalendarPage extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="header-calendar-container">
-                            <div className="left-header-calendar-container" style={{width: "25%"}}>
+                            <div className="left-header-calendar-container">
                                 <Button style={{ marginRight: 10 }} size="large">
                                     <Link to='/family' ><HomeOutlined style={{ fontSize: 19 }} /></Link>
                                 </Button>
-                                <Search 
+                                <Search
                                     placeholder="Nhập nội dung tìm kiếm"
                                     onSearch={value => console.log(value)}
                                     style={{ width: "70%" }}
@@ -180,7 +181,7 @@ class CalendarPage extends React.Component {
                             <div className="center-header-calendar-container"> Quản Lý Lịch </div>
                             <div className="right-header-calendar-container" >
                                 <Button style={{ marginRight: 10 }} size="large">
-                                    <BellOutlined className= {!remindedEventNotification && remindingEventNotification ? "remind-event-bell" : ""} />
+                                    <BellOutlined className={!remindedEventNotification && remindingEventNotification ? "remind-event-bell" : ""} />
                                 </Button>
                                 <Button size="large">
                                     <Link to="/calendar/add-event"> <PlusOutlined className="icon-header-calendar" /> </Link>

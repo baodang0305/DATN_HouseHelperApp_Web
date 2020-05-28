@@ -1,0 +1,64 @@
+.header-add-reward-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.center-header-add-reward-container {
+    font-size: 22px;
+}
+
+.left-header-add-reward-container {
+    justify-content: center;
+    width: 25%;
+}
+
+.right-header-add-reward-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 25%;
+}
+
+.form-add-reward {
+    margin: 0px 20px;
+}
+
+.form-item-add-reward {
+    margin: 10px 0px;
+    border-radius: 2px;
+    background-color: hsl(0, 0%, 100%);
+    box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
+}
+
+.name-reward-input {
+    font-size: 20px;
+    height: 60px;
+    text-align: center;
+}
+
+.form-item-point-reward {
+    position: relative;
+    width: 50%;
+    margin: auto;
+}
+
+.point-reward-input {
+    filter: opacity(0);
+    border-radius: 3px;
+}
+
+.point-reward-input-fake {
+    height: 40px;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    background-color: #1979a9;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    color: white;
+}

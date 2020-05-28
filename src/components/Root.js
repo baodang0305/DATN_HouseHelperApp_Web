@@ -22,6 +22,8 @@ import ActiveAccount from './Family/ActiveAccount/ActiveAccount';
 import ResetPassword from './Family/ResetPassword/ResetPassword';
 import RegisterFamily from './Register/RegisterFamily/RegisterFamily';
 import RegisterAccount from './Register/RegisterAccount/RegisterAccount';
+import Reward from './Reward/Reward';
+import AddReward from './Reward/AddReward/AddReward';
 
 
 const Root = () => {
@@ -61,6 +63,12 @@ const Root = () => {
                     <PrivateRoute exact path="/calendar/edit-event">
                         <AddEvent type="edit"/>
                     </PrivateRoute>
+
+                    <PrivateRoute exact path="/rewards" component={Reward} />
+                    <PrivateRoute exact path="/rewards/add-reward" >
+                        <AddReward type="add" />
+                    </PrivateRoute>
+
                     <Route exact path="/" component={Home} />
                 </Switch>
             </Router>

@@ -32,7 +32,6 @@ const getListEvents = ({month, year}) => {
 }
 
 const addEvent = ({ name, assign, dateTime, reminder, repeat, photo, notes }) => {
-
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
 
     return dispatch => {
@@ -65,7 +64,6 @@ const addEvent = ({ name, assign, dateTime, reminder, repeat, photo, notes }) =>
 }
 
 const editEvent = ({ _id, name, assign, dateTime, reminder, repeat, photo, notes }) => {
-
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
 
     return dispatch => {
@@ -81,7 +79,6 @@ const editEvent = ({ _id, name, assign, dateTime, reminder, repeat, photo, notes
         })
         .then(response => response.json()
             .then(data => {
-                console.log(data)
                 if (data.status === "success") {
                     dispatch(success());
                     history.push("/calendar");
@@ -116,7 +113,6 @@ const deleteEvent = ({ eID }) => {
         })
         .then(response => response.json()
             .then(data => {
-                console.log(data)
                 if(data.status === "success") {
                     dispatch(success());
                     history.push("/calendar");

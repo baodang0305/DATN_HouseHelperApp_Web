@@ -24,7 +24,7 @@ class Alert extends React.Component {
 
     notify = () => {
 
-        const { alert } = this.props;
+        const { alert } = this.props
 
         const taskNotification = alert.type === "remindTaskNotification" || alert.type === 'nudgeTaskNotification' ? alert.data : null;
         this.toastId = toast(
@@ -50,7 +50,7 @@ class Alert extends React.Component {
 
     render() {
 
-        const { alert } = this.props;
+        const { alert } = this.props
 
         return (
             <div> {alert.message && this.notify()} </div>
