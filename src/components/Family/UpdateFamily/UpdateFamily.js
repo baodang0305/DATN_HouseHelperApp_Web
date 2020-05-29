@@ -213,93 +213,85 @@ class UpdateFamily extends React.Component {
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
                     <Header className="header-container">
-                        <div className="header-update-family-container">
+                        <div className="left-header-update-family-container">
                             <Button onClick={this.handleClickBack} size="large" >
-                                <LeftOutlined /> 
+                                <LeftOutlined />
                             </Button>
-                            <div className="center-header-update-family-container"> Tài Khoản Gia Đình </div>
-                            <div></div>
                         </div>
+                        <div className="center-header-update-family-container"> Tài Khoản Gia Đình </div>
+                        <div style={{ width: "20%" }}></div>
                     </Header>
-                    <Content className="site-layout-background" style={{ margin: 20 }}>
-                        <div className="family-account-container">
-                            <div className="form-family-account">
-                                <Row justify="center" align="middle">
-                                    <Col span={24}>
-                                        <Form initialValues={{ "fName": user.fName }} size="large" onFinish={this.handleSubmit} >
-                                            <Form.Item style={{ textAlign: "center", marginTop: 20 }}>
-                                                <div className="container-family-img">
-                                                    {currentUrlImg === "" ? <img src={user.fImage} className="family-img" /> : <img src={currentUrlImg} className="family-img" />}
-                                                    <input onChange={this.handleChangeImg} type="file" className="input-family-img" />
-                                                </div>
-                                            </Form.Item>
+                    <Content className="content-update-family">
+                        <Form initialValues={{ "fName": user.fName }} size="large" onFinish={this.handleSubmit} style={{ width: '35%' }} >
+                            <Form.Item style={{ textAlign: "center", marginTop: 20 }}>
+                                <div className="container-family-img">
+                                    {currentUrlImg === "" ? <img src={user.fImage} className="family-img" /> : <img src={currentUrlImg} className="family-img" />}
+                                    <input onChange={this.handleChangeImg} type="file" className="input-family-img" />
+                                </div>
+                            </Form.Item>
 
-                                            <Form.Item name="fName" rules={[{ required: true, message: 'Vui lòng nhập tên gia đình!' }]}>
-                                                <Input prefix={<i className="fa fa-user" aria-hidden="true"></i>} type="text" />
-                                            </Form.Item>
+                            <Form.Item name="fName" rules={[{ required: true, message: 'Vui lòng nhập tên gia đình!' }]}>
+                                <Input prefix={<i className="fa fa-user" aria-hidden="true"></i>} type="text" />
+                            </Form.Item>
 
-                                            <Form.Item >
-                                                <Checkbox onChange={this.handleClickSetPassword}>
-                                                    <span style={{ fontSize: "18px" }}> <LockOutlined /> Đặt lại mật khẩu gia đình </span>
-                                                </Checkbox>
-                                            </Form.Item>
+                            <Form.Item >
+                                <Checkbox onChange={this.handleClickSetPassword}>
+                                    <span style={{ fontSize: "18px" }}> <LockOutlined /> Đặt lại mật khẩu gia đình </span>
+                                </Checkbox>
+                            </Form.Item>
 
-                                            <Form.Item validateStatus={stateCurrentPass} help={errorCurrentPass} >
-                                                <Input
-                                                    name="currentPass" value={currentPass} onChange={this.handleChangeInput}
-                                                    placeholder="Mật khẩu hiện tại" type="password" disabled={!isSetPass}
-                                                />
-                                            </Form.Item>
+                            <Form.Item validateStatus={stateCurrentPass} help={errorCurrentPass} >
+                                <Input
+                                    name="currentPass" value={currentPass} onChange={this.handleChangeInput}
+                                    placeholder="Mật khẩu hiện tại" type="password" disabled={!isSetPass}
+                                />
+                            </Form.Item>
 
-                                            <Form.Item validateStatus={stateNewPass} help={errorNewPass} >
-                                                <Input
-                                                    name="newPass" value={newPass} onChange={this.handleChangeInput}
-                                                    placeholder="Mật khẩu mới" type="password" disabled={!isSetPass}
-                                                />
-                                            </Form.Item>
+                            <Form.Item validateStatus={stateNewPass} help={errorNewPass} >
+                                <Input
+                                    name="newPass" value={newPass} onChange={this.handleChangeInput}
+                                    placeholder="Mật khẩu mới" type="password" disabled={!isSetPass}
+                                />
+                            </Form.Item>
 
-                                            <Form.Item validateStatus={stateConfirmPass} help={errorConfirmPass}>
-                                                <Input
-                                                    name="confirmPass" value={confirmPass} onChange={this.handleChangeInput}
-                                                    placeholder="Mật khẩu xác nhận" type="password" disabled={!isSetPass}
-                                                />
-                                            </Form.Item>
+                            <Form.Item validateStatus={stateConfirmPass} help={errorConfirmPass}>
+                                <Input
+                                    name="confirmPass" value={confirmPass} onChange={this.handleChangeInput}
+                                    placeholder="Mật khẩu xác nhận" type="password" disabled={!isSetPass}
+                                />
+                            </Form.Item>
 
-                                            <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
+                            <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
 
-                                            <Modal
-                                                onOk={this.handleSend}
-                                                onCancel={this.handleCancel}
-                                                closable={false} visible={visible}
-                                                title="Please input email to reset password!"
-                                                footer={[
-                                                    <Button key="back" onClick={this.handleCancel}> Đóng </Button>,
-                                                    <Button key="submit" type="primary" onClick={this.handleSend}> Gửi </Button>
-                                                ]}
-                                            >
-                                                <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
-                                                    <Input
-                                                        name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
-                                                        prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
-                                                    />
-                                                </Form.Item>
-                                            </Modal>
-                                            <br /><br />
-                                            <Form.Item style={{ textAlign: "center" }}>
-                                                <Button type="primary" htmlType="submit" className="login-form-button"> Lưu </Button>
-                                                {this.props.changingFamilyPassword && !this.props.changedFamilyPassword &&
-                                                    <Spin tip="Đang xử lý..." />
-                                                }
-                                            </Form.Item>
-                                        </Form>
-                                    </Col>
-                                </Row>
-                            </div>
-                        </div>
+                            <Modal
+                                onOk={this.handleSend}
+                                onCancel={this.handleCancel}
+                                closable={false} visible={visible}
+                                title="Please input email to reset password!"
+                                footer={[
+                                    <Button key="back" onClick={this.handleCancel}> Đóng </Button>,
+                                    <Button key="submit" type="primary" onClick={this.handleSend}> Gửi </Button>
+                                ]}
+                            >
+                                <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
+                                    <Input
+                                        name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
+                                        prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
+                                    />
+                                </Form.Item>
+                            </Modal>
+                            <br /><br />
+                            <Form.Item style={{ textAlign: "center" }}>
+                                <Button type="primary" htmlType="submit" style={{ width: '100%' }}> Lưu </Button>
+                                {this.props.changingFamilyPassword && !this.props.changedFamilyPassword &&
+                                    <Spin tip="Đang xử lý..." />
+                                }
+                            </Form.Item>
+                        </Form>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}></Footer>
                 </Layout>
-            </Layout>
+            </Layout >
         );
     }
 }

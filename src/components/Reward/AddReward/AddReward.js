@@ -1,13 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-import { 
-    LeftOutlined, 
-    PlusOutlined, 
-    StarOutlined, 
-    TeamOutlined, 
-    RightOutlined, 
-    CheckOutlined, 
-    PictureOutlined, 
+import {
+    LeftOutlined,
+    PlusOutlined,
+    StarOutlined,
+    TeamOutlined,
+    RightOutlined,
+    CheckOutlined,
+    PictureOutlined,
     UploadOutlined,
     SnippetsOutlined,
 } from "@ant-design/icons";
@@ -51,7 +51,7 @@ class AddReward extends React.Component {
 
     handleInputChange = (e) => {
         const { name, value } = e.target;
-        this.setState({[name]: value});
+        this.setState({ [name]: value });
     }
 
     handleAssign = (mID) => {
@@ -82,9 +82,9 @@ class AddReward extends React.Component {
         const { errorAlert } = this.props;
         if (pointItem && pointItem != 0) {
             const indexItem = pointItems.findIndex(item => item == pointItem);
-            indexItem !== -1 
+            indexItem !== -1
                 ? errorAlert("Điểm đã tồn tại")
-                : (pointItems = [...pointItems, Number(pointItem)], this.setState({pointItems}))
+                : (pointItems = [...pointItems, Number(pointItem)], this.setState({ pointItems }))
         }
         else {
             errorAlert("Điểm không hợp lệ")
@@ -141,15 +141,13 @@ class AddReward extends React.Component {
                 <DashboardMenu menuItem="4" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
-                        <div className="header-add-reward-container">
-                            <div className="left-header-add-reward-container">
-                                <Button onClick={this.handleClickBack} size="large" >
-                                    <LeftOutlined />
-                                </Button>
-                            </div>
-                            <div className="center-header-add-reward-container"> {type === "add" ? "Thêm Phần Thưởng" : "Cập Nhật Phần Thưởng"} </div>
-                            <div className="right-header-add-reward-container"></div>
+                        <div className="left-header-add-reward-container">
+                            <Button onClick={this.handleClickBack} size="large" >
+                                <LeftOutlined />
+                            </Button>
                         </div>
+                        <div className="center-header-add-reward-container"> {type === "add" ? "Thêm Phần Thưởng" : "Cập Nhật Phần Thưởng"} </div>
+                        <div className="right-header-add-reward-container"></div>
                     </Header>
                     <Content >
                         <Form onFinish={this.handleSubmit} size="large" className="form-add-reward">
@@ -163,10 +161,10 @@ class AddReward extends React.Component {
                                 <div className="point-reward-input-fake">
                                     <StarOutlined /> &nbsp; {points == 0 ? "Điểm thưởng" : `${points} Điểm`}
                                 </div>
-                                <Select 
+                                <Select
                                     placeholder="Điểm thưởng"
                                     className="point-reward-input"
-                                    onChange={(value) => this.setState({points: value})}
+                                    onChange={(value) => this.setState({ points: value })}
                                     dropdownRender={menu => (
                                         <div>
                                             {menu}
@@ -183,7 +181,7 @@ class AddReward extends React.Component {
                                         </div>
                                     )}
                                 >
-                                    {pointItems.map(item => <Option key={item}>{item} điểm</Option> )}
+                                    {pointItems.map(item => <Option key={item}>{item} điểm</Option>)}
                                 </Select>
                             </Form.Item>
                             <Form.Item className="form-item-add-reward">

@@ -140,7 +140,7 @@ class CalendarPage extends React.Component {
 
         const { isSelectedMember } = this.state;
         const { listMembers, remindingEventNotification, remindedEventNotification } = this.props;
-        
+
         !remindingEventNotification && remindedEventNotification && this.reminderBellAudio.pause();
 
         const renderListMembers = () =>
@@ -166,27 +166,25 @@ class CalendarPage extends React.Component {
                 <DashboardMenu menuItem="2" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
-                        <div className="header-calendar-container">
-                            <div className="left-header-calendar-container">
-                                <Button style={{ marginRight: 10 }} size="large">
-                                    <Link to='/family' ><HomeOutlined style={{ fontSize: 19 }} /></Link>
-                                </Button>
-                                <Search
-                                    placeholder="Nhập nội dung tìm kiếm"
-                                    onSearch={value => console.log(value)}
-                                    style={{ width: "70%" }}
-                                    size="large"
-                                />
-                            </div>
-                            <div className="center-header-calendar-container"> Quản Lý Lịch </div>
-                            <div className="right-header-calendar-container" >
-                                <Button style={{ marginRight: 10 }} size="large">
-                                    <BellOutlined className={!remindedEventNotification && remindingEventNotification ? "remind-event-bell" : ""} />
-                                </Button>
-                                <Button size="large">
-                                    <Link to="/calendar/add-event"> <PlusOutlined className="icon-header-calendar" /> </Link>
-                                </Button>
-                            </div>
+                        <div className="left-header-calendar-container">
+                            <Button style={{ marginRight: 10 }} size="large">
+                                <Link to='/family' ><HomeOutlined style={{ fontSize: 19 }} /></Link>
+                            </Button>
+                            <Search
+                                placeholder="Nhập nội dung tìm kiếm"
+                                onSearch={value => console.log(value)}
+                                style={{ width: "50%" }}
+                                size="large"
+                            />
+                        </div>
+                        <div className="center-header-calendar-container"> Quản Lý Lịch </div>
+                        <div className="right-header-calendar-container" >
+                            <Button style={{ marginRight: 10 }} size="large">
+                                <BellOutlined className={!remindedEventNotification && remindingEventNotification ? "remind-event-bell" : ""} />
+                            </Button>
+                            <Button size="large">
+                                <Link to="/calendar/add-event"> <PlusOutlined className="icon-header-calendar" /> </Link>
+                            </Button>
                         </div>
                     </Header>
 
@@ -227,7 +225,7 @@ class CalendarPage extends React.Component {
                             </div>
                         </div>
 
-                        <div className="site-layout-background" style={{ margin: " 0px 20px 30px 20px" }}>
+                        <div className="content-calendar">
                             <div style={{ padding: "40px 40px" }}>
                                 <Calendar
                                     dateCellRender={this.dateCellRender}

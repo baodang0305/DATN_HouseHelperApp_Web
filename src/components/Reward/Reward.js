@@ -96,27 +96,25 @@ class Reward extends React.Component {
                 <DashboardMenu menuItem="4" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
-                        <div className="header-reward-container">
-                            <div className="left-header-reward-container">
-                                <Button style={{ marginRight: 10 }} size="large">
-                                    <Link to='/family' ><HomeOutlined style={{ fontSize: 19 }} /></Link>
-                                </Button>
-                                <Search
-                                    placeholder="Nhập nội dung tìm kiếm"
-                                    onSearch={value => console.log(value)}
-                                    style={{ width: "70%" }}
-                                    size="large"
-                                />
-                            </div>
-                            <div className="center-header-reward-container"> Phần Thưởng </div>
-                            <div className="right-header-reward-container" >
-                                <Button style={{ marginRight: 10 }} size="large">
-                                    <BellOutlined />
-                                </Button>
-                                <Button size="large">
-                                    <Link to="/rewards/add-reward"> <PlusOutlined className="icon-header-reward" /> </Link>
-                                </Button>
-                            </div>
+                        <div className="left-header-reward-container">
+                            <Button style={{ marginRight: 10 }} size="large">
+                                <Link to='/family' ><HomeOutlined style={{ fontSize: 19 }} /></Link>
+                            </Button>
+                            <Search
+                                placeholder="Nhập nội dung tìm kiếm"
+                                onSearch={value => console.log(value)}
+                                style={{ width: "50%" }}
+                                size="large"
+                            />
+                        </div>
+                        <div className="center-header-reward-container"> Phần Thưởng </div>
+                        <div className="right-header-reward-container" >
+                            <Button style={{ marginRight: 10 }} size="large">
+                                <BellOutlined />
+                            </Button>
+                            <Button size="large">
+                                <Link to="/rewards/add-reward"> <PlusOutlined className="icon-header-reward" /> </Link>
+                            </Button>
                         </div>
                     </Header>
 

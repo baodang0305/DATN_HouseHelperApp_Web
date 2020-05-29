@@ -1,21 +1,18 @@
-.header-update-family-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.left-header-update-family-container {
+    width: 20%;
 }
 
 .center-header-update-family-container {
     font-size: 22px;
-}
-
-.family-account-container {
+    width: 60%;
     display: flex;
-    height: 100%;
-    flex-direction: column;
+    justify-content: center;
 }
 
-.form-family-account {
-    width: 400px;
-    margin: auto;
-
+.content-update-family {
+    background-color: white;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

@@ -1,27 +1,23 @@
-.header-reward-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .icon-header-reward {
     font-size: 19px;
 }
 
 .center-header-reward-container {
     font-size: 22px;
+    width: 30%;
+    display: flex;
+    justify-content: center;
 }
 
 .left-header-reward-container {
-    justify-content: center;
-    width: 25%;
+    width: 35%;
 }
 
 .right-header-reward-container {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 25%;
+    width: 35%;
 }
 
 .reward-content {

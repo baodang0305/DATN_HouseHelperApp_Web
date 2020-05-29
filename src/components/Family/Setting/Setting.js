@@ -33,13 +33,13 @@ class Setting extends React.Component {
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
-                        <div className="header-setting-container">
-                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}> 
-                                <LeftOutlined /> 
+                        <div className="left-header-setting-container">
+                            <Button onClick={this.handleClickBack} size="large" >
+                                <LeftOutlined />
                             </Button>
-                            <div className="center-header-setting-container">Cài Đặt</div>
-                            <div style={{width: "5%"}}></div>
                         </div>
+                        <div className="center-header-setting-container">Cài Đặt</div>
+                        <div style={{ width: "30%" }}></div>
                     </Header>
                     <Content >
                         <Link to={{ pathname: "/family/setting/my-account", state: { "fromSetting": true, "member": user } }} >

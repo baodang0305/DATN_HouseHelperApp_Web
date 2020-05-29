@@ -1053,13 +1053,13 @@ class ChatContainer extends React.Component {
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
-                        <div className="header-chat-container">
-                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}>
+                        <div className="left-header-chat-container">
+                            <Button onClick={this.handleClickBack} size="large">
                                 <LeftOutlined />
                             </Button>
-                            <div className="center-header-chat-container"> Tin Nhắn </div>
-                            <div style={{width: "5%"}}></div>
                         </div>
+                        <div className="center-header-chat-container"> Tin Nhắn </div>
+                        <div style={{ width: "20%" }}></div>
                     </Header>
                     <Content style={{ margin: 20 }}>
                         <Row className="chat-container">

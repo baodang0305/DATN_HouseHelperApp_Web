@@ -6,7 +6,7 @@ import {
     CloseOutlined,
     SettingOutlined,
     MessageOutlined,
-    AlertOutlined  ,
+    AlertOutlined,
     UsergroupAddOutlined
 } from "@ant-design/icons";
 import React from "react";
@@ -139,39 +139,37 @@ class Family extends React.Component {
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="header-container" >
-                        <div className="header-family-container" >
-                            <div style={{width: "10%"}}>
-                                <Button size="large">
-                                    <Link to="/family/setting">
-                                        <SettingOutlined className="icon-header-family" />
-                                    </Link>
-                                </Button>
+                    <Header className="header-container">
+                        <div className="left-header-family-container">
+                            <Button size="large">
+                                <Link to="/family/setting">
+                                    <SettingOutlined className="icon-header-family" />
+                                </Link>
+                            </Button>
                                 &emsp;
                                 <Button size="large">
-                                    <Link to="/family/chat">
-                                        <Badge count={numberOfIncomingMessages}>
-                                            <MailOutlined className="icon-header-family" />
-                                        </Badge>
+                                <Link to="/family/chat">
+                                    <Badge count={numberOfIncomingMessages}>
+                                        <MailOutlined className="icon-header-family" />
+                                    </Badge>
+                                </Link>
+                            </Button>
+                        </div>
+                        <div className="center-header-family-container" >Gia Đình</div>
+                        <div className="right-header-family-container">
+                            {user.mIsAdmin &&
+                                <Button size="large">
+                                    <Link to="/family/add-member">
+                                        <PlusOutlined className="icon-header-family" />
                                     </Link>
                                 </Button>
-                            </div>
-                            <div className="center-header-family-container">Gia Đình</div>
-                            <div style={{width: "10%", display: 'flex', justifyContent: 'flex-end'}}>
-                                {user.mIsAdmin &&
-                                    <Button size="large">
-                                        <Link to="/family/add-member">
-                                            <PlusOutlined className="icon-header-family" />
-                                        </Link>
-                                    </Button>
-                                }
-                            </div>
+                            }
                         </div>
                     </Header>
                     <Content >
                         <div className="first-row-family-content-container" >
-                            <Divider orientation="left" style={{padding: "10px 20px", margin: 0}}>
-                                <UsergroupAddOutlined/> 
+                            <Divider orientation="left" style={{ padding: "10px 20px", margin: 0 }}>
+                                <UsergroupAddOutlined />
                                 &nbsp;TẤT CẢ THÀNH VIÊN
                             </Divider>
                             {gettingListMembers && !gotListMembers &&
@@ -189,8 +187,8 @@ class Family extends React.Component {
                             </div>
                         </div>
                         <div className="second-row-family-content-container" >
-                            <Divider orientation="left" style={{padding: "10px 20px", margin: 0}}> 
-                                <AlertOutlined  /> &nbsp; BẢNG TIN GIA ĐÌNH
+                            <Divider orientation="left" style={{ padding: "10px 20px", margin: 0 }}>
+                                <AlertOutlined /> &nbsp; BẢNG TIN GIA ĐÌNH
                             </Divider>
                             {gettingListNews && !gotListNews &&
                                 <div className="spin-get-list-news"> <Spin tip="Loading..." /> </div>

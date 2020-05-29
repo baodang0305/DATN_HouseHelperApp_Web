@@ -580,15 +580,13 @@ class AddEvent extends React.Component {
                 <DashboardMenu menuItem="2" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
-                        <div className="header-calendar-container">
-                            <div className="left-header-calendar-container">
+                            <div className="left-header-add-calendar-container">
                                 <Button onClick={this.handleClickBack} size="large" >
                                     <LeftOutlined />
                                 </Button>
                             </div>
-                            <div className="center-header-calendar-container"> {type === "add" ? "Thêm Sự Kiện" : "Cập Nhật Sự Kiện"} </div>
-                            <div className="right-header-calendar-container"></div>
-                        </div>
+                            <div className="center-header-add-calendar-container"> {type === "add" ? "Thêm Sự Kiện" : "Cập Nhật Sự Kiện"} </div>
+                            <div className="right-header-add-calendar-container"></div>
                     </Header>
                     <Content style={{ position: 'relative' }}>
                         <Form onFinish={this.handleSubmit} size="large">

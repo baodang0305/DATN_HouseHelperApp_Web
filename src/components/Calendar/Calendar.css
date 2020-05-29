@@ -1,15 +1,29 @@
-.header-calendar-container {
+.left-header-calendar-container {
+    justify-content: center;
+    width: 40%;
+}
+
+.center-header-calendar-container {
+    font-size: 20px;
+    width: 20%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+}
+
+.right-header-calendar-container {
+    display: flex;
     align-items: center;
+    justify-content: flex-end;
+    width: 40%;
+}
+
+.content-calendar {
+    background-color: white;
+    margin: 0px 20px 30px 20px;
 }
 
 .icon-header-calendar {
     font-size: 19px;
-}
-
-.center-header-calendar-container {
-    font-size: 22px;
 }
 
 .first-row-content-calendar-container {
@@ -41,11 +55,6 @@
     font-size: 25px;
 }
 
-.left-header-calendar-container {
-    justify-content: center;
-    width: 25%;
-}
-
 .border-avatar-calendar {
     border: groove thin #2985ff;
 }
@@ -59,13 +68,6 @@
     padding: 5px 10px;
     border-radius: 3px;
     margin-bottom: 5px;
-}
-
-.right-header-calendar-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 25%;
 }
 
 .remind-event-bell {

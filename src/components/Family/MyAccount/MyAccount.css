@@ -1,11 +1,20 @@
-.header-my-account-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.left-header-my-account-container {
+    width: 20%;
 }
 
 .center-header-my-account-container {
     font-size: 22px;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+}
+
+.content-my-account {
+    background-color: white;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .delete-button,
@@ -25,18 +34,8 @@
     float: right;
 }
 
-.my-account-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-my-account {
-    width: 400px;
-    margin: auto;
-}
-
 .title-forgot {
     color: #1890ff;
     cursor: pointer;
-    font-size: 18px ;
+    font-size: 17px ;
 }

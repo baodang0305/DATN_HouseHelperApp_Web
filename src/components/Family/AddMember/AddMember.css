@@ -1,14 +1,19 @@
-.header-add-member-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.left-header-add-member-container {
+  width: 20%;
 }
 
 .center-header-add-member-container {
   font-size: 22px;
+  width: 60%;
+  display: flex;
+  justify-content: center;
 }
 
-.site-layout-background {
+.content-add-member {
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: white;
 }
 

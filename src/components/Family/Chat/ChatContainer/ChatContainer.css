@@ -1,11 +1,12 @@
-.header-chat-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.left-header-chat-container {
+    width: 20%;
 }
 
 .center-header-chat-container {
     font-size: 22px;
+    width: 60%;
+    display: flex;
+    justify-content: center;
 }
 
 .chat-container {

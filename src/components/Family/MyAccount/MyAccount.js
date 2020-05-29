@@ -380,178 +380,169 @@ class MyAccount extends React.Component {
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
                     <Header className="header-container">
-                        <div className="header-my-account-container">
-                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}>
+                        <div className="left-header-my-account-container">
+                            <Button onClick={this.handleClickBack} size="large">
                                 <LeftOutlined />
                             </Button>
-                            <div className="center-header-my-account-container">Tài Khoản Của Tôi</div>
-                            <div style={{width: "5%"}}></div>
                         </div>
+                        <div className="center-header-my-account-container">Tài Khoản Của Tôi</div>
+                        <div style={{ width: "20%" }}></div>
                     </Header>
-                    <Content className="site-layout-background" style={{ margin: 20 }}>
-                        <div className="my-account-container">
-                            <div className="form-my-account">
-                                <Row justify="center" align="middle">
-                                    <Col span={24}>
-                                        <Form
-                                            onFinish={this.handleSubmit} size="large"
-                                            initialValues={{ "mName": member.mName, "mEmail": member.mEmail, "mAge": member.mAge }}
-                                        >
-                                            <Form.Item style={{ textAlign: "center", marginTop: 20 }}> <Avatar /> </Form.Item>
+                    <Content className="content-my-account">
+                        <Form
+                            onFinish={this.handleSubmit} size="large" style={{ width: '40%' }}
+                            initialValues={{ "mName": member.mName, "mEmail": member.mEmail, "mAge": member.mAge }}
+                        >
+                            <Form.Item style={{ textAlign: "center", marginTop: 20 }}> <Avatar /> </Form.Item>
 
-                                            <Form.Item>
-                                                <Radio.Group
-                                                    onChange={(e) => (this.setState({ avatarType: e.target.value }))}
-                                                    style={{ display: "flex", justifyContent: "space-between" }}
-                                                >
-                                                    <Radio.Button value="camera" className="avatar camera-avatar"> <i className="fa fa-camera camera-icon" aria-hidden="true" /> </Radio.Button>
-                                                    <Radio.Button value="#f7c2c1" className="avatar avatar1" style={{ backgroundColor: "#f7c2c1" }}></Radio.Button>
-                                                    <Radio.Button value="#fcefc3" className="avatar avatar2" style={{ backgroundColor: "#fcefc3" }}></Radio.Button>
-                                                    <Radio.Button value="#fadec2" className="avatar avatar3" style={{ backgroundColor: "#fadec2" }}></Radio.Button>
-                                                    <Radio.Button value="#e4cce2" className="avatar avatar4" style={{ backgroundColor: "#e4cce2" }}></Radio.Button>
-                                                    <Radio.Button value="#d3dff1" className="avatar avatar5" style={{ backgroundColor: "#d3dff1" }}></Radio.Button>
-                                                    <Radio.Button value="#9dcc80" className="avatar avatar6" style={{ backgroundColor: "#9dcc80" }}></Radio.Button>
-                                                </Radio.Group>
-                                            </Form.Item>
+                            <Form.Item>
+                                <Radio.Group
+                                    onChange={(e) => (this.setState({ avatarType: e.target.value }))}
+                                    style={{ display: "flex", justifyContent: "space-between" }}
+                                >
+                                    <Radio.Button value="camera" className="avatar camera-avatar"> <i className="fa fa-camera camera-icon" aria-hidden="true" /> </Radio.Button>
+                                    <Radio.Button value="#f7c2c1" className="avatar avatar1" style={{ backgroundColor: "#f7c2c1" }}></Radio.Button>
+                                    <Radio.Button value="#fcefc3" className="avatar avatar2" style={{ backgroundColor: "#fcefc3" }}></Radio.Button>
+                                    <Radio.Button value="#fadec2" className="avatar avatar3" style={{ backgroundColor: "#fadec2" }}></Radio.Button>
+                                    <Radio.Button value="#e4cce2" className="avatar avatar4" style={{ backgroundColor: "#e4cce2" }}></Radio.Button>
+                                    <Radio.Button value="#d3dff1" className="avatar avatar5" style={{ backgroundColor: "#d3dff1" }}></Radio.Button>
+                                    <Radio.Button value="#9dcc80" className="avatar avatar6" style={{ backgroundColor: "#9dcc80" }}></Radio.Button>
+                                </Radio.Group>
+                            </Form.Item>
 
-                                            <Form.Item name="mName" rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}>
-                                                <Input type="text" placeholder="Name" prefix={<i className="fa fa-user" aria-hidden="true"></i>} />
-                                            </Form.Item>
+                            <Form.Item name="mName" rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}>
+                                <Input type="text" placeholder="Name" prefix={<i className="fa fa-user" aria-hidden="true"></i>} />
+                            </Form.Item>
 
-                                            <Form.Item name="mEmail" rules={[{ required: true, message: 'Vui lòng nhập email!' }]} >
-                                                <Input placeholder="Email" type="text" prefix={<i className="fa fa-envelope" aria-hidden="true"></i>} />
-                                            </Form.Item>
+                            <Form.Item name="mEmail" rules={[{ required: true, message: 'Vui lòng nhập email!' }]} >
+                                <Input placeholder="Email" type="text" prefix={<i className="fa fa-envelope" aria-hidden="true"></i>} />
+                            </Form.Item>
 
-                                            <Form.Item name="mAge" rules={[{ required: true, message: 'Vui lòng nhập tuổi!' }]}>
-                                                <Input type="number" placeholder="Age" prefix={<i className="fa fa-birthday-cake" aria-hidden="true"></i>} />
-                                            </Form.Item>
+                            <Form.Item name="mAge" rules={[{ required: true, message: 'Vui lòng nhập tuổi!' }]}>
+                                <Input type="number" placeholder="Age" prefix={<i className="fa fa-birthday-cake" aria-hidden="true"></i>} />
+                            </Form.Item>
 
-                                            <Form.Item>
-                                                <Row style={{ width: '100%' }}>
-                                                    <Col span={16}>
-                                                        <Select
-                                                            defaultValue={mRole}
-                                                            onChange={(key => (this.setState({ mRole: key })))}
-                                                            dropdownRender={menu => (
-                                                                <div>
-                                                                    {menu}
-                                                                    <Divider style={{ margin: "4px 0" }} />
-                                                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
-                                                                        <Input style={{ flex: 'auto' }} name="nameAddRole" value={nameAddRole} onChange={this.handleChangeInput} />
-                                                                        <a
-                                                                            style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
-                                                                            onClick={this.addItemRole}
-                                                                        >
-                                                                            <PlusOutlined /> Thêm vai trò
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        >
-                                                            {itemsRole.map(item => (
-                                                                <Option key={item}>{item}</Option>
-                                                            ))}
-                                                        </Select>
-                                                    </Col>
-                                                    <Col span={8}>
-                                                        <Checkbox
-                                                            checked={mIsAdmin} style={{ float: "right", lineHeight: 3 }}
-                                                            onChange={(e) => (this.setState({ mIsAdmin: e.target.checked }))}
-                                                        > Admin </Checkbox>
-                                                    </Col>
-                                                </Row>
-                                            </Form.Item>
+                            <Form.Item >
+                                <div style={{ display: 'flex' }}>
+                                    <Select
+                                        style={{ width: '70%' }}
+                                        defaultValue={mRole}
+                                        onChange={(key => (this.setState({ mRole: key })))}
+                                        dropdownRender={menu => (
+                                            <div>
+                                                {menu}
+                                                <Divider style={{ margin: "4px 0" }} />
+                                                <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
+                                                    <Input style={{ flex: 'auto' }} name="nameAddRole" value={nameAddRole} onChange={this.handleChangeInput} />
+                                                    <a
+                                                        style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
+                                                        onClick={this.addItemRole}
+                                                    >
+                                                        <PlusOutlined /> Thêm vai trò
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        )}
+                                    >
+                                        {itemsRole.map(item => (
+                                            <Option key={item}>{item}</Option>
+                                        ))}
+                                    </Select>
+                                    <div style={{ width: "30%" }}>
+                                        <Checkbox
+                                            checked={mIsAdmin} style={{ float: "right", lineHeight: 3 }}
+                                            onChange={(e) => (this.setState({ mIsAdmin: e.target.checked }))}
+                                        > Admin </Checkbox>
+                                    </div>
+                                </div>
+                            </Form.Item>
 
-                                            <Form.Item >
-                                                <Checkbox disabled={!isChanged} onChange={this.handleClickSetPassword}>
-                                                    <span style={{ fontSize: "18px" }}> <LockOutlined /> Đặt lại mật khẩu cá nhân </span>
-                                                </Checkbox>
-                                            </Form.Item>
+                            <Form.Item >
+                                <Checkbox disabled={!isChanged} onChange={this.handleClickSetPassword}>
+                                    <span style={{ fontSize: "18px" }}> <LockOutlined /> Đặt lại mật khẩu cá nhân </span>
+                                </Checkbox>
+                            </Form.Item>
 
-                                            <Form.Item validateStatus={stateCurrentPass} help={errorCurrentPass} >
-                                                <Input
-                                                    name="mCurrentPass" value={mCurrentPass} onChange={this.handleChangeInput}
-                                                    placeholder="Mật khẩu hiện tại" type="password" disabled={!isSetPass}
-                                                />
-                                            </Form.Item>
+                            <Form.Item validateStatus={stateCurrentPass} help={errorCurrentPass} >
+                                <Input
+                                    name="mCurrentPass" value={mCurrentPass} onChange={this.handleChangeInput}
+                                    placeholder="Mật khẩu hiện tại" type="password" disabled={!isSetPass}
+                                />
+                            </Form.Item>
 
-                                            <Form.Item validateStatus={stateNewPass} help={errorNewPass} >
-                                                <Input
-                                                    name="mNewPass" value={mNewPass} onChange={this.handleChangeInput}
-                                                    placeholder="Mật khẩu mới" type="password" disabled={!isSetPass}
-                                                />
-                                            </Form.Item>
+                            <Form.Item validateStatus={stateNewPass} help={errorNewPass} >
+                                <Input
+                                    name="mNewPass" value={mNewPass} onChange={this.handleChangeInput}
+                                    placeholder="Mật khẩu mới" type="password" disabled={!isSetPass}
+                                />
+                            </Form.Item>
 
-                                            <Form.Item validateStatus={stateConfirmPass} help={errorConfirmPass}>
-                                                <Input
-                                                    name="mConfirmPass" value={mConfirmPass} onChange={this.handleChangeInput}
-                                                    placeholder="Mật khẩu xác nhận" type="password" disabled={!isSetPass}
-                                                />
-                                            </Form.Item>
+                            <Form.Item validateStatus={stateConfirmPass} help={errorConfirmPass}>
+                                <Input
+                                    name="mConfirmPass" value={mConfirmPass} onChange={this.handleChangeInput}
+                                    placeholder="Mật khẩu xác nhận" type="password" disabled={!isSetPass}
+                                />
+                            </Form.Item>
 
-                                            <Form.Item>
-                                                {(member.mEmail !== user.mEmail && user.mIsAdmin) ?
-                                                    <div onClick={this.showBoxResetFamilyPassword} style={{ float: "left" }} className="login-form-forgot title-forgot"> Reset family password </div>
-                                                    :
-                                                    null
-                                                }
-                                                {member.mEmail === user.mEmail ?
-                                                    <div onClick={this.showBoxRequestResetPassword} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
-                                                    :
-                                                    null
-                                                }
-                                            </Form.Item>
+                            <Form.Item>
+                                {(member.mEmail !== user.mEmail && user.mIsAdmin) ?
+                                    <div onClick={this.showBoxResetFamilyPassword} style={{ float: "left" }} className="login-form-forgot title-forgot"> Reset family password </div>
+                                    :
+                                    null
+                                }
+                                {member.mEmail === user.mEmail ?
+                                    <div onClick={this.showBoxRequestResetPassword} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
+                                    :
+                                    null
+                                }
+                            </Form.Item>
 
-                                            <Modal
-                                                onOk={this.handleSendRequestResetPassword}
-                                                title="Vui lòng nhập email để đặt lại password!"
-                                                onCancel={this.handleCancelRequestResetPassword}
-                                                closable={false} visible={visibleRequestResetPassword}
-                                                footer={[
-                                                    <Button key="back" onClick={this.handleCancelRequestResetPassword}> Đóng </Button>,
-                                                    <Button key="submit" type="primary" onClick={this.handleSendRequestResetPassword}> Gửi </Button>
-                                                ]}
-                                            >
-                                                <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
-                                                    <Input
-                                                        name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
-                                                        prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
-                                                    />
-                                                </Form.Item>
-                                            </Modal>
+                            <Modal
+                                onOk={this.handleSendRequestResetPassword}
+                                title="Vui lòng nhập email để đặt lại password!"
+                                onCancel={this.handleCancelRequestResetPassword}
+                                closable={false} visible={visibleRequestResetPassword}
+                                footer={[
+                                    <Button key="back" onClick={this.handleCancelRequestResetPassword}> Đóng </Button>,
+                                    <Button key="submit" type="primary" onClick={this.handleSendRequestResetPassword}> Gửi </Button>
+                                ]}
+                            >
+                                <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
+                                    <Input
+                                        name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
+                                        prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
+                                    />
+                                </Form.Item>
+                            </Modal>
 
-                                            <Modal
-                                                title="Vui lòng nhập family password!"
-                                                onOk={this.handleSendResetFamilyPassword}
-                                                onCancel={this.handleCancelResetFamilyPassword}
-                                                closable={false} visible={visibleResetFamilyPassword}
-                                                footer={[
-                                                    <Button key="back" onClick={this.handleCancelResetFamilyPassword}> Đóng </Button>,
-                                                    <Button key="submit" type="primary" onClick={this.handleSendResetFamilyPassword}> Gửi </Button>
-                                                ]}
-                                            >
-                                                <Form.Item validateStatus={stateFamilyPassword} help={errorFamilyPassword}>
-                                                    <Input
-                                                        name="fPassword" value={fPassword} onChange={this.handleChangeInput}
-                                                        prefix={<LockOutlined className="site-form-item-icon" />} placeholder="Password" size="large" type="password"
-                                                    />
-                                                </Form.Item>
-                                            </Modal>
+                            <Modal
+                                title="Vui lòng nhập family password!"
+                                onOk={this.handleSendResetFamilyPassword}
+                                onCancel={this.handleCancelResetFamilyPassword}
+                                closable={false} visible={visibleResetFamilyPassword}
+                                footer={[
+                                    <Button key="back" onClick={this.handleCancelResetFamilyPassword}> Đóng </Button>,
+                                    <Button key="submit" type="primary" onClick={this.handleSendResetFamilyPassword}> Gửi </Button>
+                                ]}
+                            >
+                                <Form.Item validateStatus={stateFamilyPassword} help={errorFamilyPassword}>
+                                    <Input
+                                        name="fPassword" value={fPassword} onChange={this.handleChangeInput}
+                                        prefix={<LockOutlined className="site-form-item-icon" />} placeholder="Password" size="large" type="password"
+                                    />
+                                </Form.Item>
+                            </Modal>
 
-                                            <Form.Item style={{ textAlign: "center" }}>
-                                                <Row>
-                                                    <Col span={11}> <Button className="delete-button" onClick={this.handleDeleteMember} > Xóa </Button> </Col>
-                                                    <Col span={11} offset={2}> <Button className="save-button" type="primary" htmlType="submit" > Lưu </Button> </Col>
-                                                </Row>
-                                                {this.props.changingPassword && !this.props.changedPassword &&
-                                                    <Spin tip="Đang xử lý..." />
-                                                }
-                                            </Form.Item>
-                                        </Form>
-                                    </Col>
+                            <Form.Item style={{ textAlign: "center" }}>
+                                <Row>
+                                    <Col span={11}> <Button className="delete-button" onClick={this.handleDeleteMember} > Xóa </Button> </Col>
+                                    <Col span={11} offset={2}> <Button className="save-button" type="primary" htmlType="submit" > Lưu </Button> </Col>
                                 </Row>
-                            </div>
-                        </div>
+                                {this.props.changingPassword && !this.props.changedPassword &&
+                                    <Spin tip="Đang xử lý..." />
+                                }
+                            </Form.Item>
+                        </Form>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}></Footer>
                 </Layout>

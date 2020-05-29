@@ -1,11 +1,12 @@
-.header-setting-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .center-header-setting-container {
     font-size: 22px;
+    width: 40%;
+    display: flex;
+    justify-content: center;
+}
+
+.left-header-setting-container {
+    width: 30%;
 }
 
 .panel-container {
