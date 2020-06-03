@@ -1,5 +1,5 @@
 import React from 'react'
-import { List, Avatar, Button, Skeleton, Col, Row, Modal, Tooltip, Checkbox } from 'antd';
+import { List, Avatar, Button, Skeleton, Col, Row, Modal, Tooltip, Checkbox, Spin } from 'antd';
 import history from '../../../helpers/history';
 
 import { connect } from 'react-redux';
@@ -111,165 +111,188 @@ class TaskList extends React.Component {
 
         return (
             <div>
+                {this.shouldComponentRender()
+                    ? <List className="task__list-task-container"
+                        itemLayout="horizontal"
+                        pagination={{
+                            pageSize: 5
+                        }}
+                        dataSource={dataTasks}
+                        renderItem={item => (
+                            <List.Item className="task__list-item" onClick={() => {
+                                if (hiddenActionsList === false) {
+                                    this.setState({ hiddenActionsList: !hiddenActionsList, index: item._id, dataTemp: { idTask: item._id, nameTask: item.name, memberUser: item.assign } })
+                                    this.props.getRecentTask(item);
+                                }
 
-                <List
-                    itemLayout="horizontal"
-                    pagination={{
-                        pageSize: 5
-                    }}
-                    dataSource={dataTasks}
-                    renderItem={item => (
-                        <List.Item style={{ padding: '5px 0', minHeight: 87 }} key={`${item._id}`}
-                            actions={
-                                (item._id === index && hiddenActionsList === false)
-                                    ? (item.state === 'todo' || item.state === 'upcoming' ? [
-                                        <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
-                                            {item.assign === null ? <div className="list-action"
-                                                onClick={(e) => {
-                                                    this.setState({ visibleAssignTask: true, })
-                                                }}>
-                                                <SolutionOutlined className="icon-action-task" />
-                                                <div>Nhận việc</div>
-                                            </div> : null}
-
-
-                                            <div className="list-action"
-                                                onClick={() => (this.setState({ visibleCompleteTask: true }))}>
-
-                                                <CheckOutlined style={{ color: '#09ed37' }} className="icon-action-task" />
-                                                <div>Hoàn thành</div>
-                                            </div>
-                                            {checkAccession(item, user) === true ? <div className="list-action"
-                                                onClick={() => (this.setState({ visibleDismissTask: true }))}>
-                                                <StopOutlined style={{ color: '#F8DA74' }} className="icon-action-task" />
-                                                <div>Bỏ qua</div>
-                                            </div> : false}
-
-
-
-                                            {item.assign ? <div className="list-action"
-                                                onClick={() => (this.setState({ visibleRemindTask: true }))}>
-                                                <AlertOutlined style={{ color: 'orange' }} className="icon-action-task" />
-                                                <div>Nhắc nhở</div>
-                                            </div> : null}
-
-                                            {user.mIsAdmin === true ? <div className="list-action"
-                                                onClick={() => history.push("/tasks/edit-task")}>
-                                                <EditOutlined style={{ color: '#756f6d' }} className="icon-action-task" />
-                                                <div>Sửa</div>
-                                            </div> : null
-                                            }
-                                            {user.mIsAdmin === true ? <div className="list-action"
-                                                onClick={(e) => {
-                                                    this.setState({ visibleDeleteTask: true, })
-                                                }}>
-                                                <DeleteOutlined style={{ color: '#EC6764' }} className="icon-action-task" />
-                                                <div>Xóa bỏ</div>
-                                            </div> : null}
-
-
-                                        </div>
-                                    ] : [
+                            }}
+                                style={{ padding: '5px 0', minHeight: 87 }} key={`${item._id}`}
+                                actions={
+                                    (item._id === index && hiddenActionsList === false)
+                                        ? (item.state === 'todo' || item.state === 'upcoming' ? [
                                             <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
-                                                <div className="list-action"
-                                                    onClick={(e) => {
-                                                        this.setState({ visibleRedoTask: true, })
-                                                    }}>
-                                                    <div><ArrowUpOutlined style={{ color: '#2295FF', fontSize: 20 }} /></div>
-                                                    <div>Làm lại</div>
+                                                <div className="task_action-left-part">
+                                                    <div className="task__action-item"
+                                                        onClick={() => {
+                                                            if (hiddenActionsList === false) {
+                                                                this.setState({ hiddenActionsList: !hiddenActionsList, index: item._id, dataTemp: { idTask: item._id, nameTask: item.name, memberUser: item.assign } })
+                                                                this.props.getRecentTask(item);
+                                                            }
+                                                        }}>
+
+                                                        <CloseOutlined style={{ color: '#888888' }} className="icon-action-task" />
+                                                        <div className="task__action-title">Đóng</div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ]) : null}>
-                            <Skeleton avatar title={false} loading={!this.shouldComponentRender()} active style={{ width: '100%' }}>
-
-                                <div className="detail-task" style={{ width: '100%' }} >
-                                    <div style={{ marginLeft: '-15px', position: 'relative' }}>
-                                        {loadingTask && item._id === index
-                                            ? <LoadingOutlined style={{ fontSize: 28, color: '#2985ff' }} />
-                                            : <div className="round">
-                                                <input checked={item.state === 'completed' ? true : false}
-                                                    onChange={(e) => this.checkCompleteByCheckBox(item)}
-                                                    type="checkbox" key={item._id} id={`${item._id}`} className="check-box-task" />
-                                                <label htmlFor={`${item._id}`}></label>
-                                            </div>}
-
-                                    </div>
-                                    <Row gutter={10} style={{ width: '100%', marginLeft: 20 }} onClick={(e) => {
-                                        this.setState({ hiddenActionsList: !hiddenActionsList, index: item._id, dataTemp: { idTask: item._id, nameTask: item.name, memberUser: item.assign } })
-                                        this.props.getRecentTask(item);
-                                    }}>
-
-                                        <Col span={12} hidden={item._id === index ? (hiddenActionsList === true ? false : true) : false}>
-                                            <div className="infor-task">
-                                                <div className="name-task">{item.name}</div>
-                                                {item.notes === "" ? null :
-                                                    <div className="note-task">
-                                                        <SnippetsOutlined style={{ fontSize: 16, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: 4 }} />
-                                                    &nbsp;{item.notes}
-                                                    </div>}
-
-                                                <div className="time-task">
-                                                    {item.dueDate === null ? `${'Không gia hạn thời gian'}` : moment(`${item.dueDate}`).calendar()}
-                                                </div>
-                                            </div>
-                                        </Col>
-                                        <Col span={4} className="show-image-task" hidden={item._id === index ? (hiddenActionsList === true ? false : true) : false}>
-                                            <img className="image-task" src={item.photo} alt="" hidden={item.photo === null ? true : false} />
-                                        </Col>
-                                        <Col flex="auto" className="show-assign-action-task">
-                                            <div className="icon-assigned-point">
-
-                                                {/* Assigned members */}
-                                                <div className="icon-assigned">
-
-                                                    {item.assign !== null ? item.assign.mAssigns.map((member, recentIndex) =>
-                                                        <div key={member.mID.mName} className="container-icon-avatar">
-
-                                                            {item.assign.isAll === true ? <div hidden={recentIndex === 0 ? true : false} className="line-connect-all-member"></div> : null}
-                                                            <Tooltip placement="top" title={member.mID.mName}>
-                                                                <Avatar style={{
-                                                                    border: item.assign.isAll === true && member.isDone === false
-                                                                        ? '1px solid #2985ff'
-                                                                        : (item.assign.isAll === true && member.isDone === true ? '1px solid rgb(21, 255, 0)' : null)
-                                                                    , margin: item.assign.isAll === true ? null : '0 5px'
-                                                                }}
-                                                                    className={member.isDone === true ? "icon-avatar-member-completed" : "icon-avatar"} src={member.mID.mAvatar.image} />
-                                                                {member.isDone === true ? <CheckOutlined
-                                                                    className="icon-check-member-completed"
-                                                                /> : null}
-                                                            </Tooltip>
-                                                            {item.assign.isAll === true ? <div hidden={recentIndex === (item.assign.mAssigns.length - 1) ? true : false} className="line-connect-all-member"></div> : null}
-                                                        </div>)
-                                                        : <div className="list-action" hidden={item._id === index ? !hiddenActionsList : false}
+                                                <div className="task__action-right-part">
+                                                    {item.assign === null
+                                                        ? <div className="task__action-item"
                                                             onClick={(e) => {
-                                                                this.setState({ visibleAssignTask: true, hiddenActionsList: !this.state.hiddenActionsList })
+                                                                this.setState({ visibleAssignTask: true, })
                                                             }}>
                                                             <SolutionOutlined className="icon-action-task" />
-                                                            <div>Nhận việc</div>
-                                                        </div>}
+                                                            <div className="task__action-title">Nhận việc</div>
+                                                        </div> : null}
+
+
+                                                    <div className="task__action-item"
+                                                        onClick={() => (this.setState({ visibleCompleteTask: true }))}>
+
+                                                        <CheckOutlined style={{ color: '#09ed37' }} className="icon-action-task" />
+                                                        <div className="task__action-title">Hoàn thành</div>
+                                                    </div>
+                                                    {checkAccession(item, user) === true ? <div className="task__action-item"
+                                                        onClick={() => (this.setState({ visibleDismissTask: true }))}>
+                                                        <StopOutlined style={{ color: '#F8DA74' }} className="icon-action-task" />
+                                                        <div className="task__action-title">Bỏ qua</div>
+                                                    </div> : false}
+
+                                                    {item.assign ? <div className="task__action-item"
+                                                        onClick={() => (this.setState({ visibleRemindTask: true }))}>
+                                                        <AlertOutlined style={{ color: 'orange' }} className="icon-action-task" />
+                                                        <div className="task__action-title">Nhắc nhở</div>
+                                                    </div> : null}
+
+                                                    {user.mIsAdmin === true ? <div className="task__action-item"
+                                                        onClick={() => history.push("/tasks/edit-task")}>
+                                                        <EditOutlined style={{ color: '#756f6d' }} className="icon-action-task" />
+                                                        <div className="task__action-title">Sửa</div>
+                                                    </div> : null
+                                                    }
+                                                    {user.mIsAdmin === true ? <div className="task__action-item"
+                                                        onClick={(e) => {
+                                                            this.setState({ visibleDeleteTask: true, })
+                                                        }}>
+                                                        <DeleteOutlined style={{ color: '#EC6764' }} className="icon-action-task" />
+                                                        <div className="task__action-title">Xóa bỏ</div>
+                                                    </div> : null}
                                                 </div>
 
-                                                <div className="task-point">
-                                                    <StarOutlined className="icon-task-point" />
-                                                    <span className="point">&nbsp;{item.points} điểm</span>
-                                                </div>
+
+
                                             </div>
-                                        </Col>
-                                    </Row>
+                                        ] : [
+                                                <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
+                                                    <div className="task__action-item"
+                                                        onClick={(e) => {
+                                                            this.setState({ visibleRedoTask: true, })
+                                                        }}>
+                                                        <div><ArrowUpOutlined style={{ color: '#2295FF', fontSize: 20 }} /></div>
+                                                        <div className="task__action-title">Làm lại</div>
+                                                    </div>
+                                                </div>
+                                            ]) : null}>
 
-                                </div>
-                            </Skeleton>
-                        </List.Item>
-                    )}
-                />
-                <Modal style={{ maxWidth: 416 }}
+                                <Skeleton avatar title={false} loading={!this.shouldComponentRender()} active style={{ width: '100%' }}>
+
+                                    <div className="detail-task" style={{ width: '100%', display: item._id === index ? (hiddenActionsList === true ? null : 'none') : null }} >
+                                        <div style={{ marginLeft: '-15px', position: 'relative' }}>
+                                            {loadingTask && item._id === index
+                                                ? <LoadingOutlined style={{ fontSize: 28, color: '#2985ff' }} />
+                                                : <div className="round">
+                                                    <input checked={item.state === 'completed' ? true : false}
+                                                        onChange={(e) => this.checkCompleteByCheckBox(item)}
+                                                        type="checkbox" key={item._id} id={`${item._id}`} className="check-box-task" />
+                                                    <label htmlFor={`${item._id}`}></label>
+                                                </div>}
+
+                                        </div>
+                                        <Row gutter={10} style={{ width: '100%', marginLeft: 20, display: item._id === index ? (hiddenActionsList === true ? null : 'none') : null }} onClick={(e) => {
+                                            this.setState({ hiddenActionsList: !hiddenActionsList, index: item._id, dataTemp: { idTask: item._id, nameTask: item.name, memberUser: item.assign } })
+                                            this.props.getRecentTask(item);
+                                        }}>
+
+                                            <Col xs={18} sm={16} md={16} lg={14} xl={12} >
+                                                <div className="infor-task">
+                                                    <div className="name-task">{item.name}</div>
+                                                    {item.notes === "" ? null :
+                                                        <div className="note-task">
+                                                            <SnippetsOutlined style={{ fontSize: 16, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: 4 }} />
+                                                    &nbsp;{item.notes}
+                                                        </div>}
+
+                                                    <div className="time-task">
+                                                        {item.dueDate === null ? `${'Không gia hạn thời gian'}` : moment(`${item.dueDate}`).calendar()}
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                            <Col xs={0} sm={0} md={0} lg={4} xl={4} className="show-image-task" hidden={item._id === index ? (hiddenActionsList === true ? false : true) : false}>
+                                                <img className="image-task" src={item.photo} alt="" hidden={item.photo === null ? true : false} />
+                                            </Col>
+                                            <Col xs={6} sm={8} md={8} lg={6} xl={8} className="show-assign-action-task" style={{ display: item._id === index ? (hiddenActionsList === true ? null : 'none') : null }}>
+                                                {/* Assigned members */}
+                                                <div className="right-part-item-task">
+                                                    <div className="icon-assigned">
+                                                        {item.assign !== null ? item.assign.mAssigns.map((member, recentIndex) =>
+                                                            <div key={member.mID.mName} className="container-icon-avatar">
+
+                                                                {item.assign.isAll === true ? <div hidden={recentIndex === 0 ? true : false} className="line-connect-all-member"></div> : null}
+                                                                <Tooltip placement="top" title={member.mID.mName}>
+                                                                    <Avatar style={{
+                                                                        border: item.assign.isAll === true && member.isDone === false
+                                                                            ? '1px solid #2985ff'
+                                                                            : (item.assign.isAll === true && member.isDone === true ? '1px solid rgb(21, 255, 0)' : null)
+                                                                        , margin: item.assign.isAll === true ? null : '0 5px'
+                                                                    }}
+                                                                        className={member.isDone === true ? "icon-avatar-member-completed" : "icon-avatar"} src={member.mID.mAvatar.image} />
+                                                                    {member.isDone === true ? <CheckOutlined
+                                                                        className="icon-check-member-completed"
+                                                                    /> : null}
+                                                                </Tooltip>
+                                                                {item.assign.isAll === true ? <div hidden={recentIndex === (item.assign.mAssigns.length - 1) ? true : false} className="line-connect-all-member"></div> : null}
+                                                            </div>)
+                                                            : <div className="task__action-item" hidden={item._id === index ? !hiddenActionsList : false}
+                                                                onClick={(e) => {
+                                                                    this.setState({ visibleAssignTask: true, hiddenActionsList: !this.state.hiddenActionsList })
+                                                                }}>
+                                                                <SolutionOutlined className="icon-action-task" />
+                                                                <div className="task__action-title">Đăng ký</div>
+                                                            </div>}
+                                                    </div>
+
+                                                    <div className="task-point">
+                                                        <StarOutlined className="icon-task-point" />
+                                                        <span className="point">&nbsp;{item.points} điểm</span>
+                                                    </div>
+                                                </div>
+                                            </Col>
+                                        </Row>
+
+                                    </div>
+                                </Skeleton>
+                            </List.Item>
+                        )}
+                    />
+                    : <div className="spin-get-list-members"><Spin tip="Đang tải..." /> </div>}
+
+                <Modal className="task__modal"
                     visible={visibleCompleteTask}
                     footer={null}
                     maskClosable={false}
                     onCancel={() => this.setState({ visibleCompleteTask: false })}>
                     <CompleteTaskForm idTask={dataTemp.idTask} nameTask={dataTemp.nameTask} assignedMembers={dataTemp.memberUser !== null ? dataTemp.memberUser.mAssigns : []} />
                 </Modal>
-                <Modal style={{ maxWidth: 416 }}
+                <Modal
                     footer={null}
                     visible={visibleDismissTask}
                     maskClosable={false}
@@ -283,21 +306,21 @@ class TaskList extends React.Component {
                     onCancel={() => this.setState({ visibleRemindTask: false })}>
                     <NudgeTaskForm idTask={dataTemp.idTask} assignedMembers={dataTemp.memberUser !== null ? dataTemp.memberUser.mAssigns : []} />
                 </Modal>
-                <Modal style={{ maxWidth: 416 }}
+                <Modal
                     footer={null}
                     visible={visibleDeleteTask}
                     maskClosable={false}
                     onCancel={() => this.setState({ visibleDeleteTask: false })}>
                     <DeleteTaskForm idTask={dataTemp.idTask} nameTask={dataTemp.nameTask} memberDelete={user} />
                 </Modal>
-                <Modal style={{ maxWidth: 416 }}
+                <Modal
                     footer={null}
                     visible={visibleRedoTask}
                     maskClosable={false}
                     onCancel={() => this.setState({ visibleRedoTask: false })}>
                     <RedoTaskForm idTask={dataTemp.idTask} nameTask={dataTemp.nameTask} />
                 </Modal>
-                <Modal style={{ maxWidth: 416 }}
+                <Modal
                     footer={null}
                     visible={visibleAssignTask}
                     maskClosable={false}

@@ -31,10 +31,12 @@ class DeleteTaskForm extends Component {
                     <div>
                         <div className="action-task-label">Thành viên xóa:</div>
                         <div className="action-task-detail-data">
-                            <div className="avatar-member">
-                                <Avatar className="icon-avatar-member" src={memberDelete.mAvatar.image} />
+                            <div className="modal-task__member-container">
+                                <div className="avatar-member">
+                                    <Avatar className="icon-avatar-member" src={memberDelete.mAvatar.image} />
+                                </div>
+                                <div className='name-avatar-member'>{memberDelete.mName}</div>
                             </div>
-                            <div className='name-avatar-member'>{memberDelete.mName}</div>
                         </div>
                     </div>
 

@@ -54,6 +54,13 @@ class Setting extends React.Component {
                                 <CaretRightOutlined className="caretright-icon" />
                             </div>
                         </Link>
+                        <Link to="/task-category" >
+                            <div className="panel-container">
+                                <span className="panel-content"> <i className="fa fa-book custom-icon" /> Loại công việc </span>
+                                <CaretRightOutlined className="caretright-icon" />
+
+                            </div>
+                        </Link>
                         {/* <Link to="#">
                             <div className="panel-container">
                                 <span className="panel-content"> <i className="fa fa-question-circle-o custom-icon" /> Helper Center </span> 

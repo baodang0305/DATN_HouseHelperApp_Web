@@ -31,10 +31,12 @@ class DismissTaskForm extends Component {
                     <div>
                         <div className="action-task-label">Thành viên bỏ qua:</div>
                         <div className="action-task-detail-data">
-                            <div className="avatar-member">
-                                <Avatar className="icon-avatar-member" src={memberDismiss.mAvatar.image} />
+                            <div className="modal-task__member-container">
+                                <div className="avatar-member">
+                                    <Avatar className="icon-avatar-member" src={memberDismiss.mAvatar.image} />
+                                </div>
+                                <div className='name-avatar-member'>{memberDismiss.mName}</div>
                             </div>
-                            <div className='name-avatar-member'>{memberDismiss.mName}</div>
                         </div>
                     </div>
 

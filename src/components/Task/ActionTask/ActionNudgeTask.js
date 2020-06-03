@@ -61,7 +61,7 @@ class NudgeTaskForm extends Component {
                     </div>
                     <div style={{ marginTop: 10 }} className="action-task-detail-data">
                         {assignedMembers.map(item =>
-                            <div key={item.mID._id} className="container-avatar-member">
+                            <div key={item.mID._id} className="modal-task__member-container">
                                 <div className="avatar-member"
                                     onClick={() => this.handledChangeAvatar(item.mID._id)}>
                                     <Avatar

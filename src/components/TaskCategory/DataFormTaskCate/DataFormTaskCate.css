@@ -1,0 +1,144 @@
+.input-item-add-task-cate {
+	border: none;
+	font-size: 18px;
+	text-align: center;
+}
+
+.form-item-add-task-cate {
+	margin: 10px 0;
+	padding: 10px 30px;
+	border-radius: 2px;
+	background-color: hsl(0, 0%, 100%);
+	background-position: 50% 50%;
+	box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
+}
+
+.recent-image-task-cate {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.recent-avatar-task-cate {
+	height: 50px;
+	width: 50px;
+}
+
+.title-choose-image-task-cate {
+	width: 100%;
+	text-align: center;
+	margin: 10px 0;
+}
+
+.list-all-image-task-cate {
+	width: 100%;
+}
+
+.container-item-image-task-cate {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	position: relative;
+}
+
+.item-image-task-cate {
+	width: max-content;
+	height: max-content;
+	position: relative;
+}
+
+.checked-assignment-add-cate {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 30px;
+	color: #52c41a;
+	z-index: 1;
+}
+
+.avatar-item-image-task-cate,
+.checked-avatar-item-image-task-cate {
+	width: 50px;
+	height: 50px;
+	cursor: pointer;
+	position: relative;
+	transition: all 0.4s ease-in;
+}
+
+.checked-avatar-item-image-task-cate {
+	background-color: gray;
+	opacity: 0.5;
+	border: 2px solid #12c930;
+}
+
+.avatar-item-image-task-cate:hover {
+	animation: animate 1.5s ease-out;
+}
+
+@keyframes animate {
+	0% {
+		box-shadow: 0 0 0 0 rgba(74, 137, 255, 0.7), 0 0 0 0 rgba(74, 137, 255, .7);
+	}
+
+	50% {
+		box-shadow: 0 0 0 15px rgba(74, 137, 255, 0), 0 0 0 0 rgba(74, 137, 255, .7);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(74, 137, 255, 0), 0 0 0 0 rgba(74, 137, 255, 0);
+	}
+}
+
+.btn-container-task-cate {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+.btn-task-cate {
+	margin-left: 10px;
+}
+
+.task-cate-form__content {
+	margin: 0px 10px;
+}
+
+@media all and (min-width: 320px) and (max-width: 599px) {
+	.form-item-add-task-cate {
+		margin: 5px 0px;
+		padding: 5px;
+	}
+
+	.task-cate-form__content {
+		margin: 5px 0px;
+	}
+
+	.form-item-add-task-cate:nth-child(1) {
+		margin: 0px 0px 5px 0px;
+	}
+
+	.checked-avatar-item-image-task-cate,
+	.avatar-item-image-task-cate {
+		width: 48px;
+		height: 48px;
+	}
+
+	.list-all-image-task-cate {
+		width: 100%;
+		padding: 0 5px;
+	}
+
+	.btn-container-task-cate {
+		margin-bottom: 70px;
+	}
+}
+
+@media all and (min-width: 600px) and (max-width: 1023px) {}
+
+@media all and (min-width: 1024px) {}
+
+@media all and (min-width: 1280px) {}

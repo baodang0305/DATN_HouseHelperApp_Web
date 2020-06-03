@@ -45,10 +45,12 @@ class AssignTaskForm extends Component {
                         <div>
                             <div className="action-task-label">Thành viên nhận công việc:</div>
                             <div className="action-task-detail-data">
-                                <div className="avatar-member">
-                                    <Avatar className="icon-avatar-member" src={user.mAvatar.image} />
+                                <div className="modal-task__member-container">
+                                    <div className="avatar-member">
+                                        <Avatar className="icon-avatar-member" src={user.mAvatar.image} />
+                                    </div>
+                                    <div className='name-avatar-member'>{user.mName}</div>
                                 </div>
-                                <div className='name-avatar-member'>{user.mName}</div>
                             </div>
                         </div>
                         {/* <div className="action-task-label">
@@ -56,7 +58,7 @@ class AssignTaskForm extends Component {
                         </div>
                         <div style={{ marginTop: 10 }} className="list-avatar-member">
                             {assignedMembers.length !== 0 ? assignedMembers.map(item =>
-                                <div className="container-avatar-member">
+                                <div className="modal-task__member-container">
                                     <div className="avatar-member"
                                         onClick={() => this.handledChangeAvatar(item.mID._id)}>
                                         <Avatar className="icon-avatar-member" src={item.mID.mAvatar.image} />

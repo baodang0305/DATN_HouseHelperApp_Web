@@ -24,7 +24,8 @@ import RegisterFamily from './Register/RegisterFamily/RegisterFamily';
 import RegisterAccount from './Register/RegisterAccount/RegisterAccount';
 import Reward from './Reward/Reward';
 import AddReward from './Reward/AddReward/AddReward';
-
+import TaskCategory from './TaskCategory/TaskCategory';
+import DataFormTaskCate from './TaskCategory/DataFormTaskCate/DataFormTaskCate';
 
 const Root = () => {
 
@@ -48,6 +49,14 @@ const Root = () => {
                     </PrivateRoute>
                     <PrivateRoute path="/tasks" component={Task} />
 
+                    <PrivateRoute path="/add-task-category">
+                        <DataFormTaskCate type="add" />
+                    </PrivateRoute>
+                    <PrivateRoute path="/edit-task-category">
+                        <DataFormTaskCate type="edit" />
+                    </PrivateRoute>
+                    <PrivateRoute path="/task-category" component={TaskCategory} />
+
                     <PrivateRoute exact path="/family" component={Family} />
                     <PrivateRoute exact path="/family/chat" component={Chat} />
                     <PrivateRoute exact path="/family/member" component={Member} />
@@ -58,10 +67,10 @@ const Root = () => {
 
                     <PrivateRoute exact path="/calendar" component={Calendar} />
                     <PrivateRoute exact path="/calendar/add-event">
-                        <AddEvent type="add"/>
+                        <AddEvent type="add" />
                     </PrivateRoute>
                     <PrivateRoute exact path="/calendar/edit-event">
-                        <AddEvent type="edit"/>
+                        <AddEvent type="edit" />
                     </PrivateRoute>
 
                     <PrivateRoute exact path="/rewards" component={Reward} />

@@ -4,16 +4,35 @@
 	flex-direction: row;
 	justify-content: center;
 }
+
+.add-task__header {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	height: 100%;
+}
+
 .container-form-add-task {
 	width: 100%;
+}
+
+.add-task__content {
+	margin: 0 10px;
+}
+
+.add-task__label-form-item {
+	font-size: 16px;
 }
 
 .list-avatar-member,
 .list-task-cate {
 	margin-top: 5px;
 	display: flex;
+	flex-wrap: wrap;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: space-evenly;
 	align-items: center;
 }
 
@@ -23,6 +42,10 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+}
+
+.task-cate-item {
+	margin: 0 5px;
 }
 
 .avatar-member,
@@ -40,6 +63,7 @@
 	border: 1px solid rgba(175, 172, 172, 0.533);
 	cursor: pointer;
 }
+
 .icon-avatar-member-checked,
 .icon-avatar-task-cate-checked {
 	width: 40px;
@@ -71,7 +95,7 @@
 }
 
 .name-avatar-member {
-	margin-left: 5px;
+	margin-top: 5px;
 	display: inline-block;
 	background-color: #f2f3f5;
 	color: #385898;
@@ -119,6 +143,7 @@
 	flex-direction: column;
 	align-items: center;
 }
+
 .input-add-task-img {
 	width: 100%;
 	height: 100%;
@@ -128,28 +153,34 @@
 	filter: alpha(opacity=0);
 	top: 0;
 }
+
 .upload-img {
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
 }
+
 .tt-upload-img {
 	width: max-content;
 }
+
 .after-upload-img {
 	width: 100%;
 	height: 100%;
 	object-fit: fill;
 }
+
 /* custom again form add task */
+
 .form-item-add {
 	margin: 10px 0;
-	padding: 10px 30px;
+	padding: 10px 20px;
 	border-radius: 2px;
 	background-color: hsl(0, 0%, 100%);
 	background-position: 50% 50%;
 	box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
 }
+
 .input-item-add-task {
 	border: none;
 	font-size: 18px;
@@ -157,6 +188,7 @@
 }
 
 /* css for select point and time in tab add task */
+
 .custom-select-add-task,
 .custom-select-date-add-task {
 	position: relative;
@@ -166,6 +198,7 @@
 	border-radius: 2px;
 	cursor: pointer;
 }
+
 .custom-select-date-add-task {
 	display: flex;
 	flex-direction: row;
@@ -176,6 +209,7 @@
 	border-color: #40a9ff;
 	border-right-width: 1px !important;
 }
+
 .present-select-add-task {
 	width: 100%;
 	height: 100%;
@@ -183,8 +217,8 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	justify-content: center;
 	position: relative;
-	padding: 0 30px;
 	cursor: pointer;
 }
 
@@ -198,6 +232,7 @@
 	padding: 0;
 	cursor: pointer;
 }
+
 .select-item-add-task {
 	position: absolute;
 	top: 0;
@@ -206,23 +241,129 @@
 	z-index: 1;
 	cursor: pointer;
 }
+
 .show-data-select {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	width: max-content;
 	font-size: 18px;
 	color: white;
 }
-.ant-picker-input > input:hover {
+
+.ant-picker-input>input:hover {
 	cursor: pointer;
 }
 
-.ant-form-item-label > label {
+.ant-form-item-label>label {
 	width: 100%;
 	position: relative;
 }
+
 .disable-btn-add-task {
 	pointer-events: none;
 	color: slategrey;
 }
+
+.add-task__button-select-icon {
+	font-size: 25px;
+	margin-right: 15px;
+	color: white;
+}
+
+.add-task__header-title {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.header__btn-link {
+	font-size: 19px;
+}
+
+.add-task__header-title {
+	font-size: 19px;
+}
+
+@media all and (min-width: 320px) and (max-width: 599px) {
+	.add-task__content {
+		margin: 0 0px;
+	}
+
+	.header__btn-link {
+
+		font-size: 16px;
+	}
+
+	.task__header-icon {
+		font-size: 16px;
+	}
+
+	.form-item-add {
+		margin: 5px 0;
+		padding: 5px 10px;
+	}
+
+	.add-task__button-select-icon {
+		font-size: 20px;
+		margin-right: 10px;
+		color: white;
+	}
+
+	.show-data-select {
+		font-size: 14px;
+	}
+
+	.present-select-add-task {
+		justify-content: center;
+	}
+
+	.add-task__label-cate {
+		font-size: 12px;
+	}
+
+	.add-task__label-form-item {
+		font-size: 14px;
+	}
+
+	.container-add-task {
+		padding-bottom: 70px;
+	}
+
+	.add-task__header-title {
+		font-size: 18px;
+	}
+
+	.ant-select-lg {
+		font-size: 14px;
+	}
+
+	.ant-picker-large .ant-picker-input>input {
+		font-size: 14px;
+	}
+
+}
+
+@media all and (min-width: 600px) and (max-width: 1023px) {
+	.show-data-select {
+		font-size: 15px;
+	}
+
+	.present-select-add-task {
+		justify-content: center;
+	}
+
+	.add-task__label-cate {
+		font-size: 13px;
+	}
+
+	.add-task__label-form-item {
+		font-size: 14px;
+	}
+
+	.container-add-task {
+		padding-bottom: 70px;
+	}
+}
+
+@media all and (min-width: 1024px) {}
+
+@media all and (min-width: 1280px) {}

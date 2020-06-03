@@ -48,9 +48,9 @@ class CompleteTaskForm extends Component {
                         <div className="action-task-label">
                             Thành viên hoàn thành:
                         </div>
-                        <div style={{ marginTop: 10 }} className="list-avatar-member">
+                        <div style={{ marginTop: 10 }} className="modal-task__members-list">
                             {assignedMembers.length !== 0 ? assignedMembers.map(item =>
-                                <div key={item.mID._id} className="container-avatar-member">
+                                <div key={item.mID._id} className="modal-task__member-container">
                                     <div className="avatar-member"
                                         onClick={() => this.handledChangeAvatar(item.mID._id)}>
                                         <Avatar className={checkedMembers.indexOf(item._id) === -1 ? "icon-avatar-member" : "icon-avatar-member-checked"} src={item.mID.mAvatar.image} />

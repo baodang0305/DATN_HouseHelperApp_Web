@@ -3,6 +3,23 @@ div.ant-modal-confirm-btns {
 	height: 0;
 }
 
+
+.modal-task__members-list {
+	margin-top: 5px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.modal-task__member-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin: 0 5px;
+}
+
 .form-done-task {
 	display: flex;
 	width: 100%;
@@ -10,7 +27,9 @@ div.ant-modal-confirm-btns {
 	justify-content: center;
 	align-items: center;
 }
+
 .action-task-title {
+	margin-top: 10px;
 	font-size: 15px;
 	font-weight: 500;
 	width: 100%;
@@ -19,6 +38,7 @@ div.ant-modal-confirm-btns {
 	justify-content: center;
 	align-items: center;
 }
+
 .action-task-label {
 	margin: 15px 0 10px;
 	font-size: 15px;
@@ -27,6 +47,7 @@ div.ant-modal-confirm-btns {
 	text-align: center;
 	color: black;
 }
+
 .action-task-detail-data {
 	display: flex;
 	flex-direction: row;
@@ -41,4 +62,41 @@ div.ant-modal-confirm-btns {
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
+}
+
+
+@media only screen and (min-width: 1025px) {}
+
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+
+	.action-task-title,
+	.action-task-label {
+		font-size: 14px;
+	}
+
+	.name-avatar-member {
+		font-size: 12px;
+		width: max-content;
+	}
+
+	.modal-task__member-container {
+		flex-wrap: wrap;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+
+	.action-task-title,
+	.action-task-label {
+		font-size: 13px;
+	}
+
+	.name-avatar-member {
+		font-size: 11px;
+		width: max-content;
+	}
+
+	.modal-task__member-container {
+		flex-wrap: wrap;
+	}
 }
