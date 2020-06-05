@@ -1,0 +1,160 @@
+.grocery-form__header {
+    display: flex;
+    margin: 0 10px;
+    position: relative;
+    width: 100%;
+}
+
+.grocery-form__header-title {
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.grocery-form__content {
+    margin: 0;
+    padding: 0;
+}
+
+.grocery-form__form-container {
+    margin: 10px 10px;
+}
+
+.grocery-from__action-item>.grocery__action>.grocery__icon-action {
+    font-size: 15px;
+}
+
+.grocery-form__form-item {
+    margin-bottom: 8px;
+    padding: 10px;
+    background-color: white;
+}
+
+.grocery-form__list-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.grocery-form__members-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.grocery-form__member-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.grocery-form__member-item:hover>.grocery-form__avatar {
+    border: 1px solid #1890ff;
+}
+
+.grocery-form__title-avatar {
+    margin-top: 5px;
+    display: inline-block;
+    background-color: #f2f3f5;
+    color: #385898;
+    padding: 2px 8px;
+    font-weight: 500;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.grocery-form__avatar {
+    width: 45px;
+    height: 45px;
+}
+
+.grocery-form__item {
+    border-bottom: 1px solid #999999;
+    margin: 10px;
+    width: 45%;
+    display: flex;
+    cursor: pointer;
+}
+
+.grocery-form__stt-item {
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.grocery-form__main-info-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.grocery-from__action-item {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.grocery-form__des-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.grocery-form__name-item {
+    font-weight: 500;
+}
+
+.grocery-form__input-name {
+    border: none;
+    text-align: center;
+}
+
+.grocery-form__item-label {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.grocery-form__add-item-container {
+    margin: 0 10px;
+}
+
+.grocery-form__input-image {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #999999;
+}
+
+.grocery-form__btn {
+    display: flex;
+    position: absolute;
+    right: 10px;
+    bottom: 0px;
+}
+
+@media all and (min-width: 320px) and (max-width: 599px) {
+    .grocery-form__item {
+        border-bottom: 1px solid #999999;
+        margin: 0px;
+        width: 100%;
+    }
+}
+
+@media all and (min-width: 600px) and (max-width: 1023px) {
+    .grocery-form__item {
+        border-bottom: 1px solid #999999;
+        margin: 0px;
+        width: 100%;
+    }
+}
+
+@media all and (min-width: 1024px) {}
+
+@media all and (min-width: 1280px) {}

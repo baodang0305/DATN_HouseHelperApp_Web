@@ -26,6 +26,8 @@ import Reward from './Reward/Reward';
 import AddReward from './Reward/AddReward/AddReward';
 import TaskCategory from './TaskCategory/TaskCategory';
 import DataFormTaskCate from './TaskCategory/DataFormTaskCate/DataFormTaskCate';
+import Grocery from './Grocery/Grocery';
+import DataFormGrocery from './Grocery/DataFormGrocery/DataFormGrocery';
 
 const Root = () => {
 
@@ -77,6 +79,11 @@ const Root = () => {
                     <PrivateRoute exact path="/rewards/add-reward" >
                         <AddReward type="add" />
                     </PrivateRoute>
+
+                    <PrivateRoute exact path="/groceries/add-grocery" >
+                        <DataFormGrocery type="add" />
+                    </PrivateRoute>
+                    <PrivateRoute exact path="/grocery" component={Grocery} />
 
                     <Route exact path="/" component={Home} />
                 </Switch>

@@ -6,7 +6,7 @@ import alert from './alert.reducers';
 import family from './family.reducers';
 import calendar from './calendar.reducers';
 import authentication from './authentication.reducers';
-
+import grocery from './grocery.reducers';
 
 const rootReducer = combineReducers({
     taskCate,
@@ -15,6 +15,7 @@ const rootReducer = combineReducers({
     index,
     family,
     calendar,
-    authentication
+    authentication,
+    grocery
 });
 export default rootReducer;

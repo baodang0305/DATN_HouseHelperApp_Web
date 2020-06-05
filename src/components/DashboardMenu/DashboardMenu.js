@@ -47,7 +47,7 @@ class DashboardMenu extends React.Component {
 
                         <Menu.Item key="5">
                             <ShoppingCartOutlined className="size-icon" />
-                            <Link to="#">Mua Sắm</Link>
+                            <Link to="/grocery">Mua Sắm</Link>
                         </Menu.Item>
 
                     </Menu>

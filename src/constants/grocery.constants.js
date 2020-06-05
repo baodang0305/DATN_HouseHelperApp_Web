@@ -1,0 +1,9 @@
+const getAllGrocery = {
+    GET_ALL_GROCERY_REQUEST: "GET_ALL_GROCERY_REQUEST",
+    GET_ALL_GROCERY_SUCCESS: "GET_ALL_GROCERY_SUCCESS",
+    GET_ALL_GROCERY_FAILURE: "GET_ALL_GROCERY_FAILURE"
+}
+
+export const groceryConstants = {
+    getAllGrocery
+};
