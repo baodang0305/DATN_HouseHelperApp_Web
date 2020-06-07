@@ -5,7 +5,7 @@ import { Prompt } from "react-router-dom";
 import socketIoClient from "socket.io-client";
 import { LeftOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Layout, Row, Col, Button, Input, Tabs, Menu, Modal } from "antd";
+import { Layout, Row, Col, Button, Input, Tabs, Menu, Modal, Avatar } from "antd";
 import { faPhone, faPhoneSlash } from "@fortawesome/free-solid-svg-icons";
 
 import "./ChatContainer.css";
@@ -37,6 +37,7 @@ class ChatContainer extends React.Component {
             familyGroup: null,
             isShowEmojis: false,
             activeTab: "active",
+            activeKeyTabMobileChat: "members",
             receiverActive: null,
             receiverRecent: null,
             filteredUsersActive: [],
@@ -874,11 +875,20 @@ class ChatContainer extends React.Component {
         });
     }
 
+    handleChangeTabMobileChat = (key) => {
+        this.setState({ activeKeyTabMobileChat: key })
+    }
+
+    onChange = activeKey => {
+        this.setState({ activeKeyTabMobileChat: activeKey })
+    }
+
     render() {
 
         const {
             message,
             activeTab,
+            activeKeyTabMobileChat,
             userOffer,
             isAccepted,
             userIsOffer,
@@ -898,7 +908,7 @@ class ChatContainer extends React.Component {
         const toolBar = () => (
             <div ref={this.toggleContainer}>
                 <Row className="tool-bar-container" >
-                    <Col>
+                    <Col xs={8} sm={8} lg={7} xl={7} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         {activeTab === "active" &&
                             <i onClick={this.handleOfferCall} style={{ cursor: "pointer" }} className="fa fa-camera fa-lg" />
                         }
@@ -906,7 +916,7 @@ class ChatContainer extends React.Component {
                         <i className="fa fa-microphone fa-lg" ></i> &ensp;
                         <i className="fa fa-image fa-lg"></i> &ensp;
                     </Col>
-                    <Col flex="auto">
+                    <Col xs={16} sm={16} lg={17} xl={17}>
                         <Input
                             name="message"
                             value={message}
@@ -960,7 +970,7 @@ class ChatContainer extends React.Component {
                 if (receiverActive) {
                     return (
                         <>
-                            <img
+                            <Avatar
                                 className="img-header-message"
                                 src={receiverActive.mAvatar.image}
                                 style={{ backgroundColor: receiverActive.mAvatar.color }}
@@ -979,7 +989,7 @@ class ChatContainer extends React.Component {
                 if (receiverRecent) {
                     return (
                         <>
-                            <img
+                            <Avatar
                                 className="img-header-message"
                                 src={receiverRecent.mAvatar.image}
                                 style={{ backgroundColor: receiverRecent.mAvatar.color }}
@@ -1000,7 +1010,7 @@ class ChatContainer extends React.Component {
                 if (familyGroup) {
                     return (
                         <>
-                            <img className="img-header-message" src={familyGroup.fImage} /> &emsp;
+                            <Avatar className="img-header-message" src={familyGroup.fImage} /> &emsp;
                             <div style={{ fontWeight: "bold" }}>{familyGroup.fName}</div>
                         </>
                     );
@@ -1052,20 +1062,20 @@ class ChatContainer extends React.Component {
                 </Modal>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="header-container" >
+                    <Header className="header-container chat__header" >
                         <div className="left-header-chat-container">
-                            <Button onClick={this.handleClickBack} size="large">
-                                <LeftOutlined />
-                            </Button>
+                            <div onClick={this.handleClickBack} className="header__btn-link">
+                                <LeftOutlined className="header__icon-btn" />
+                            </div>
                         </div>
                         <div className="center-header-chat-container"> Tin Nhắn </div>
-                        <div style={{ width: "20%" }}></div>
+
                     </Header>
-                    <Content style={{ margin: 20 }}>
+                    <Content className="chat__content" >
                         <Row className="chat-container">
-                            <Col span={6}>
+                            <Col xl={6} lg={10} sm={10} >
                                 <Row className="header-chat-list-container">
-                                    <img
+                                    <Avatar
                                         src={user.mAvatar.image}
                                         className="img-header-chat-list"
                                         style={{ backgroundColor: user.mAvatar.color }}
@@ -1080,7 +1090,6 @@ class ChatContainer extends React.Component {
                                     />
                                 </Row>
                                 <Row style={{ padding: 10 }} >
-
                                     <Tabs defaultActiveKey={activeTab} onTabClick={this.handleTabClick} style={{ width: "100%" }}>
 
                                         <TabPane tab="Hoạt động" key="active">
@@ -1094,7 +1103,7 @@ class ChatContainer extends React.Component {
                                                         <Menu.Item className="menu-item-container" key={item.mSocketID}>
                                                             <Row align="middle" justify="start">
                                                                 <div className="img-chat-list-container">
-                                                                    <img
+                                                                    <Avatar
                                                                         src={item.mAvatar.image}
                                                                         className="img-chat-list"
                                                                         style={{ backgroundColor: item.mAvatar.color }}
@@ -1145,7 +1154,7 @@ class ChatContainer extends React.Component {
                                                             <Row align="middle" justify="start">
 
                                                                 <div className="img-chat-list-container">
-                                                                    <img
+                                                                    <Avatar
                                                                         src={item.mAvatar.image}
                                                                         className="img-chat-list"
                                                                         style={{ backgroundColor: item.mAvatar.color }}
@@ -1191,7 +1200,7 @@ class ChatContainer extends React.Component {
                                                     <Menu.Item className="menu-item-container" key="group">
                                                         <Row align="middle" justify="start">
                                                             <div className="img-chat-list-container">
-                                                                <img className="img-chat-list" src={familyGroup.fImage} />
+                                                                <Avatar className="img-chat-list" src={familyGroup.fImage} />
                                                             </div>
                                                             <div style={{ float: "right", marginLeft: 10 }} >
                                                                 <div className="name-item-chat-list"> {familyGroup.fName} </div>
@@ -1201,16 +1210,15 @@ class ChatContainer extends React.Component {
                                                 </Menu>
                                             }
                                         </TabPane>
-
                                     </Tabs>
                                 </Row>
                             </Col>
-                            <Col span={10} style={{ borderRight: "groove thin", borderLeft: "groove thin", borderRadius: 10 }}>
+                            <Col xl={10} lg={14} sm={14} className="chat__show-chat-msg">
                                 <Row className="header-message-container"> {headerBodyMessage()} </Row>
                                 <Row > {showMessages()} </Row>
                                 {showToolBar()}
                             </Col>
-                            <Col span={8} style={{ padding: 10 }}>
+                            <Col xl={8} lg={0} sm={0} style={{ padding: 10 }} >
 
                                 <div className="video-call-title"> Video Call </div>
 
@@ -1239,6 +1247,188 @@ class ChatContainer extends React.Component {
                                 </Row>
                             </Col>
                         </Row>
+                    </Content>
+
+                    <Content className="chat-mobile__content">
+                        <Tabs type="card" defaultActiveKey={activeKeyTabMobileChat} activeKey={activeKeyTabMobileChat} onChange={this.onChange}>
+                            <TabPane tab="Thành viên" key="members">
+                                <div >
+                                    <Row className="header-chat-list-container">
+                                        <Avatar
+                                            src={user.mAvatar.image}
+                                            className="img-header-chat-list"
+                                            style={{ backgroundColor: user.mAvatar.color }}
+                                        /> &emsp;
+                                    <div className="name-header-chat-list">{user.mName}</div>
+                                    </Row>
+                                    <Row style={{ padding: 10 }}>
+                                        <Search
+                                            name="searchInput" value={searchInput}
+                                            onChange={this.handleChangeSearchInput}
+                                            style={{ borderRadius: 5 }} placeholder="Tìm kiếm"
+                                        />
+                                    </Row>
+                                    <Row style={{ padding: 10 }} >
+                                        <Tabs defaultActiveKey={activeTab} onTabClick={this.handleTabClick} style={{ width: "100%" }}>
+
+                                            <TabPane tab="Hoạt động" key="active">
+                                                {receiverActive &&
+                                                    <Menu
+                                                        style={{ borderRight: "none" }}
+                                                        onClick={this.handleClickMenuActive}
+                                                        selectedKeys={[receiverActive.mSocketID]}
+                                                    >
+                                                        {filteredUsersActive.length !== 0 && filteredUsersActive.map((item, index) =>
+                                                            <Menu.Item className="menu-item-container" key={item.mSocketID} onClick={(e) => { this.handleChangeTabMobileChat("messages") }}>
+                                                                <Row align="middle" justify="start">
+                                                                    <div className="img-chat-list-container">
+                                                                        <Avatar
+                                                                            src={item.mAvatar.image}
+                                                                            className="img-chat-list"
+                                                                            style={{ backgroundColor: item.mAvatar.color }}
+                                                                        />
+                                                                        <div className="icon-active" />
+                                                                    </div>
+                                                                    <div style={{ float: "right", marginLeft: 10 }} >
+                                                                        {item.messages.length === 0 ?
+                                                                            <div className="name-item-chat-list">{item.mName}</div>
+                                                                            :
+                                                                            <>
+                                                                                {user.mName === item.messages[item.messages.length - 1].name ?
+                                                                                    <>
+                                                                                        <div className="name-item-chat-list">{item.mName}</div>
+                                                                                        <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                                    </>
+                                                                                    :
+                                                                                    item.messages[item.messages.length - 1].seen ?
+                                                                                        <>
+                                                                                            <div className="name-item-chat-list">{item.mName}</div>
+                                                                                            <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
+                                                                                        </>
+                                                                                        :
+                                                                                        <>
+                                                                                            <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
+                                                                                            <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
+                                                                                        </>
+                                                                                }
+                                                                            </>
+                                                                        }
+                                                                    </div>
+                                                                </Row>
+                                                            </Menu.Item>
+                                                        )}
+                                                    </Menu>
+                                                }
+                                            </TabPane>
+
+                                            <TabPane tab="Gần đây" key="recent">
+                                                {receiverRecent &&
+                                                    <Menu
+                                                        style={{ borderRight: "none" }}
+                                                        onClick={this.handleClickMenuRecent}
+                                                        selectedKeys={[receiverRecent.mID]}
+                                                    >
+                                                        {filteredUsersRecent && filteredUsersRecent.map((item, index) =>
+                                                            <Menu.Item className="menu-item-container" key={item.mID}>
+                                                                <Row align="middle" justify="start">
+
+                                                                    <div className="img-chat-list-container">
+                                                                        <Avatar
+                                                                            src={item.mAvatar.image}
+                                                                            className="img-chat-list"
+                                                                            style={{ backgroundColor: item.mAvatar.color }}
+                                                                        />
+                                                                        {item.mSocketID && <div className="icon-active" />}
+                                                                    </div>
+                                                                    <div style={{ float: "right", marginLeft: 10 }} >
+
+                                                                        {item.messages.length === 0 ?
+                                                                            <div className="name-item-chat-list">{item.mName}</div>
+                                                                            :
+                                                                            <>
+                                                                                {user.mName === item.messages[item.messages.length - 1].name ?
+                                                                                    <>
+                                                                                        <div className="name-item-chat-list">{item.mName}</div>
+                                                                                        <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                                    </>
+                                                                                    :
+                                                                                    item.messages[item.messages.length - 1].seen ?
+                                                                                        <>
+                                                                                            <div className="name-item-chat-list">{item.mName}</div>
+                                                                                            <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
+                                                                                        </>
+                                                                                        :
+                                                                                        <>
+                                                                                            <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
+                                                                                            <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
+                                                                                        </>
+                                                                                }
+                                                                            </>
+                                                                        }
+                                                                    </div>
+                                                                </Row>
+                                                            </Menu.Item>
+                                                        )}
+                                                    </Menu>
+                                                }
+                                            </TabPane>
+
+                                            <TabPane tab="Gia đình" key="family-group">
+                                                {familyGroup &&
+                                                    <Menu style={{ borderRight: "none" }} selectedKeys={["group"]}>
+                                                        <Menu.Item className="menu-item-container" key="group">
+                                                            <Row align="middle" justify="start">
+                                                                <div className="img-chat-list-container">
+                                                                    <Avatar className="img-chat-list" src={familyGroup.fImage} />
+                                                                </div>
+                                                                <div style={{ float: "right", marginLeft: 10 }} >
+                                                                    <div className="name-item-chat-list"> {familyGroup.fName} </div>
+                                                                </div>
+                                                            </Row>
+                                                        </Menu.Item>
+                                                    </Menu>
+                                                }
+                                            </TabPane>
+                                        </Tabs>
+                                    </Row>
+                                </div>
+                            </TabPane>
+                            <TabPane tab="Tin nhắn" key="messages">
+                                <Row className="header-message-container"> {headerBodyMessage()} </Row>
+                                <Row > {showMessages()} </Row>
+                                {showToolBar()}
+                            </TabPane>
+                            <TabPane tab="Cuộc gọi" key="calls">
+                                <div >
+
+                                    <div className="video-call-title"> Video Call </div>
+
+                                    <video ref={this.remoteVideo} id="remote-video" autoPlay controls />
+                                    <video ref={this.localVideo} id="local-video" autoPlay controls />
+
+                                    {userOffer && <div className="caller-name"> {`${userOffer.mName} contacting...`} </div>}
+
+                                    {userIsOffer && <div className="callee-name"> {`${userIsOffer.mName} contacting...`} </div>}
+
+                                    <Row justify="center" >
+
+                                        {userOffer && !isAccepted &&
+                                            <Button onClick={this.handleAccept} className="accept-btn green-btn color-btn">
+                                                <FontAwesomeIcon icon={faPhone} size="lg" />
+                                            </Button>
+                                        }
+
+    &emsp;&emsp;&emsp;
+
+    {(userIsOffer || userOffer) &&
+                                            <Button onClick={this.handleClose} className="cancel-btn red-btn color-btn">
+                                                <FontAwesomeIcon icon={faPhoneSlash} size="lg" />
+                                            </Button>
+                                        }
+                                    </Row>
+                                </div>
+                            </TabPane>
+                        </Tabs>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}> </Footer>
                 </Layout>

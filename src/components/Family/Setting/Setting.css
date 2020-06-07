@@ -12,12 +12,14 @@
 .panel-container {
     background-color: white;
     color: rgb(112, 124, 143);
-    margin: 15px 20px;
+    margin: 10px 10px;
     border-radius: 5px;
     height: 50px;
     position: relative;
     line-height: 50px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .panel-container:hover {
@@ -30,9 +32,9 @@
 }
 
 .caretright-icon {
-    float: right;
-    line-height: 45px;
+    position: absolute;
     padding-right: 15px;
+    right: 0;
     font-size: 15px;
     color: #d7d7d7;
 }
@@ -57,17 +59,32 @@
 }
 
 /* small phones to small tablets */
-@media only screen and (min-width: 480px) and ( max-width: 767px) {
+@media only screen and (min-width: 480px) and (max-width: 767px) {
     .panel-content {
-        font-size: 14px;
+        font-size: 15px;
     }
 }
 
 /* small phones from 0 - 480px */
 @media only screen and (min-width: 0px) and (max-width: 479px) {
     .panel-content {
-        font-size: 12px;
+        font-size: 15px;
+    }
+
+    .header-container {
+        padding: 0 0;
+    }
+
+    .header__icon-btn {
+        font-size: 15px;
+    }
+
+    .center-header-setting-container {
+        font-size: 18px;
+    }
+
+    .panel-container {
+        margin: 5px 0;
+        border-radius: 0;
     }
 }
-
-

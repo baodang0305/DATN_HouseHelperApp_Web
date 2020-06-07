@@ -122,18 +122,18 @@ class AddMember extends React.Component {
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
-                    <Header className="header-container" >
+                    <Header className="header-container add-member__header" >
                         <div className="left-header-add-member-container">
-                            <Button onClick={this.handleClickBack} size="large">
-                                <LeftOutlined />
-                            </Button>
+                            <div onClick={this.handleClickBack} className="header__btn-link">
+                                <LeftOutlined className="header__icon-btn" />
+                            </div>
                         </div>
                         <div className="center-header-add-member-container"> Tạo Thông Tin Thành Viên </div>
-                        <div style={{ width: "20%" }}></div>
+
                     </Header>
                     <Content className="content-add-member" >
                         <Form onFinish={this.handleSubmit} size="large" initialValues={{ remember: true }}
-                            style={{ width: "35%" }}
+                            className="add-member__form"
                         >
                             <Form.Item style={{ textAlign: "center" }}>
                                 {avatarType === "camera" ?
@@ -166,7 +166,7 @@ class AddMember extends React.Component {
                                 <Input
                                     type="text" placeholder="Tên"
                                     name="mName" value={mName} onChange={this.handleChangeInput}
-                                    prefix={<i className="fa fa-user" aria-hidden="true"></i>}
+                                    prefix={<i className="fa fa-user" aria-hidden="true" style={{ paddingRight: 5 }}></i>}
                                 />
                             </Form.Item>
 
@@ -174,7 +174,7 @@ class AddMember extends React.Component {
                                 <Input
                                     type="text" placeholder="Username or Email"
                                     name="mEmail" value={mEmail} onChange={this.handleChangeInput}
-                                    prefix={<i className="fa fa-envelope" aria-hidden="true"></i>}
+                                    prefix={<i className="fa fa-envelope" aria-hidden="true" style={{ paddingRight: 5 }}></i>}
                                 />
                             </Form.Item>
 
@@ -182,7 +182,7 @@ class AddMember extends React.Component {
                                 <Input
                                     type="number" placeholder="Tuổi"
                                     name="mAge" value={mAge} onChange={this.handleChangeInput}
-                                    prefix={<i className="fa fa-birthday-cake" aria-hidden="true"></i>}
+                                    prefix={<i className="fa fa-birthday-cake" aria-hidden="true" style={{ paddingRight: 5 }}></i>}
                                 />
                             </Form.Item>
 
@@ -197,10 +197,10 @@ class AddMember extends React.Component {
                                                 <div>
                                                     {menu}
                                                     <Divider style={{ margin: "4px 0" }} />
-                                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
+                                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: '4px 4px' }}>
                                                         <Input style={{ flex: 'auto' }} name="nameAddRole" value={nameAddRole} onChange={this.handleChangeInput} />
                                                         <a
-                                                            style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
+                                                            style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer', fontSize: 14 }}
                                                             onClick={this.addItemRole}
                                                         >
                                                             <PlusOutlined /> Thêm vai trò

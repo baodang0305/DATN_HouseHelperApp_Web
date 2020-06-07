@@ -34,9 +34,9 @@ class Setting extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="left-header-setting-container">
-                            <Button onClick={this.handleClickBack} size="large" >
-                                <LeftOutlined />
-                            </Button>
+                            <div onClick={this.handleClickBack} className="header__btn-link" >
+                                <LeftOutlined className="header__icon-btn" />
+                            </div>
                         </div>
                         <div className="center-header-setting-container">Cài Đặt</div>
                         <div style={{ width: "30%" }}></div>

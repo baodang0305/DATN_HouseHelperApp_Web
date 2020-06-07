@@ -43,24 +43,22 @@ class Member extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="header-member-container">
-                            <Button onClick={this.handleClickBack} size="large" style={{width: "5%"}}>
-                                <LeftOutlined />
-                            </Button>
+                            <div onClick={this.handleClickBack} className="header__btn-link" >
+                                <LeftOutlined className="header__icon-btn" />
+                            </div>
                             <div className="center-header-member-container" > {member.mName}</div>
-                            <div style={{width: "5%"}}>
+                            <div>
                                 {(inforLogin.user.mIsAdmin || (inforLogin.user._id === member._id)) &&
-                                    <Button size="large">
-                                        <Link to={{ pathname: "/family/setting/my-account", state: { member } }} >
-                                            <EditOutlined />
-                                        </Link>
-                                    </Button>
+                                    <Link to={{ pathname: "/family/setting/my-account", state: { member } }} className="header__btn-link">
+                                        <EditOutlined className="header__icon-btn" />
+                                    </Link>
                                 }
                             </div>
                         </div>
                     </Header>
                     <Content  >
                         <div className="first-row-member-content-container">
-                            <Avatar src={member.mAvatar.image} style={{ backgroundColor: member.mAvatar.color}} size={70}/>
+                            <Avatar src={member.mAvatar.image} style={{ backgroundColor: member.mAvatar.color }} size={70} />
                             &emsp;
                             <div >
                                 <div className="font-size-20"> {member.mPoints} </div>
@@ -68,12 +66,12 @@ class Member extends React.Component {
                             </div>
                         </div>
                         <div className="second-row-member-content-container" >
-                            <List
+                            <List className="member__list"
                                 dataSource={listTasks}
-                                pagination={{ onChange: page => { console.log(page); }, pageSize: 3, }}
-                                style={{ padding: "0px 20px", width: "100%" }} itemLayout="vertical" size="large"
+                                pagination={{ onChange: page => { console.log(page); }, pageSize: 5 }}
+                                style={{ width: "100%" }} itemLayout="vertical" size="large"
                                 renderItem={item => (
-                                    <List.Item
+                                    <List.Item className="member__list-item"
                                         actions={[
                                             <IconText icon={StarOutlined} text="0" key="list-vertical-star-o" />,
                                             <IconText icon={LikeOutlined} text="0" key="list-vertical-like-o" />,
@@ -82,17 +80,17 @@ class Member extends React.Component {
                                         extra={item.photo && <img className="image-task" alt="logo" src={item.photo} />}
                                     >
                                         <Skeleton avatar title={false} loading={item.loading} active>
-                                            <Row gutter={30} >
-                                                <Col style={{ textAlign: "center" }}>
+                                            <div className="member__news-container" >
+                                                <div style={{ textAlign: "center" }} className="member__news-item-member">
                                                     <Avatar src={item.mIdCreate.mAvatar} style={{ marginBottom: 5 }} />
-                                                    <div>{item.mIdCreate.mName}</div>
-                                                </Col>
-                                                <Col>
-                                                    <div className="state-task">{item.state}</div>
+                                                    <div className="member__name">{item.mIdCreate.mName}</div>
+                                                </div>
+                                                <div className="member__news-item-des">
+                                                    <div className="state-task">{item.state === "todo" ? "Cần làm" : (item.state === "completed" ? "Đã xong" : "Sắp tới")}</div>
                                                     <div className="name-task">{item.name}</div>
                                                     {item.date && <div className="date-task">{moment(`${item.date.lastDueDate}`).format('MMMM Do YYYY, h:mm:ss a')}</div>}
-                                                </Col>
-                                            </Row>
+                                                </div>
+                                            </div>
                                         </Skeleton>
                                     </List.Item>
                                 )}

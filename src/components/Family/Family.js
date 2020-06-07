@@ -7,7 +7,7 @@ import {
     SettingOutlined,
     MessageOutlined,
     AlertOutlined,
-    UsergroupAddOutlined
+    TeamOutlined
 } from "@ant-design/icons";
 import React from "react";
 import moment from 'moment';
@@ -141,36 +141,33 @@ class Family extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container">
                         <div className="left-header-family-container">
-                            <Button size="large">
-                                <Link to="/family/setting">
-                                    <SettingOutlined className="icon-header-family" />
-                                </Link>
-                            </Button>
+                            <Link to="/family/setting" className="header__btn-link">
+                                <SettingOutlined className="icon-header-family" />
+                            </Link>
                                 &emsp;
-                                <Button size="large">
-                                <Link to="/family/chat">
-                                    <Badge count={numberOfIncomingMessages}>
-                                        <MailOutlined className="icon-header-family" />
-                                    </Badge>
-                                </Link>
-                            </Button>
+                                <Link to="/family/chat" className="header__btn-link">
+                                <Badge count={numberOfIncomingMessages}>
+                                    <MailOutlined className="icon-header-family" />
+                                </Badge>
+                            </Link>
                         </div>
                         <div className="center-header-family-container" >Gia Đình</div>
                         <div className="right-header-family-container">
                             {user.mIsAdmin &&
-                                <Button size="large">
-                                    <Link to="/family/add-member">
-                                        <PlusOutlined className="icon-header-family" />
-                                    </Link>
-                                </Button>
+                                <Link to="/family/add-member" className="header__btn-link">
+                                    <PlusOutlined className="icon-header-family" />
+                                </Link>
                             }
                         </div>
                     </Header>
                     <Content >
                         <div className="first-row-family-content-container" >
                             <Divider orientation="left" style={{ padding: "10px 20px", margin: 0 }}>
-                                <UsergroupAddOutlined />
-                                &nbsp;TẤT CẢ THÀNH VIÊN
+                                <div className="family__title-section-container">
+                                    <TeamOutlined className="family__title-section-icon" />
+                                &nbsp;<div className="family__title-section-text">Thành viên gia đình</div>
+                                </div>
+
                             </Divider>
                             {gettingListMembers && !gotListMembers &&
                                 <div className="spin-get-list-members"><Spin tip="Loading..." /> </div>
@@ -179,7 +176,7 @@ class Family extends React.Component {
                                 {listMembers && listMembers.map((member, id) =>
                                     <div className="member-item-container" key={id} onClick={() => this.handleChooseMember(member)}>
                                         <Badge count={10} overflowCount={10000}>
-                                            <Avatar src={member.mAvatar.image} style={{ backgroundColor: member.mAvatar.color }} shape="circle" size={60} />
+                                            <Avatar src={member.mAvatar.image} style={{ backgroundColor: member.mAvatar.color }} shape="circle" className="family__avatar-member" />
                                         </Badge>
                                         <div className="size-member-name"> {member.mName} </div>
                                     </div>
@@ -188,25 +185,32 @@ class Family extends React.Component {
                         </div>
                         <div className="second-row-family-content-container" >
                             <Divider orientation="left" style={{ padding: "10px 20px", margin: 0 }}>
-                                <AlertOutlined /> &nbsp; BẢNG TIN GIA ĐÌNH
+                                <div className="family__title-section-container">
+                                    <AlertOutlined className="family__title-section-icon" />
+                                &nbsp;
+                                <div className="family__title-section-text">Bảng tin gia đình</div>
+                                </div>
+
                             </Divider>
                             {gettingListNews && !gotListNews &&
                                 <div className="spin-get-list-news"> <Spin tip="Loading..." /> </div>
                             }
                             {listNews &&
                                 <List
-                                    style={{ padding: "10px 50px", width: "100%" }}
+                                    className="family__news-list"
+                                    style={{ paddingBottom: 10, width: "100%" }}
                                     itemLayout="vertical"
                                     size="large"
                                     pagination={{
+                                        style: { marginRight: 10 },
                                         onChange: page => {
                                             console.log(page);
                                         },
-                                        pageSize: 3,
+                                        pageSize: 5,
                                     }}
                                     dataSource={listNews}
                                     renderItem={item => (
-                                        <List.Item
+                                        <List.Item className="family__news-item"
                                             actions={[
                                                 <IconText icon={StarOutlined} text="0" key="list-vertical-star-o" />,
                                                 <IconText icon={LikeOutlined} text="0" key="list-vertical-like-o" />,
@@ -218,7 +222,7 @@ class Family extends React.Component {
                                                     <div className="left-list-item-family-container">
                                                         <div className="first-col-content-list-item-family">
                                                             <Avatar src={item.mID.mAvatar.image} style={{ marginBottom: 5, backgroundColor: item.mID.mAvatar.color }} />
-                                                            <div>{item.mID.mName}</div>
+                                                            <div className="family__name-avatar">{item.mID.mName}</div>
                                                         </div>
                                                         <div>
                                                             <div className="state-task">{item.subject}</div>

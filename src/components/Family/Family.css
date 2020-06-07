@@ -12,6 +12,10 @@
 
 .left-header-family-container {
     width: 35%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .center-header-family-container {
@@ -35,7 +39,7 @@
 
 .first-row-family-content-container,
 .second-row-family-content-container {
-    margin: 20px;
+    margin: 10px;
     background-color: white;
 }
 
@@ -58,8 +62,23 @@
 .member-item-container {
     cursor: pointer;
     width: 20%;
-    margin: 20px 0px;
-    text-align: center;
+    margin: 10px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.size-member-name {
+    margin-top: 5px;
+    display: inline-block;
+    background-color: #f2f3f5;
+    color: #385898;
+    padding: 2px 8px;
+    font-weight: 500;
+    border-radius: 10px;
+    font-size: 13px;
+    width: max-content;
 }
 
 .title-second-row-family-content-container,
@@ -70,7 +89,7 @@
     font-size: 18px;
 }
 
-.list-item-new-family-container{
+.list-item-new-family-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -80,14 +99,92 @@
     display: flex;
 }
 
+.family__news-list {}
+
 .first-col-content-list-item-family {
-    margin-right: 30px;
+    margin-right: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: max-content;
+}
+
+.family__name-avatar {
+    width: max-content;
+    font-weight: 500;
 }
 
 .right-list-item-family-container {
     cursor: pointer;
 }
+
+.family__title-section-container {
+    display: flex;
+    align-items: center;
+}
+
+.family__avatar-member {
+    width: 50px;
+    height: 50px;
+}
+
+@media all and (min-width: 320px) and (max-width: 599px) {
+    .icon-header-family {
+        font-size: 15px;
+    }
+
+    .family__title-section-text {
+        font-size: 14px;
+    }
+
+    .family__title-section-icon {
+        font-size: 15px;
+    }
+
+    .first-row-family-content-container,
+    .second-row-family-content-container {
+        margin: 10px 0px;
+        background-color: white;
+    }
+
+    .family__avatar-member {
+        width: 40px;
+        height: 40px;
+    }
+
+    .size-member-name {
+        font-size: 12px;
+    }
+
+
+    .member-item-container {
+        width: 25%;
+    }
+
+    .family__name-avatar {
+        font-size: 12px;
+    }
+
+    .center-header-family-container {
+        font-size: 18px;
+    }
+}
+
+@media all and (min-width: 600px) and (max-width: 1023px) {
+    .first-col-content-list-item-family {
+        margin-right: 10px;
+    }
+
+    .name-task {
+        font-size: 15px;
+    }
+
+    .date-task {
+        font-size: 13px;
+    }
+}
+
+@media all and (min-width: 1024px) {}
+
+@media all and (min-width: 1280px) {}

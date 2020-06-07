@@ -1,28 +1,37 @@
+.add-member__header {
+  position: relative;
+  width: 100%;
+}
+
 .left-header-add-member-container {
-  width: 20%;
+  position: absolute;
+  left: 10px;
 }
 
 .center-header-add-member-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   font-size: 22px;
-  width: 60%;
-  display: flex;
-  justify-content: center;
+  width: max-content;
 }
 
 .content-add-member {
-  margin: 20px;
+  margin: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding-top: 40px;
   background-color: white;
 }
 
 .img-profile {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    position: relative;
-    border: groove thin;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: relative;
+  border: groove thin;
 }
 
 button.upload-container:hover,
@@ -47,11 +56,12 @@ button.upload-container:hover::after {
   top: 11px;
   color: black;
 }
+
 .camera-avatar {
   background-color: #efefef;
 }
 
-.avatar:hover{
+.avatar:hover {
   transform: translateY(-3px);
 }
 
@@ -62,18 +72,23 @@ button.upload-container:hover::after {
 .avatar1:hover {
   box-shadow: 0px 0px 40px #f7c2c1;
 }
+
 .avatar2:hover {
   box-shadow: 0px 0px 40px #fcefc3;
 }
+
 .avatar3:hover {
   box-shadow: 0px 0px 40px #fadec2;
 }
+
 .avatar4:hover {
   box-shadow: 0px 0px 40px #e4cce2;
 }
+
 .avatar5:hover {
   box-shadow: 0px 0px 40px #d3dff1;
 }
+
 .avatar6:hover {
   box-shadow: 0px 0px 40px #9dcc80;
 }
@@ -94,21 +109,27 @@ button.upload-container:hover::after {
 .camera-avatar::after {
   background-color: #a29b9b;
 }
+
 .avatar1::after {
   background-color: #f14743;
 }
+
 .avatar2::after {
   background-color: #efbe18;
 }
+
 .avatar3::after {
   background-color: #f38110;
 }
+
 .avatar4::after {
   background-color: #d652cb;
 }
+
 .avatar5::after {
   background-color: #528fea;
 }
+
 .avatar6::after {
   background-color: #61c722;
 }
@@ -123,3 +144,42 @@ button.upload-container:hover::after {
 .fa-birthday-cake {
   color: #d7d7d7;
 }
+
+.add-member__form {
+  width: 35%;
+
+}
+
+@media all and (min-width: 320px) and (max-width: 599px) {
+  .add-member__form {
+    width: 90%;
+  }
+
+  .left-header-add-member-container {
+    left: 5px;
+  }
+
+  .header__icon-btn {
+    font-size: 15px;
+  }
+
+  .center-header-add-member-container {
+    font-size: 16px;
+  }
+
+  .content-add-member {
+    margin: 10px 0px;
+    align-items: center;
+    padding-top: 10%;
+  }
+}
+
+@media all and (min-width: 600px) and (max-width: 1023px) {
+  .add-member__form {
+    width: 60%;
+  }
+}
+
+@media all and (min-width: 1024px) {}
+
+@media all and (min-width: 1280px) {}
