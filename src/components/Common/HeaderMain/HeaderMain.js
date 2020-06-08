@@ -27,6 +27,40 @@ class HeaderMain extends Component {
     state = {
         enableInputSearch: false
     }
+
+    getKeyMainTabAddLink(tab) {
+
+        let linkAddBtn = '';
+        switch (tab) {
+            case 'task':
+                {
+                    linkAddBtn = "/tasks/add-task";
+                    break;
+                }
+            case 'taskCategory':
+                {
+                    linkAddBtn = "/add-task-category";
+                    break;
+                }
+            case 'reward':
+                {
+                    linkAddBtn = "/rewards/add-reward";
+                    break;
+                }
+            case 'grocery':
+                {
+                    linkAddBtn = "/groceries/add-grocery";
+                    break;
+                }
+            case 'calendar':
+                {
+                    linkAddBtn = "/calendar/add-event";
+                    break;
+                }
+            default: break;
+        }
+        return linkAddBtn;
+    }
     render() {
         const { enableInputSearch } = this.state;
         const { user, tab, title } = this.props;
@@ -57,24 +91,12 @@ class HeaderMain extends Component {
                     <div style={{ marginRight: 10 }} className="header__btn-link">
                         <BellOutlined className="task__header-icon" />
                     </div>
-                    {user.mIsAdmin === true ? (
-                        tab === 'task' ? (
-                            <Link to="/tasks/add-task" className="header__btn-link">
-                                <PlusOutlined className="task__header-icon" />
-                            </Link>
-                        ) : tab === 'taskCategory' ? (
-                            <Link to="/add-task-category" className="header__btn-link">
-                                <PlusOutlined className="task__header-icon" />
-                            </Link>
-
-                        ) : tab === 'reward' ? (
-                            <Link to="/rewards/add-reward" className="header__btn-link">
-                                <PlusOutlined className="task__header-icon" />
-                            </Link>
-                        ) : tab === 'grocery' ? <Link to="/groceries/add-grocery" className="header__btn-link">
+                    {user.mIsAdmin === true ?
+                        <Link to={this.getKeyMainTabAddLink(tab)} className="header__btn-link">
                             <PlusOutlined className="task__header-icon" />
-                        </Link> : null
-                    ) : null}
+                        </Link>
+                        : null
+                    }
                 </div>
             </div>
         );

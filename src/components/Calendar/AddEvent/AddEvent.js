@@ -508,11 +508,10 @@ class AddEvent extends React.Component {
                 <div className="user-add-event-container" key={index} onClick={() => this.handleAssign(item._id)}>
                     <div className="avatar-add-event-container">
                         <Avatar
-                            size={50} src={item.mAvatar.image}
-                            style={{ 
-                                backgroundColor: item.mAvatar.color, 
-                                opacity: isSelectedMember(item._id) !== -1 && 0.5, 
-                                border: "groove thin",
+                            className="calendar-add__avatar-member" src={item.mAvatar.image}
+                            style={{
+                                backgroundColor: item.mAvatar.color,
+                                opacity: isSelectedMember(item._id) !== -1 && 0.5,
                                 borderColor: isSelectedMember(item._id) !== -1 && "#1890ff"
                             }}
                         />
@@ -579,14 +578,14 @@ class AddEvent extends React.Component {
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="2" />
                 <Layout className="site-layout">
-                    <Header className="header-container" >
-                            <div className="left-header-add-calendar-container">
-                                <Button onClick={this.handleClickBack} size="large" >
-                                    <LeftOutlined />
-                                </Button>
+                    <Header className="header-container calendar-add__header" >
+                        <div className="left-header-add-calendar-container">
+                            <div onClick={this.handleClickBack} className="header__btn-link">
+                                <LeftOutlined className="header__icon-btn" />
                             </div>
-                            <div className="center-header-add-calendar-container"> {type === "add" ? "Thêm Sự Kiện" : "Cập Nhật Sự Kiện"} </div>
-                            <div className="right-header-add-calendar-container"></div>
+                        </div>
+                        <div className="center-header-add-calendar-container"> {type === "add" ? "Thêm Sự Kiện" : "Cập Nhật Sự Kiện"} </div>
+                        <div className="right-header-add-calendar-container"></div>
                     </Header>
                     <Content style={{ position: 'relative' }}>
                         <Form onFinish={this.handleSubmit} size="large">
@@ -615,16 +614,18 @@ class AddEvent extends React.Component {
                                     className="name-event-input" placeholder="Tên sự kiện" type="text"
                                 />
                             </Form.Item>
-                            <Form.Item className="form-item-add-event">
-                                <TeamOutlined
-                                    className="icon-input-add-event"
-                                    style={{ color: assign.length > 0 ? "#096dd9" : "black", marginTop: 20 }}
-                                />
-                                <span
-                                    className="title-input-add-event"
-                                    style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
-                                > Thành Viên: </span>
-                                <Row align="middle" justify="center" style={{ marginBottom: 20 }}>
+                            <Form.Item className="form-item-add-event" label={
+                                <div className="title-input-add-event">
+                                    <TeamOutlined
+                                        className="icon-input-add-event"
+                                        style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
+                                    />
+                                    <span
+                                        style={{ color: assign.length > 0 ? "#096dd9" : "black" }} className="calendar__label-title"
+                                    > Thành Viên </span>
+                                </div>}>
+
+                                <Row align="middle" justify="center" className="calendar-add__body-form">
                                     {gettingListMembers && !gotListMembers ?
                                         <Spin tip="Loading..." />
                                         :
@@ -644,38 +645,39 @@ class AddEvent extends React.Component {
                             </Form.Item>
                             <Form.Item className="form-item-add-event">
                                 <Row className="row-form-item-add-event">
-                                    <Col span={4} className="title-input-add-event">
+                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event">
                                         <CalendarOutlined
                                             className="icon-input-add-event"
                                             style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }}
                                         />
-                                        <span style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }}>Thời gian</span>
+                                        <span style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }} className="calendar__label-title">Thời gian</span>
+                                    </Col>
+                                    <Col xl={18} lg={17} sm={16} xs={17}>
+                                        <div className="width-70-percent" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <DatePicker
+                                                value={dateTime.start ? moment(dateTime.start) : null}
+                                                onChange={this.handleSelectStartDate}
+                                                style={{ float: 'right' }} showTime placeholder="Bắt đầu" showTime
+                                            />
+                                            <div className=""><ArrowRightOutlined /></div>
+
+                                            <DatePicker
+                                                showTime onChange={this.handleSelectEndDate} placeholder="Kết thúc"
+                                                value={dateTime.end ? moment(dateTime.end) : null}
+                                            />
+                                        </div>
                                     </Col>
 
-                                    <Col span={7} >
-                                        <DatePicker
-                                            value={dateTime.start ? moment(dateTime.start) : null}
-                                            onChange={this.handleSelectStartDate}
-                                            style={{ float: 'right' }} showTime placeholder="Bắt đầu" showTime
-                                        />
-                                    </Col>
-                                    <Col span={2} className="col-form-item-add-event"> <ArrowRightOutlined /></Col>
-                                    <Col span={7} >
-                                        <DatePicker
-                                            showTime onChange={this.handleSelectEndDate} placeholder="Kết thúc"
-                                            value={dateTime.end ? moment(dateTime.end) : null}
-                                        />
-                                    </Col>
                                 </Row>
                                 <Row className="row-form-item-add-event">
-                                    <Col span={4} className="title-input-add-event">
+                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event">
                                         <BellOutlined
                                             className="icon-input-add-event"
                                             style={{ color: "#096dd9" }}
                                         />
-                                        <span style={{ color: "#096dd9" }}>Nhắc nhở</span>
+                                        <span style={{ color: "#096dd9" }} className="calendar__label-title">Nhắc nhở</span>
                                     </Col>
-                                    <Col span={16} className="col-form-item-add-event">
+                                    <Col xl={18} lg={17} sm={16} xs={17} className="col-form-item-add-event">
                                         <Input
                                             name="reminder" value={reminder} onChange={this.handleChangeInput}
                                             className="width-70-percent" type="number" suffix="Phút"
@@ -683,12 +685,12 @@ class AddEvent extends React.Component {
                                     </Col>
                                 </Row>
                                 <Row className="row-form-item-add-event">
-                                    <Col span={4} className="title-input-add-event">
+                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event">
                                         <RedoOutlined className="icon-input-add-event" style={{ color: "#096dd9" }} />
-                                        <span style={{ color: "#096dd9" }}>Lặp lại</span>
+                                        <span style={{ color: "#096dd9" }} className="calendar__label-title">Lặp lại</span>
                                     </Col>
-                                    <Col span={16} className="col-form-item-add-event">
-                                        <Button className="width-70-percent" onClick={() => this.setState({ showRepeatModal: true })} >{convertRepeatType()}</Button>
+                                    <Col xl={18} lg={17} sm={16} xs={17} className="col-form-item-add-event">
+                                        <Button className="width-70-percent " onClick={() => this.setState({ showRepeatModal: true })} >{convertRepeatType()}</Button>
                                     </Col>
 
                                     <Modal width={450} closable={false} footer={null} title={null} visible={showRepeatModal} >
@@ -914,14 +916,14 @@ class AddEvent extends React.Component {
                                                 (repeat.type === "month" && repeatTypeOfMonth === "day" && activeTabNestedRepeatType === "order")
                                                 ||
                                                 (repeat.type === "year" && repeatTypeOfYear === "day" && activeTabNestedRepeatType === "order")
-                                             )  &&  <div style={{margin: '20px 0px 0px 0px', color: '#1890ff'}}>Ghi chú: 0 là tuần cuối của tháng.</div>
+                                            ) && <div style={{ margin: '20px 0px 0px 0px', color: '#1890ff' }}>Ghi chú: 0 là tuần cuối của tháng.</div>
                                             }
                                             {
                                                 (
-                                                    (repeat.type === "month" && repeatTypeOfMonth === "date" )
+                                                    (repeat.type === "month" && repeatTypeOfMonth === "date")
                                                     ||
-                                                    (repeat.type === "year" &&  repeatTypeOfYear === "date" && activeTabNestedRepeatType === "date")
-                                                ) && <div style={{margin: '20px 0px 0px 0px', color: '#1890ff'}}>Ghi chú: 0 là ngày cuối cùng của tháng</div>
+                                                    (repeat.type === "year" && repeatTypeOfYear === "date" && activeTabNestedRepeatType === "date")
+                                                ) && <div style={{ margin: '20px 0px 0px 0px', color: '#1890ff' }}>Ghi chú: 0 là ngày cuối cùng của tháng</div>
                                             }
                                             <Divider />
 
@@ -937,14 +939,14 @@ class AddEvent extends React.Component {
                             </Form.Item>
                             <Form.Item className="form-item-add-event">
                                 <Row className="row-form-item-add-event">
-                                    <Col span={4} className="title-input-add-event" >
+                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event" >
                                         <PictureOutlined
                                             className="icon-input-add-event"
                                             style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }}
                                         />
-                                        <span style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }}> Hình ảnh </span>
+                                        <span style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }} className="calendar__label-title"> Hình ảnh </span>
                                     </Col>
-                                    <Col span={16} className="col-form-item-add-event" >
+                                    <Col xl={18} lg={17} sm={16} xs={17} className="col-form-item-add-event" >
                                         {currentUrlImg !== "" && <img src={currentUrlImg} style={{ width: 300, height: 'auto' }} />}
                                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                                             <div className="upload-img-add-calendar-container" style={{ marginTop: currentUrlImg ? 5 : 0 }}>
@@ -967,7 +969,7 @@ class AddEvent extends React.Component {
                                             className="icon-input-add-event"
                                             style={{ color: notes ? "#096dd9" : "black" }}
                                         />
-                                        <span style={{ color: notes ? "#096dd9" : "black" }}>Ghi chú</span>
+                                        <span style={{ color: notes ? "#096dd9" : "black" }} className="calendar__label-title">Ghi chú</span>
                                     </div>
                                     <TextArea
                                         name="notes" value={notes} onChange={this.handleChangeInput}
@@ -976,14 +978,14 @@ class AddEvent extends React.Component {
                                 </Row>
                             </Form.Item>
                             <Form.Item className="form-item-add-event">
-                                <Row className="row-form-item-add-event" style={{ float: "right", marginRight: 20 }}>
+                                <Row className="row-form-item-add-event calendar-add__btn" style={{ marginRight: 10, marginLeft: 10 }}>
                                     {type === "add" ?
-                                        <Button type="primary" ghost size="large"> Hủy </Button>
+                                        <Button className="calendar-add__btn-cancel" type="primary" ghost size="large"> Hủy </Button>
                                         :
-                                        <Button onClick={this.handleDeleteEvent} type="primary" ghost size="large"> Xóa </Button>
+                                        <Button className="calendar-add__btn-cancel" onClick={this.handleDeleteEvent} type="primary" ghost size="large"> Xóa </Button>
                                     }
                                 &emsp;
-                                <Button htmlType="submit" type="primary" size="large"> {type === "add" ? "Thêm" : "Cập nhật"} </Button>
+                                <Button className="calendar-add__btn-add" htmlType="submit" type="primary" size="large"> {type === "add" ? "Thêm" : "Cập nhật"} </Button>
                                 </Row>
                             </Form.Item>
                         </Form>

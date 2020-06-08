@@ -153,7 +153,7 @@ class Grocery extends React.Component {
                                         <Divider orientation="center" className="grocery__divider">Đã hoàn tất</Divider>
                                     </div>
                                 </div>
-                                : <div className="spin-get-list-members loading-data"><Spin tip="Đang tải..." /> </div>}
+                                : <div className="spin-get-list-members loading-data-grocery"><Spin tip="Đang tải..." /> </div>}
 
                         </div>
                     </Content>

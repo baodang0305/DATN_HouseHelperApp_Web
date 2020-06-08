@@ -3,6 +3,7 @@
   padding: 10px 10px;
   background-color: white;
   height: 100%;
+  position: relative;
 }
 
 .grocery__panel {
@@ -190,6 +191,12 @@
   font-weight: 500;
 }
 
+.loading-data-grocery {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
 @media all and (min-width: 320px) and (max-width: 599px) {
   .grocery__content-container {

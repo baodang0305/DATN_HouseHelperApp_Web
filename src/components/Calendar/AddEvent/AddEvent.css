@@ -1,12 +1,21 @@
+.calendar-add__header {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
 .left-header-add-calendar-container {
-    width: 20%;
+    position: absolute;
+    left: 10px;
 }
 
 .center-header-add-calendar-container {
-    width: 60%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     font-size: 22px;
-    display: flex;
-    justify-content: center;
 }
 
 .right-header-add-calendar-container {
@@ -14,7 +23,7 @@
 }
 
 .form-item-add-event {
-    margin: 10px 20px;
+    margin: 10px 10px;
     border-radius: 2px;
     background-color: hsl(0, 0%, 100%);
     box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
@@ -69,17 +78,29 @@
     font-size: 16px;
 }
 
+.title-input-add-event {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    width: max-content;
+}
+
 .icon-input-add-event {
     margin: 0px 4px 0px 20px;
 }
 
 .row-form-item-add-event {
-    margin: 20px 0px;
+    margin: 10px 0px;
     align-items: center;
+    width: 100%;
 }
 
-.col-form-item-add-event {  
+.col-form-item-add-event {
     text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 }
 
 .width-70-percent {
@@ -88,12 +109,12 @@
 
 .name-user-add-event {
     margin-top: 4px;
-	display: inline-block;
-	background-color: #f2f3f5;
-	color: #385898;
-	padding: 5px 10px;
-	font-weight: 600;
-	border-radius: 10px;
+    display: inline-block;
+    background-color: #f2f3f5;
+    color: #385898;
+    padding: 5px 10px;
+    font-weight: 600;
+    border-radius: 10px;
 }
 
 .upload-img-add-calendar-container {
@@ -101,7 +122,7 @@
     justify-content: center;
 }
 
-.upload-img-ui-add-canlendar{
+.upload-img-ui-add-canlendar {
     position: relative;
     cursor: pointer;
     border: groove thin;
@@ -125,10 +146,10 @@
     margin-left: 5px;
     margin-top: 5px;
     width: 150px;
-    height: 35px; 
-    border: groove thin; 
+    height: 35px;
+    border: groove thin;
     display: flex;
-    align-items: center; 
+    align-items: center;
     justify-content: center;
     cursor: pointer;
 }
@@ -152,7 +173,7 @@
 
 .title-modal-container {
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     align-items: center;
     width: 100%;
 }
@@ -200,7 +221,7 @@
 
 .repeat-type-item-modal-selected {
     border-color: #1890ff;
-    border-width: 1px; 
+    border-width: 1px;
     border-style: groove;
     border-radius: 50%;
     color: #1890ff;
@@ -297,7 +318,94 @@
 .cancel-button-modal {
     width: 48%;
 }
+
 .save-button-modal {
     width: 48%;
 }
 
+.center-item-pos {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.calendar-add__body-form {
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.calendar-add__avatar-member {
+    width: 45px;
+    height: 45px;
+}
+
+.calendar-add__btn {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 30px;
+}
+
+@media all and (min-width: 320px) and (max-width: 599px) {
+    .form-item-add-event {
+        margin: 10px 0px;
+    }
+
+    .name-event-input {
+        font-size: 18px;
+        height: 50px;
+    }
+
+    .center-header-add-calendar-container {
+        font-size: 18px;
+    }
+
+    .calendar-add__body-form {
+        width: 100%;
+        margin-top: 0px;
+        margin-bottom: 10px;
+    }
+
+    .width-70-percent {
+        width: 95%;
+    }
+
+    .icon-input-add-event {
+        font-size: 14px;
+    }
+
+    .calendar__label-title {
+        font-size: 14px;
+    }
+
+    .calendar-add__avatar-member {
+        width: 40px;
+        height: 40px;
+    }
+
+    .name-user-add-event {
+        font-size: 13px;
+    }
+
+
+    .calendar-add__btn-cancel {
+        width: 45%;
+    }
+
+    .calendar-add__btn-add {
+        width: 45%;
+    }
+
+    .calendar-add__btn {
+        display: flex;
+        justify-content: space-between;
+        padding-left: 10px;
+    }
+}
+
+@media all and (min-width: 600px) and (max-width: 1023px) {}
+
+@media all and (min-width: 1024px) {}
+
+@media all and (min-width: 1280px) {}

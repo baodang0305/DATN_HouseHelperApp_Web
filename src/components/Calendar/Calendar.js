@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import socketIoClient from "socket.io-client";
 import { PlusOutlined, HomeOutlined, LeftOutlined, RightOutlined, BellOutlined } from "@ant-design/icons";
-import { Layout, Calendar, Button, Avatar, Input } from "antd";
+import { Layout, Calendar, Button, Avatar, Input, Divider } from "antd";
 
 import "./Calendar.css";
 import history from "../../helpers/history";
@@ -13,6 +13,7 @@ import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import { familyActions } from "../../actions/family.actions";
 import { calendarActions } from "../../actions/calendar.actions";
 import { indexConstants } from "../../constants/index.constants";
+import HeaderMain from "../../components/Common/HeaderMain/HeaderMain"
 
 let socket;
 const { Search } = Input;
@@ -78,7 +79,7 @@ class CalendarPage extends React.Component {
     handleClickPre = () => {
         const { idCurrentItem } = this.state;
         if (idCurrentItem > 1) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft - 283;
+            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft - 200;
             this.setState({ idCurrentItem: idCurrentItem - 1 })
         }
     }
@@ -90,7 +91,7 @@ class CalendarPage extends React.Component {
         const numberOfMembers = listMembers ? listMembers.length : 0;
 
         if (idCurrentItem < numberOfMembers) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft + 283;
+            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft + 200;
             this.setState({ idCurrentItem: idCurrentItem + 1 });
         }
     }
@@ -148,9 +149,9 @@ class CalendarPage extends React.Component {
                 <div className="user-calendar-container" key={index}>
                     <div className="avatar-event-container" onClick={() => this.handleChooseMember(item._id)}>
                         {isSelectedMember === item._id ?
-                            <Avatar size={50} src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }} className="border-avatar-calendar" />
+                            <Avatar className="calendar__avatar-member border-avatar-calendar" src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }} />
                             :
-                            <Avatar size={50} src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }} />
+                            <Avatar className="calendar__avatar-member" src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }} />
                         }
                     </div>
                     {isSelectedMember === item._id ?
@@ -165,27 +166,30 @@ class CalendarPage extends React.Component {
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="2" />
                 <Layout className="site-layout">
-                    <Header className="header-container" >
+                    <Header className="header-container calendar__header" >
                         <div className="left-header-calendar-container">
-                            <Button style={{ marginRight: 10 }} size="large">
-                                <Link to='/family' ><HomeOutlined style={{ fontSize: 19 }} /></Link>
-                            </Button>
+                            <Link to='/family' className="header__btn-link header__home-btn">
+                                <HomeOutlined className="icon-header-calendar" />
+                            </Link>
+
                             <Search
+                                className="calendar__header-search"
                                 placeholder="Nhập nội dung tìm kiếm"
                                 onSearch={value => console.log(value)}
-                                style={{ width: "50%" }}
+                                style={{ marginLeft: 10 }}
                                 size="large"
                             />
                         </div>
                         <div className="center-header-calendar-container"> Quản Lý Lịch </div>
                         <div className="right-header-calendar-container" >
-                            <Button style={{ marginRight: 10 }} size="large">
+                            <div style={{ marginRight: 10 }} className="header__btn-link">
                                 <BellOutlined className={!remindedEventNotification && remindingEventNotification ? "remind-event-bell" : ""} />
-                            </Button>
-                            <Button size="large">
-                                <Link to="/calendar/add-event"> <PlusOutlined className="icon-header-calendar" /> </Link>
-                            </Button>
+                            </div>
+                            <Link to="/calendar/add-event" className="header__btn-link">
+                                <PlusOutlined className="icon-header-calendar" />
+                            </Link>
                         </div>
+                        {/* <HeaderMain tab="calendar" title="Sự kiện"></HeaderMain> */}
                     </Header>
 
                     <Content >
@@ -202,9 +206,9 @@ class CalendarPage extends React.Component {
                                 <div className="user-calendar-container" >
                                     <div className="avatar-event-container" onClick={() => this.handleChooseMember("all")}>
                                         {isSelectedMember === "all" ?
-                                            < Avatar size={50} icon={<HomeOutlined style={{ fontSize: "22px", color: "#2985ff" }} />} className="border-avatar-calendar" />
+                                            < Avatar className="calendar__avatar-member border-avatar-calendar" icon={<HomeOutlined style={{ fontSize: "22px", color: "#2985ff" }} />} />
                                             :
-                                            < Avatar size={50} icon={<HomeOutlined style={{ fontSize: "22px", color: "gray" }} />} />
+                                            < Avatar className="calendar__avatar-member" icon={<HomeOutlined style={{ fontSize: "22px", color: "gray" }} />} />
                                         }
                                     </div>
                                     {isSelectedMember === "all" ?
@@ -226,12 +230,20 @@ class CalendarPage extends React.Component {
                         </div>
 
                         <div className="content-calendar">
-                            <div style={{ padding: "40px 40px" }}>
-                                <Calendar
+                            <div className="calendar__show-event">
+                                <Divider>Sự kiện trong ngày</Divider>
+                                <div>Khi bấm 1 ngày thì danh sách event ngày đó show ở đây
+                                </div>
+                            </div>
+                            <div className="calendar__calender-container">
+                                <Calendar className="calendar__pc-or-tablet"
                                     dateCellRender={this.dateCellRender}
                                     onPanelChange={this.onPanelChange}
                                 />
+
+                                <Calendar fullscreen={false} className="calendar__mobile" />
                             </div>
+
                         </div>
 
                     </Content>
