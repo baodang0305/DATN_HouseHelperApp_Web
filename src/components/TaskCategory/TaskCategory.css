@@ -22,7 +22,7 @@
 .task-cate__content-container {
   padding: 15px;
   position: relative;
-  min-height: 400px;
+  height: 100%;
 }
 
 .task-cate__item-container,

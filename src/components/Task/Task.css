@@ -252,4 +252,12 @@
 		transform: translate(-50%, -50%);
 		font-size: 18px;
 	}
+
+	.ant-collapse-content>.ant-collapse-content-box {
+		padding-right: 8px;
+	}
+
+	.ant-collapse>.ant-collapse-item>.ant-collapse-header {
+		padding-right: 0px;
+	}
 }

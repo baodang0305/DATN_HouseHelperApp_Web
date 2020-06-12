@@ -293,6 +293,23 @@
 		width: 100%;
 		margin-left: 0px;
 	}
+
+	.task__action-item {
+		margin-right: 0px;
+	}
+
+	.icon-task-point {
+		font-size: 15px;
+	}
+
+	.point {
+		font-size: 15px;
+	}
+
+	.task__action-title {
+		font-size: 12px;
+		width: max-content;
+	}
 }
 
 @media only screen and (min-width: 992px) {
@@ -309,6 +326,8 @@
 		width: 100%;
 		margin-left: 0px;
 	}
+
+
 }
 
 /* Mobile */
@@ -323,7 +342,7 @@
 	}
 
 	.note-task {
-		font-size: 12px;
+		font-size: 13px;
 	}
 
 	.time-task {
@@ -341,11 +360,10 @@
 	.icon-assigned {
 		height: auto;
 		margin-bottom: 8px;
-
 	}
 
 	.icon-action-task {
-		font-size: 17px;
+		font-size: 20px;
 	}
 
 	.task-point {
@@ -353,11 +371,11 @@
 	}
 
 	.icon-task-point {
-		font-size: 11px;
+		font-size: 13px;
 	}
 
 	.point {
-		font-size: 11px;
+		font-size: 13px;
 	}
 
 	.task__list-item>.ant-list-item-action {
@@ -386,8 +404,8 @@
 
 	.icon-avatar-member-completed,
 	.icon-avatar {
-		width: 25px;
-		height: 25px;
+		width: 30px;
+		height: 30px;
 	}
 
 	.task__list-task-container>.ant-list-pagination>ul>li {

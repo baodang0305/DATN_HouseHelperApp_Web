@@ -1,158 +1,287 @@
 .grocery-form__header {
-    display: flex;
-    margin: 0 10px;
-    position: relative;
-    width: 100%;
+  display: flex;
+  margin: 0 10px;
+  position: relative;
+  width: 100%;
 }
 
 .grocery-form__header-title {
-    font-size: 20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .grocery-form__content {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .grocery-form__form-container {
-    margin: 10px 10px;
+  margin: 10px 10px;
 }
 
 .grocery-from__action-item>.grocery__action>.grocery__icon-action {
-    font-size: 15px;
+  font-size: 15px;
 }
 
 .grocery-form__form-item {
-    margin-bottom: 8px;
-    padding: 10px;
-    background-color: white;
-}
-
-.grocery-form__list-container {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 10px;
+  background-color: white;
 }
 
 .grocery-form__members-container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .grocery-form__member-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
 }
 
 .grocery-form__member-item:hover>.grocery-form__avatar {
-    border: 1px solid #1890ff;
+  border: 1px solid #1890ff;
 }
 
 .grocery-form__title-avatar {
-    margin-top: 5px;
-    display: inline-block;
-    background-color: #f2f3f5;
-    color: #385898;
-    padding: 2px 8px;
-    font-weight: 500;
-    border-radius: 10px;
-    font-size: 13px;
+  margin-top: 5px;
+  display: inline-block;
+  background-color: #f2f3f5;
+  color: #385898;
+  padding: 2px 8px;
+  font-weight: 500;
+  border-radius: 10px;
+  font-size: 13px;
 }
 
-.grocery-form__avatar {
-    width: 45px;
-    height: 45px;
+.grocery-form__avatar,
+.grocery-form__avatar-checked {
+  width: 45px;
+  height: 45px;
 }
 
 .grocery-form__item {
-    border-bottom: 1px solid #999999;
-    margin: 10px;
-    width: 45%;
-    display: flex;
-    cursor: pointer;
+  border-bottom: 1px solid #888888;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  height: 100%;
 }
 
 .grocery-form__stt-item {
-    margin-right: 10px;
-    font-weight: 500;
+  margin-right: 10px;
+  font-weight: 500;
 }
 
 .grocery-form__main-info-item {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .grocery-from__action-item {
-    height: 100%;
-    display: flex;
-    align-items: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  width: 100px;
 }
 
 .grocery-form__des-item {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
 }
 
 .grocery-form__name-item {
-    font-weight: 500;
+  font-weight: 500;
+  width: max-content;
+}
+
+.grocery-form__note-item {
+  padding-left: 15px;
 }
 
 .grocery-form__input-name {
-    border: none;
-    text-align: center;
+  border: none;
+  text-align: center;
 }
 
-.grocery-form__item-label {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
+.grocery-form__form-item-label,
+.grocery-form__item-title {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: black;
 }
 
 .grocery-form__add-item-container {
-    margin: 0 10px;
+  margin: 0 10px;
 }
 
 .grocery-form__input-image {
-    width: 50px;
-    height: 50px;
-    border: 1px solid #999999;
+  display: flex;
+  flex-direction: row;
+}
+
+.grocery-form__image-item {
+  max-height: 120px;
+  object-fit: contain;
+  margin-right: 15px;
 }
 
 .grocery-form__btn {
+  display: flex;
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+}
+
+.grocery-form__body-item-form {
+  padding: 0px 20px;
+}
+
+.grocery-form__icon-label {
+  margin-right: 10px;
+}
+
+.grocery-form__btn-repeat {
+  width: 100%;
+  height: 40px;
+}
+
+.grocery-form__repeat {
+  width: 50%;
+}
+
+.grocery-form__avatar-container {
+  position: relative;
+}
+
+.grocery-form__checked-icon {
+  color: #52c41a;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
+}
+
+.grocery-form__avatar-checked {
+  opacity: 0.5;
+}
+
+.grocery-form__icon-add-container {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.grocery-form__icon-add-container:hover {
+  color: #1890ff;
+  border: 1px solid #1890ff;
+}
+
+.grocery-form__icon-add {
+  font-size: 28px;
+}
+
+.grocery-form__img {
+  object-fit: cover;
+  max-height: 70px;
+}
+
+.grocery-form__info-item {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.grocery-form__action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0px 8px;
+}
+
+.grocery-form__action:last-child {
+  margin-right: 0px;
+}
+
+@media all and (min-width: 320px) and (max-width: 768px) {
+  .grocery-form__item {
+    border-bottom: 1px solid #999999;
+    margin: 0px;
+    width: 100%;
+  }
+
+  .grocery-form__form-item {
+    margin-bottom: 5px;
+  }
+
+  .grocery-form__repeat {
+    width: 100%;
+  }
+
+  .grocery-form__form-container {
+    margin: 5px 0px;
+  }
+
+  .grocery-form__body-item-form {
+    padding: 0px 10px;
+  }
+
+  .grocery-form__content {
+    margin: 0;
+    padding-bottom: 60px;
+  }
+
+  .grocery-form__btn {
+    width: 100%;
     display: flex;
-    position: absolute;
-    right: 10px;
-    bottom: 0px;
+    justify-content: space-between;
+
+  }
+
+  .grocery-form__btn>button {
+    width: 45%;
+  }
+
+  .grocery-form__btn>button:first-child {
+    margin-left: 20px;
+  }
 }
 
-@media all and (min-width: 320px) and (max-width: 599px) {
-    .grocery-form__item {
-        border-bottom: 1px solid #999999;
-        margin: 0px;
-        width: 100%;
-    }
-}
+@media all and (min-width: 769px) and (max-width: 1023px) {
+  .grocery-form__item {
+    border-bottom: 1px solid #999999;
+    margin: 0px;
+    width: 100%;
+  }
 
-@media all and (min-width: 600px) and (max-width: 1023px) {
-    .grocery-form__item {
-        border-bottom: 1px solid #999999;
-        margin: 0px;
-        width: 100%;
-    }
+  .grocery-form__repeat {
+    width: 100%;
+  }
 }
 
 @media all and (min-width: 1024px) {}

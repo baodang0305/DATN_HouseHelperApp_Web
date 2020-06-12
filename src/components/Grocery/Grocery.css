@@ -6,19 +6,16 @@
   position: relative;
 }
 
-.grocery__panel {
-
-  border-bottom: 1px solid #595959;
-}
-
-.grocery__main-collapse>.grocery__divider {
-  margin: 5px 0 0 0;
-}
 
 .grocery__header-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: black;
+  height: 60px;
+  margin: 0px 10px;
+
+
 }
 
 .grocery__title-list {
@@ -28,7 +25,8 @@
 .grocery__des-list {
   display: flex;
   align-items: center;
-  max-width: 70%;
+  width: 100%;
+  cursor: pointer;
 }
 
 .grocery__relative-info {
@@ -40,6 +38,7 @@
 
 .grocery__assign-member {
   margin-right: 20px;
+  cursor: pointer;
 }
 
 .grocery__action {
@@ -47,6 +46,7 @@
   flex-direction: column;
   align-items: center;
   margin: 0 8px;
+  cursor: pointer;
 }
 
 .grocery__action:last-child {
@@ -61,6 +61,7 @@
 .grocery__title-action {
   font-size: 12px;
   text-transform: none;
+  width: max-content;
 }
 
 .grocery__icon-action-option {
@@ -118,6 +119,7 @@
   width: 100%;
   min-height: 44px;
   align-items: center;
+  position: relative;
 }
 
 .grocery__des-info-item {
@@ -198,6 +200,21 @@
   transform: translate(-50%, -50%);
 }
 
+.grocery__image-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.grocery__is-completed {
+  background-color: #66bb6a;
+}
+
+.grocery__main-data {
+  height: 60%;
+}
+
 @media all and (min-width: 320px) and (max-width: 599px) {
   .grocery__content-container {
     margin: 5px 0px;
@@ -235,6 +252,10 @@
   .grocery__icon-action {
     font-size: 15px;
 
+  }
+
+  .grocery__icon-action:hover {
+    background-color: rgba(250, 12, 11, 0.5);
   }
 
   .grocery__title-action {
