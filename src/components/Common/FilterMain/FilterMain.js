@@ -6,6 +6,8 @@ class FilterMain extends Component {
         idChosenMember: 'all',
         idChosenCate: 'all',
         filterBy: 'cate',
+        orderDateBy: 'decreaseDate',
+        orderMoneyBy: 'decreaseMoney',
         visiblePopover: false,
     }
 
@@ -18,7 +20,6 @@ class FilterMain extends Component {
     };
 
     handleChangeSelectFilterCate(idClickedCate) {
-
         const { handleSelectFilter } = this.props;
         this.setState({ idChosenCate: idClickedCate });
         handleSelectFilter(idClickedCate);
@@ -43,9 +44,17 @@ class FilterMain extends Component {
             : null
         this.hidePopover();
     }
+
+    handleChangeOrderDateBy = (orderBy) => {
+        this.setState({ orderDateBy: orderBy });
+    }
+
+    handleChangeOrderMoneyBy = (orderBy) => {
+        this.setState({ orderMoneyBy: orderBy });
+    }
     render() {
-        const { allMembers, allCates } = this.props;
-        const { idChosenCate, idChosenMember, filterBy } = this.state;
+        const { allMembers, allCates, tab } = this.props;
+        const { idChosenCate, idChosenMember, filterBy, orderDateBy, orderMoneyBy } = this.state;
         return (
             <div>
                 <div className="filter-list-task">
@@ -71,12 +80,21 @@ class FilterMain extends Component {
                     {/* Change type filter */}
                     <Popover
                         className="filter-popover-task"
-                        placement="bottom"
+                        placement="bottomRight"
 
                         content={
                             <div className="filter-popover">
                                 <div className={filterBy === 'cate' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeFilterBy('cate')}>Loại công việc</div>
                                 <div className={filterBy === 'member' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeFilterBy('member')}>Thành viên</div>
+                                <div className={orderDateBy === 'decreaseDate' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeOrderDateBy('decreaseDate')}>Mới nhất</div>
+                                <div className={orderDateBy === 'increaseDate' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeOrderDateBy('increaseDate')}>Cũ nhất</div>
+
+                                {tab === 'shoppingList' ? (
+                                    <>
+                                        <div className={orderMoneyBy === 'decreaseMoney' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeOrderMoneyBy('decreaseMoney')}>Hóa đơn giảm</div>
+                                        <div className={orderMoneyBy === 'increaseMoney' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeOrderMoneyBy('increaseMoney')}>Hóa đơn tăng</div>
+                                    </>) : null}
+
                                 {/* <div className="hide-popover" onClick={this.hidePopover}>Đóng</div> */}
                             </div>
                         }
@@ -87,7 +105,7 @@ class FilterMain extends Component {
                     >
                         <div className="list-task-filter">
                             <Avatar src="https://static.thenounproject.com/png/1701541-200.png" className="task-filter"></Avatar>
-                            <div>Filter</div>
+                            <div>Phân loại</div>
                         </div>
                     </Popover>
                 </div>

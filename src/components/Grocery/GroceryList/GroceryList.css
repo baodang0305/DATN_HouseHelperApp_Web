@@ -1,7 +1,8 @@
 .grocery__data-bill {
     width: max-content;
-    color: #3a9e3f;
+    color: #0ca714;
 }
+
 
 @media all and (min-width: 320px) and (max-width: 599px) {
     .grocery__info-item {

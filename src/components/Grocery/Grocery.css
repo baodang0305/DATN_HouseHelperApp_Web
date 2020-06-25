@@ -48,6 +48,7 @@
   align-items: center;
   margin: 0 8px;
   cursor: pointer;
+
 }
 
 .grocery__action:last-child {
@@ -55,7 +56,7 @@
 }
 
 .grocery__icon-action {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .grocery__title-action {
@@ -106,7 +107,8 @@
   flex-direction: row;
   width: max-content;
   align-items: center;
-  display: flex;
+  position: relative;
+  z-index: 1;
 }
 
 .grocery__action-item>.grocery__action>.grocery__icon-action {
@@ -241,6 +243,31 @@
   object-position: center;
 }
 
+/* Quick filter and order mode */
+
+.quick-filter {
+  display: flex;
+}
+
+.quick-filter__item {
+  margin: 0px 10px;
+  padding: 2px 3px;
+  cursor: pointer;
+  border-radius: 3px;
+  border: 1px solid #EDEDED;
+
+}
+
+.quick-filter__chosen-item {
+  border-radius: 3px;
+  border: 1px solid #2985EE;
+  color: #2985EE;
+}
+
+
+
+/*  */
+
 @media all and (min-width: 320px) and (max-width: 599px) {
   .grocery__content-container {
     margin: 5px 0px;
@@ -272,7 +299,7 @@
   }
 
   .grocery__icon-action {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .grocery__icon-action:hover {
@@ -297,6 +324,10 @@
 @media all and (min-width: 600px) and (max-width: 1023px) {
   .grocery__title-list {
     font-size: 16px;
+  }
+
+  .grocery__icon-action {
+    font-size: 18px;
   }
 }
 

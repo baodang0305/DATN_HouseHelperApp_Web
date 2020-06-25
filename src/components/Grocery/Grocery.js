@@ -24,6 +24,8 @@ let socket;
 class Grocery extends React.Component {
     state = {
         allGroceriesState: null,
+        quickFilter: 'all',
+        tabMode: 'todo'
     }
 
     getData() {
@@ -83,8 +85,10 @@ class Grocery extends React.Component {
 
     checkIsListComplete = (listShopping) => {
         var isCompletedList = false;
-        if (listShopping.every(itemInList => itemInList.isChecked === true)) {
-            isCompletedList = true;
+        if (listShopping.length > 0) {
+            if (listShopping.every(itemInList => itemInList.isChecked === true)) {
+                isCompletedList = true;
+            }
         }
         return isCompletedList;
     }
@@ -114,11 +118,23 @@ class Grocery extends React.Component {
 
     }
 
+    handleClickQuickFilter = (quickFilterMode) => {
+        const { quickFilter } = this.state;
+        const { user, allGroceries } = this.props;
+        if (quickFilterMode === 'all') {
+            this.setState({ quickFilter: quickFilterMode, allGroceriesState: allGroceries });
+        } else if (quickFilterMode === 'recentUser') {
+            this.setState({ quickFilter: quickFilterMode, allGroceriesState: allGroceries.filter(item => item.assign && item.assign._id === user._id) })
+        }
 
+    }
+    handleOnChangeTabMode = (activeKey) => {
+        this.setState({ tabMode: activeKey });
+    }
 
     render() {
         const { listMembers, allGroceryTypes, allGroceries, user } = this.props;
-        const { allGroceriesState } = this.state;
+        const { allGroceriesState, quickFilter, tabMode } = this.state;
         console.log(allGroceriesState);
         let dataGroceries = allGroceriesState ? allGroceriesState : allGroceries;
         console.log(dataGroceries);
@@ -139,7 +155,7 @@ class Grocery extends React.Component {
                             {this.shouldComponentRender()
                                 ? <div>
                                     <div className="grocery__filter">
-                                        <FilterMain allMembers={listMembers} allCates={allGroceryTypes} handleSelectFilter={this.handleSelectFilter} />
+                                        <FilterMain tab={tabMode === 'completed' ? 'shoppingList' : null} allMembers={listMembers} allCates={allGroceryTypes} handleSelectFilter={this.handleSelectFilter} />
                                     </div>
                                     {/* <div className="grocery__main-data">
                                         <Divider orientation="center" className="grocery__divider">Cần mua</Divider>
@@ -150,13 +166,28 @@ class Grocery extends React.Component {
                                         <GroceryList allGroceries={allGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))} />
                                     </div> */}
 
-                                    <div className="grocery__main-data">
-                                        <Tabs defaultActiveKey="1" className="grocery__tab-data">
-                                            <TabPane tab="Danh sách cần mua" key="1">
+                                    <div className="grocery__main-data" style={{ marginTop: '-10px' }}>
+                                        <Tabs defaultActiveKey="1" className="grocery__tab-data" onChange={this.handleOnChangeTabMode}
+                                            tabBarExtraContent={
+                                                <div className="quick-filter">
+                                                    <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
+                                                        onClick={() => { this.handleClickQuickFilter('recentUser') }} >
+                                                        Tôi phụ trách
+                                                    </div>
+                                                    <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
+                                                        onClick={() => { this.handleClickQuickFilter('all') }}>
+                                                        Tất cả thành viên
+                                                    </div>
+
+                                                </div>
+
+                                            }>
+
+                                            <TabPane tab="Danh sách cần mua" key="todo">
                                                 {allGroceries ? <GroceryList allGroceries={dataGroceries.filter(itemGrocery => !this.checkIsListComplete(itemGrocery.listItems))} /> : null}
                                             </TabPane>
 
-                                            <TabPane tab="Danh sách đã hoàn tất" key="2">
+                                            <TabPane tab="Danh sách đã hoàn tất" key="completed">
                                                 {allGroceries ? <GroceryList allGroceries={dataGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))} /> : null}
                                             </TabPane>
 
