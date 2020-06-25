@@ -27,7 +27,7 @@
 }
 
 .grocery-form__form-item {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   padding: 10px;
   background-color: white;
 }
@@ -136,7 +136,7 @@
 
 .grocery-form__input-image {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .grocery-form__image-item {
@@ -228,6 +228,11 @@
   margin-right: 0px;
 }
 
+.grocery-data__upload-btn {
+  flex: 1;
+  height: 20px;
+}
+
 @media all and (min-width: 320px) and (max-width: 768px) {
   .grocery-form__item {
     border-bottom: 1px solid #999999;
@@ -269,6 +274,18 @@
 
   .grocery-form__btn>button:first-child {
     margin-left: 20px;
+  }
+
+  .grocery-form__title-avatar {
+    font-size: 12px;
+  }
+
+  .grocery-form__form-item-label {
+    font-size: 15px;
+  }
+
+  .grocery-form__header {
+    margin: 0;
   }
 }
 

@@ -73,14 +73,14 @@ const addGrocery = (name, assign, stID, repeat, listItems) => {
     function failure() { return { type: groceryConstants.addGrocery.ADD_GROCERY_FAILURE } }
 }
 
-const editGrocery = (slID, name, stID, assign, repeat, listItems) => {
+const editGrocery = (slID, name, stID, assign, repeat, listItems, total, bill) => {
     return dispatch => {
         const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
         const { token } = inforLogin;
         dispatch(request());
 
         return axios.post(
-            'https://househelperapp-api.herokuapp.com/edit-shopping-list', { slID, name, stID, assign, repeat, listItems }, {
+            'https://househelperapp-api.herokuapp.com/edit-shopping-list', { slID, name, stID, assign, repeat, listItems, total, bill }, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -196,11 +196,52 @@ const checkBoughtItem = (slID, islID) => {
     function failure() { return { type: groceryConstants.checkBoughtItem.CHECK_BOUGHT_ITEM_FAILURE } }
 }
 
+const assignGrocery = (slID) => {
+    return dispatch => {
+        const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+        const { token } = inforLogin;
+        dispatch(request());
+
+        return axios.post(
+            'https://househelperapp-api.herokuapp.com/assign-shopping-list', { slID }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                const message = res.data.message;
+                if (res.data.status === 'success') {
+                    axios.get(
+                        'https://househelperapp-api.herokuapp.com/list-shopping-list', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                        .then(res => {
+                            dispatch(success(res.data.shoppingLists));
+                            dispatch(alertActions.success(message));
+                            history.push("/grocery");
+                        })
+                }
+                else {
+                    dispatch(failure());
+                    dispatch(alertActions.error(message));
+                }
+            }
+            )
+    }
+    function request() { return { type: groceryConstants.assignGrocery.ASSIGN_GROCERY_REQUEST } }
+    function success(allGroceries) {
+        return { type: groceryConstants.assignGrocery.ASSIGN_GROCERY_SUCCESS, allGroceries }
+    }
+    function failure() { return { type: groceryConstants.assignGrocery.ASSIGN_GROCERY_FAILURE } }
+}
 
 export const groceryActions = {
     getAllGroceries,
     addGrocery,
     editGrocery,
     deleteGrocery,
-    checkBoughtItem
+    checkBoughtItem,
+    assignGrocery
 }

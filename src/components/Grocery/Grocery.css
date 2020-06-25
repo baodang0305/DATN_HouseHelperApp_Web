@@ -6,7 +6,6 @@
   position: relative;
 }
 
-
 .grocery__header-container {
   display: flex;
   align-items: center;
@@ -14,8 +13,10 @@
   color: black;
   height: 60px;
   margin: 0px 10px;
+}
 
-
+.grocery__header-container:hover {
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .grocery__title-list {
@@ -50,13 +51,12 @@
 }
 
 .grocery__action:last-child {
-  margin-right: 0px;
+  margin-right: 10px;
 }
 
 .grocery__icon-action {
   font-size: 18px;
 }
-
 
 .grocery__title-action {
   font-size: 12px;
@@ -82,6 +82,7 @@
 
 .grocery__list-item-container {
   background-color: #f9f9f9;
+  margin: 0 20px;
 }
 
 .grocery__item-container {
@@ -93,10 +94,11 @@
   padding-right: 10px;
   cursor: pointer;
   min-height: 44px;
+  width: 100%;
 }
 
-.grocery__item-container:hover>.grocery__info-item>.grocery__action-item {
-  display: flex;
+.grocery__item-container:hover {
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .grocery__action-item {
@@ -104,8 +106,7 @@
   flex-direction: row;
   width: max-content;
   align-items: center;
-  display: none;
-
+  display: flex;
 }
 
 .grocery__action-item>.grocery__action>.grocery__icon-action {
@@ -126,8 +127,6 @@
   display: flex;
   flex-direction: column;
 }
-
-
 
 /* quick -check -box */
 
@@ -187,6 +186,8 @@
 .grocery__actions-list {
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 .grocery__name-item {
@@ -215,6 +216,31 @@
   height: 60%;
 }
 
+.grocery__bill-modal>.ant-modal-content>.ant-modal-body {
+  padding: 10px 20px;
+}
+
+.grocery__modal-hint {
+  margin-bottom: 20px;
+}
+
+.grocery__bill-modal-image-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.grocery__bill-modal-list-image {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.grocery__bill-modal-image {
+  width: 30%;
+  object-fit: contain;
+  object-position: center;
+}
+
 @media all and (min-width: 320px) and (max-width: 599px) {
   .grocery__content-container {
     margin: 5px 0px;
@@ -222,7 +248,7 @@
   }
 
   .grocery__title-list {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .grocery__relative-info {
@@ -245,13 +271,8 @@
     font-size: 12px;
   }
 
-  .grocery__action {
-    display: none;
-  }
-
   .grocery__icon-action {
     font-size: 15px;
-
   }
 
   .grocery__icon-action:hover {
@@ -266,6 +287,10 @@
   .grocery__option-actions {
     position: absolute;
     z-index: 99;
+  }
+
+  .grocery__tab-data>.ant-tabs-nav {
+    padding: 0 10px;
   }
 }
 

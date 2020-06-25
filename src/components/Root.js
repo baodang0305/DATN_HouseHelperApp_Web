@@ -28,6 +28,8 @@ import TaskCategory from './TaskCategory/TaskCategory';
 import DataFormTaskCate from './TaskCategory/DataFormTaskCate/DataFormTaskCate';
 import Grocery from './Grocery/Grocery';
 import DataFormGrocery from './Grocery/DataFormGrocery/DataFormGrocery';
+import GroceryType from './GroceryType/GroceryType';
+import DataFormGroceryType from './GroceryType/DataGroceryType/DataGroceryType';
 
 const Root = () => {
 
@@ -83,7 +85,22 @@ const Root = () => {
                     <PrivateRoute exact path="/groceries/add-grocery" >
                         <DataFormGrocery type="add" />
                     </PrivateRoute>
+                    <PrivateRoute exact path="/groceries/edit-grocery" >
+                        <DataFormGrocery type="edit" />
+                    </PrivateRoute>
                     <PrivateRoute exact path="/grocery" component={Grocery} />
+
+                    <PrivateRoute exact path="/grocery-type/add-type">
+                        <DataFormGroceryType type="add" />
+                    </PrivateRoute>
+
+                    <PrivateRoute exact path="/grocery-type/edit-type">
+                        <DataFormGroceryType type="edit" />
+                    </PrivateRoute>
+
+                    <PrivateRoute exact path="/grocery-type">
+                        <GroceryType></GroceryType>
+                    </PrivateRoute>
 
                     <Route exact path="/" component={Home} />
                 </Switch>

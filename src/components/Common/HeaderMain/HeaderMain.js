@@ -57,6 +57,10 @@ class HeaderMain extends Component {
                     linkAddBtn = "/calendar/add-event";
                     break;
                 }
+            case 'groceryType':
+                {
+                    linkAddBtn = "/grocery-type/add-type";
+                }
             default: break;
         }
         return linkAddBtn;

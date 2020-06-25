@@ -28,10 +28,17 @@ const checkBoughtItem = {
     CHECK_BOUGHT_ITEM_FAILURE: "CHECK_BOUGHT_ITEM_FAILURE",
 }
 
+const assignGrocery = {
+    ASSIGN_GROCERY_REQUEST: "ASSIGN_GROCERY_REQUEST",
+    ASSIGN_GROCERY_SUCCESS: "ASSIGN_GROCERY_SUCCESS",
+    ASSIGN_GROCERY_FAILURE: "ASSIGN_GROCERY_FAILURE"
+}
+
 export const groceryConstants = {
     getAllGrocery,
     addGrocery,
     editGrocery,
     deleteGrocery,
-    checkBoughtItem
+    checkBoughtItem,
+    assignGrocery
 };

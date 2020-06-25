@@ -55,7 +55,7 @@ const addGroceryType = (name, image) => {
                 if (res.data.status === 'success') {
                     dispatch(success());
                     dispatch(alertActions.success(message));
-                    history.push("/grocery");
+                    history.push("/grocery-type");
                 }
                 else {
                     dispatch(failure());
@@ -95,7 +95,7 @@ const editGroceryType = (stID, name, image) => {
                         .then(res => {
                             dispatch(success(res.data.listShoppingTypes));
                             dispatch(alertActions.success(message));
-                            history.push("/task-category");
+                            history.push("/grocery-type");
                         })
 
                 }
