@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import socketIoClient from "socket.io-client";
-import { PlusOutlined, HomeOutlined, LeftOutlined, RightOutlined, BellOutlined } from "@ant-design/icons";
+import { PlusOutlined, HomeOutlined, BellOutlined } from "@ant-design/icons";
 import { Layout, Calendar, Button, Avatar, Input, Divider } from "antd";
 
 import "./Calendar.css";
@@ -24,15 +24,9 @@ class CalendarPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            date: {
-                d: null,
-                m: null,
-                y: null
-            },
-            idCurrentItem: 1,
+            date: { d: null, m: null, y: null },
             isSelectedMember: 'all'
         }
-        this.scrollBar = React.createRef();
         this.reminderBellAudio = new Audio(indexConstants.REMINDER_BELL_AUDIO);
     }
 
@@ -76,25 +70,6 @@ class CalendarPage extends React.Component {
         this.reminderBellAudio.pause();
     }
 
-    handleClickPre = () => {
-        const { idCurrentItem } = this.state;
-        if (idCurrentItem > 1) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft - 200;
-            this.setState({ idCurrentItem: idCurrentItem - 1 })
-        }
-    }
-
-    handleClickNext = () => {
-
-        const { idCurrentItem } = this.state;
-        const { listMembers } = this.props;
-        const numberOfMembers = listMembers ? listMembers.length : 0;
-
-        if (idCurrentItem < numberOfMembers) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft + 200;
-            this.setState({ idCurrentItem: idCurrentItem + 1 });
-        }
-    }
 
     handleChooseMember = (mID) => {
         this.setState({ isSelectedMember: mID })
@@ -144,23 +119,19 @@ class CalendarPage extends React.Component {
 
         !remindingEventNotification && remindedEventNotification && this.reminderBellAudio.pause();
 
-        const renderListMembers = () =>
-            listMembers && listMembers.map((item, index) =>
+        const renderListMembers = () => (
+            listMembers && listMembers.map((item, index) => (
                 <div className="user-calendar-container" key={index}>
-                    <div className="avatar-event-container" onClick={() => this.handleChooseMember(item._id)}>
-                        {isSelectedMember === item._id ?
-                            <Avatar className="calendar__avatar-member border-avatar-calendar" src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }} />
-                            :
-                            <Avatar className="calendar__avatar-member" src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }} />
-                        }
+                    <div onClick={() => this.handleChooseMember(item._id)}>
+                        <Avatar
+                            size={50} src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }}
+                            className={isSelectedMember === item._id ? "border-avatar-calendar" : ""}
+                        />
                     </div>
-                    {isSelectedMember === item._id ?
-                        <div className="name-user-calendar" style={{ color: "#2985ff" }}>{item.mName}</div>
-                        :
-                        <div className="name-user-calendar">{item.mName}</div>
-                    }
+                    <div className="name-user-calendar" style={{ color: isSelectedMember === item._id ? "#2985ff" : null }}>{item.mName}</div>
                 </div>
-            )
+            ))
+        )
 
         return (
             <Layout style={{ minHeight: '100vh' }}>
@@ -194,38 +165,18 @@ class CalendarPage extends React.Component {
 
                     <Content >
                         <div className="first-row-content-calendar-container" >
-                            <div>
-                                {listMembers && listMembers.length > 4 &&
-                                    <div className="pre-icon-calendar" onClick={this.handleClickPre} >
-                                        <LeftOutlined style={{ color: 'gray' }} />
-                                    </div>
-                                }
-                            </div>
-
-                            <div className="list-user-calendar-container" ref={this.scrollBar}>
+                            <div className="list-user-calendar-container" >
                                 <div className="user-calendar-container" >
-                                    <div className="avatar-event-container" onClick={() => this.handleChooseMember("all")}>
-                                        {isSelectedMember === "all" ?
-                                            < Avatar className="calendar__avatar-member border-avatar-calendar" icon={<HomeOutlined style={{ fontSize: "22px", color: "#2985ff" }} />} />
-                                            :
-                                            < Avatar className="calendar__avatar-member" icon={<HomeOutlined style={{ fontSize: "22px", color: "gray" }} />} />
-                                        }
+                                    <div onClick={() => this.handleChooseMember("all")}>
+                                        < Avatar
+                                            size={50}
+                                            icon={<HomeOutlined style={{ fontSize: "22px", color: isSelectedMember === "all" ? "#2985ff" : "gray" }} />}
+                                            className={isSelectedMember === "all" ? "border-avatar-calendar" : ""}
+                                        />
                                     </div>
-                                    {isSelectedMember === "all" ?
-                                        <div className="name-user-calendar" style={{ color: "#2985ff" }}>Tất cả</div>
-                                        :
-                                        <div className="name-user-calendar">Tất cả</div>
-                                    }
+                                    <div className="name-user-calendar" style={{ color: isSelectedMember === "all" ? "#2985ff" : null }}>Tất cả</div>
                                 </div>
                                 {renderListMembers()}
-                            </div>
-
-                            <div>
-                                {listMembers && listMembers.length > 4 &&
-                                    <div className="next-icon-calendar" onClick={this.handleClickNext}>
-                                        <RightOutlined style={{ color: 'gray' }} />
-                                    </div>
-                                }
                             </div>
                         </div>
 

@@ -2,7 +2,7 @@ import React from "react";
 import moment from 'moment';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { Layout, Row, Col, Button, List, Skeleton, Avatar } from "antd";
+import { Layout, List, Skeleton, Avatar } from "antd";
 import { LeftOutlined, EditOutlined, StarOutlined, LikeOutlined, MessageOutlined } from "@ant-design/icons";
 
 import "./Member.css";
@@ -97,19 +97,15 @@ class Member extends React.Component {
                             />
                         </div>
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}></Footer>
                 </Layout>
             </Layout>
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    const { listTasks } = state.index;
-    return {
-        listTasks
-    };
-}
+const mapStateToProps = (state) => ({
+    listTasks: state.index.listTasks
+})
 
 const actionCreators = {
     getListTasks: indexActions.getListTasks

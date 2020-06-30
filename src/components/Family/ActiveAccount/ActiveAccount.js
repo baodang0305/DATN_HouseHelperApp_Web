@@ -13,43 +13,28 @@ const ActiveAccount = (props) => {
         activeAccount({ "code": fieldsValue.code, aaID });
     }
 
-
     return (
-
         <div className="container-active-account">
-
             <div className="title-active-account"> Kích Hoạt Tài Khoản </div>
-
             <Form onFinish={handleSubmit} size="large" >
-
                 <Form.Item name="code" rules={[{ required: true, message: 'Vui lòng nhập mã code!' }]} >
                     <Input type="text" placeholder="Code" />
                 </Form.Item>
-
                 <Form.Item style={{ textAlign: "center" }}>
                     <Button type="primary" htmlType="submit" className="login-form-button"> Xác Nhận </Button>
                     {props.activating && !props.activated &&
                         <Spin tip="Loading..." />
                     }
                 </Form.Item>
-
             </Form>
-
         </div>
-
     );
-
 }
-
-const mapStateToProps = (state) => {
-    return {
-        activated: state.family.activated,
-        activating: state.family.activating
-    }
-}
-
+const mapStateToProps = (state) => ({
+    activated: state.family.activated,
+    activating: state.family.activating
+})
 const actionCreators = {
     activeAccount: familyActions.activeAccount
 }
-
 export default connect(mapStateToProps, actionCreators)(ActiveAccount);

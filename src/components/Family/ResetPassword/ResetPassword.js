@@ -5,62 +5,68 @@ import { LockOutlined } from "@ant-design/icons";
 
 import "./ResetPassword.css";
 import { memberActions } from "../../../actions/member.actions";
+import Password from "antd/lib/input/Password";
 
 class ResetPassword extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            stateConfirm: "",
-            errorConfirm: null
+            isSubmit: false,
+            newPassword: "",
+            confirmPassword: "",
         }
     }
 
-    handleSubmit = (fieldsValue) => {
-        if (fieldsValue.newPassword !== fieldsValue.confirmPassword) {
-            this.setState({ stateConfirm: "error", errorConfirm: "Mật khẩu xác nhận không đúng!"});
-        } else {
+    handleSubmit = (e) => {
+        const { newPassword, confirmPassword } = this.state;
+        if (newPassword && newPassword === confirmPassword) {
             const { resetPassword } = this.props;
             const rpID = this.props.match.params.id;
-            this.setState({ stateConfirm: "", errorConfirm: null});
             resetPassword({ "newPassword": fieldsValue.newPassword, rpID });
+        } else {
+            this.setState({ isSubmit: true })
         }
     }
 
     render() {
 
-        const { stateConfirm, errorConfirm } = this.state;
+        const { newPassword, confirmPassword, isSubmit } = this.state;
 
         return (
 
             <div className="container-reset-password">
                 <div className="title-reset-password"> Đặt lại mật khẩu </div>
                 <Form onFinish={this.handleSubmit} size="large">
-                    <Form.Item name="newPassword" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới!' }]} >
+                    <div className="form-item-reset-password">
                         <Input
+                            name="password" value={newPassword}
+                            onChange={(e) => this.setState({ newPassword: e.target.value })}
                             type="password" placeholder="Mật khẩu mới"
                             prefix={<LockOutlined className="site-form-item-icon" />}
                         />
-                    </Form.Item>
+                        {isSubmit && !newPassword && < div className="error-message-reset-pass-form">Vui lòng nhập mật khẩu mới</div>}
+                    </div>
 
-                    <Form.Item 
-                        name="confirmPassword" validateStatus={stateConfirm} help={errorConfirm} 
-                        rules={[{ required: true, message: 'Vui lòng nhập mật khẩu xác nhận!' }]} 
-                    >
+                    <div className="form-item-reset-password">
                         <Input
+                            name="confirmPassword" value={confirmPassword}
+                            onChange={(e) => this.setState({ confirmPassword: e.target.value })}
                             type="password" placeholder="Mật khẩu xác nhận"
                             prefix={<LockOutlined className="site-form-item-icon" />}
                         />
-                    </Form.Item>
-
-                    <Form.Item style={{ textAlign: "center" }}>
+                        {isSubmit && confirmPassword !== newPassword &&
+                            <div className="error-message-reset-pass-form">Mật khẩu xác nhận chưa đúng </div>
+                        }
+                    </div>
+                    <div className="form-item-reset-password spin-reset-pass-container">
                         <Button type="primary" htmlType="submit" className="login-form-button"> Gửi </Button>
                         {this.props.resetting && !this.props.resetted &&
                             <Spin tip="Đang xử lý..." />
                         }
-                    </Form.Item>
+                    </div>
                 </Form>
-            </div>
+            </div >
         );
     }
 }

@@ -6,15 +6,13 @@
 }
 
 .left-header-add-calendar-container {
-    position: absolute;
-    left: 10px;
+    width: 20%;
 }
 
 .center-header-add-calendar-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 60%;
+    display: flex;
+    justify-content: center;
     font-size: 22px;
 }
 
@@ -23,88 +21,75 @@
 }
 
 .form-item-add-event {
-    margin: 10px 10px;
+    padding: 10px 20px;
+    margin: 10px;
     border-radius: 2px;
     background-color: hsl(0, 0%, 100%);
     box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
 }
 
-.name-event-input {
+.form-item-input-name-add-event {
+    padding: 0px;
+}
+
+.time-input-add-event-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px 0px;
+}
+
+.lable-input-add-event-container {
+    width: 25%;
+}
+
+.content-input-add-event-container {
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.name-input-add-event {
     font-size: 20px;
     height: 60px;
     text-align: center;
 }
 
-.pre-icon-add-event {
-    margin: 0px 5px 20px 0px;
-    font-size: 25px;
-    color: hsl(0, 1%, 68%);
-    cursor: pointer;
-}
-
-.next-icon-add-event {
-    margin: 0px 5px 20px 0px;
-    font-size: 25px;
-    color: hsl(0, 1%, 68%);
-    cursor: pointer;
-}
-
 .list-users-asign-add-event-container {
-    width: 800px;
     display: flex;
-    overflow-x: hidden;
-    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0px;
 }
 
 .user-add-event-container {
-    text-align: center;
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 20px;
 }
 
 .avatar-add-event-container {
-    width: 160px;
+    position: relative;
+}
+
+.avatar-add-event {
+    width: 45px;
+    height: 45px;
+    border: groove thin;
 }
 
 .check-asign-add-event {
-    color: #1890ff;
+    color: #52c41a;
     position: absolute;
     font-size: 30px;
-    left: 42%;
-    top: 12%;
-}
-
-.icon-input-add-event,
-.title-input-add-event {
-    font-size: 16px;
-}
-
-.title-input-add-event {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: flex-start;
-    width: max-content;
+    left: 8px;
+    top: 8px;
 }
 
 .icon-input-add-event {
-    margin: 0px 4px 0px 20px;
-}
-
-.row-form-item-add-event {
-    margin: 10px 0px;
-    align-items: center;
-    width: 100%;
-}
-
-.col-form-item-add-event {
-    text-align: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-}
-
-.width-70-percent {
-    width: 70%;
+    font-size: 16px;
 }
 
 .name-user-add-event {
@@ -152,6 +137,23 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+.image-add-calendar {
+    width: 100px;
+    height: auto;
+}
+
+.image-add-calendar-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-image-add-calendar-container {
+    display: flex;
+    flex-direction: row;
 }
 
 .icon-loading-add-event {
@@ -208,7 +210,7 @@
 }
 
 .repeat-type-item-modal::after {
-    content: '';
+    content: "";
     display: inline-block;
     height: 100%;
     width: 100%;
@@ -244,7 +246,7 @@
     padding: 2px 10px;
     border-bottom-style: groove;
     border-bottom-width: 0.1px;
-    margin: 20px 10px;
+    margin: 5px 10px 20px 10px;
     cursor: pointer;
 }
 
@@ -323,22 +325,26 @@
     width: 48%;
 }
 
+.end-repeat-type-container {
+    width: 80%;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button-container-add-calendar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
 .center-item-pos {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-}
-
-.calendar-add__body-form {
-    width: 100%;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-.calendar-add__avatar-member {
-    width: 45px;
-    height: 45px;
 }
 
 .calendar-add__btn {
@@ -388,7 +394,6 @@
         font-size: 13px;
     }
 
-
     .calendar-add__btn-cancel {
         width: 45%;
     }
@@ -404,8 +409,11 @@
     }
 }
 
-@media all and (min-width: 600px) and (max-width: 1023px) {}
+@media all and (min-width: 600px) and (max-width: 1023px) {
+}
 
-@media all and (min-width: 1024px) {}
+@media all and (min-width: 1024px) {
+}
 
-@media all and (min-width: 1280px) {}
+@media all and (min-width: 1280px) {
+}

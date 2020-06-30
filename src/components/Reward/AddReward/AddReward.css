@@ -11,34 +11,41 @@
 }
 
 .form-add-reward {
-    margin: 0px 20px;
+    margin: 0px 10px;
 }
 
 .form-item-add-reward {
+    width: 100%;
+    padding: 10px 20px;
     margin: 10px 0px;
     border-radius: 2px;
     background-color: hsl(0, 0%, 100%);
     box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
 }
 
-.name-reward-input {
+.name-input-add-reward {
     font-size: 20px;
     height: 60px;
     text-align: center;
+}
+
+.form-item-input-name {
+    padding: 0px;
 }
 
 .form-item-point-reward {
     position: relative;
     width: 50%;
     margin: auto;
+    padding: 0px;
 }
 
-.point-reward-input {
+.point-input-add-reward {
     filter: opacity(0);
     border-radius: 3px;
 }
 
-.point-reward-input-fake {
+.point-input-fake-add-reward {
     height: 40px;
     width: 100%;
     position: absolute;
@@ -51,4 +58,116 @@
     align-items: center;
     font-size: 20px;
     color: white;
+}
+
+.icon-loading-add-reward {
+    background-color: rgba(0, 0, 0, 0.5);
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+.list-users-asign-add-reward-container {
+    margin: 20px 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.user-add-reward-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 20px;
+}
+
+.avatar-add-reward-container {
+    position: relative;
+}
+
+.avatar-add-reward {
+    width: 45px;
+    height: 45px;
+    border: groove thin;
+}
+
+.check-asign-add-reward {
+    color: #52c41a;
+    font-size: 30px;
+    font-weight: bold;
+    position: absolute;
+    top: 7px;
+    left: 7px;
+}
+
+.name-user-add-reward {
+    margin-top: 4px;
+    display: inline-block;
+    background-color: #f2f3f5;
+    color: #385898;
+    padding: 5px 10px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.title-input-add-reward {
+    font-size: 16px;
+}
+
+.icon-input-add-reward {
+    font-size: 16px;
+}
+
+.button-container-add-reward {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.image-add-reward-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-add-reward {
+    width: 100px;
+    height: auto;
+}
+
+.upload-img-add-reward-container {
+    display: flex;
+    justify-content: center;
+}
+
+.upload-img-ui-add-reward {
+    position: relative;
+    cursor: pointer;
+    border: groove thin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 35px;
+}
+
+.button-image-add-reward-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.input-file-add-reward {
+    width: 150px;
+    height: 35px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    position: absolute;
 }

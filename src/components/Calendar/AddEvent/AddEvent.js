@@ -1,23 +1,17 @@
 import React from "react";
 import {
-    RedoOutlined,
-    LeftOutlined,
-    TeamOutlined,
-    BellOutlined,
-    CheckOutlined,
-    RightOutlined,
-    UploadOutlined,
-    PictureOutlined,
-    LoadingOutlined,
-    SnippetsOutlined,
-    CalendarOutlined,
-    ArrowRightOutlined,
+    RedoOutlined, LeftOutlined, TeamOutlined, BellOutlined,
+    CheckOutlined, RightOutlined, UploadOutlined, PictureOutlined,
+    LoadingOutlined, SnippetsOutlined, CalendarOutlined, ArrowRightOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import firebase from "firebase/app";
 import { connect } from "react-redux";
 import { storage } from "../../../helpers/firebaseConfig";
-import { Layout, Row, Col, Button, Form, Input, Avatar, DatePicker, Select, Spin, Alert, Modal, Divider } from "antd";
+import {
+    Layout, Row, Col, Button, Form, Input, Avatar, DatePicker,
+    Spin, Alert, Modal, Divider, Select,
+} from "antd";
 
 import "./AddEvent.css";
 import history from "../../../helpers/history";
@@ -26,6 +20,7 @@ import { familyActions } from "../../../actions/family.actions";
 import { calendarActions } from "../../../actions/calendar.actions";
 
 const { TextArea } = Input;
+const { Option } = Select;
 const { Header, Content, Footer } = Layout;
 
 class AddEvent extends React.Component {
@@ -39,25 +34,24 @@ class AddEvent extends React.Component {
             reminder: 0,
             image: null,
             error: false,
-            idScrollListMembers: 1,
             idScrollDateOfMonth: 1,
             currentUrlImg: "",
             repeatTypeOfMonth: 'day',
             repeatTypeOfYear: 'day',
-            repeat: { type: "no-repeat", end: null, day: [], date: null, order: null, month: null },
+            endRepeatType: 'times',
+            repeat: { type: "no-repeat", end: null, day: [], date: null, order: null, month: null, times: 1 },
             dateTime: { start: null, end: null },
 
             errorModalForm: "",
             activeTabNestedRepeatType: 'day',
             showRepeatModal: false,
         }
-        this.scrollBarListMembers = React.createRef();
         this.scrollBarDateOfmonth = React.createRef();
         this.inputFile = React.createRef();
     }
 
     mapRepeatEventEditToRepeatForm = () => {
-        let { repeat, repeatTypeOfMonth, repeatTypeOfYear, activeTabNestedRepeatType } = this.state;
+        let { repeat, repeatTypeOfMonth, repeatTypeOfYear, activeTabNestedRepeatType, endRepeatType } = this.state;
         const { event } = history.location.state;
 
         if (event.repeat) {
@@ -71,7 +65,7 @@ class AddEvent extends React.Component {
             }
             else if (event.repeat.type === "month") {
                 repeat.type = "month";
-                if (event.repeat.date) {
+                if (event.repeat.date || event.repeat.date === 0) {
                     repeat.date = event.repeat.date;
                     repeatTypeOfMonth = "date"
                 }
@@ -85,7 +79,7 @@ class AddEvent extends React.Component {
             else if (event.repeat.type === "year") {
                 repeat.type = "year";
                 repeat.month = event.repeat.month;
-                if (event.repeat.date) {
+                if (event.repeat.date || event.repeat.date === 0) {
                     repeat.date = event.repeat.date;
                     repeatTypeOfYear = "date";
                     activeTabNestedRepeatType = "date";
@@ -97,6 +91,9 @@ class AddEvent extends React.Component {
                     activeTabNestedRepeatType = "day";
                 }
             }
+
+            if (event.repeat.times) { repeat.times = event.repeat.times; endRepeatType = "times"; }
+            else if (event.repeat.end) { repeat.end = event.repeat.end; endRepeatType = "date"; }
         }
         else {
             repeat.type = "no-repeat"
@@ -104,6 +101,7 @@ class AddEvent extends React.Component {
 
         this.setState({
             repeat,
+            endRepeatType,
             repeatTypeOfMonth,
             repeatTypeOfYear,
             activeTabNestedRepeatType,
@@ -133,26 +131,6 @@ class AddEvent extends React.Component {
 
     handleClickBack = () => {
         history.push("/calendar");
-    }
-
-    handleClickMemberPre = () => {
-        const { idScrollListMembers } = this.state;
-        if (idScrollListMembers > 1) {
-            this.scrollBarListMembers.current.scrollLeft = this.scrollBarListMembers.current.scrollLeft - 160;
-            this.setState({ idScrollListMembers: idScrollListMembers - 1 })
-        }
-    }
-
-    handleClickMemberNext = () => {
-
-        const { idScrollListMembers } = this.state;
-        const { listMembers } = this.props;
-        const numberOfMembers = listMembers ? listMembers.length : 0
-
-        if (idScrollListMembers < numberOfMembers) {
-            this.scrollBarListMembers.current.scrollLeft = this.scrollBarListMembers.current.scrollLeft + 160;
-            this.setState({ idScrollListMembers: idScrollListMembers + 1 });
-        }
     }
 
     handleClickDateOfMonthPre = () => {
@@ -187,7 +165,7 @@ class AddEvent extends React.Component {
 
     handleSelectEndtDateRepeat = (date, dateString) => {
         const { repeat } = this.state;
-        if (date) { repeat.end = date._d }
+        if (date) { repeat.end = date._d, repeat.times = 1 }
         else { repeat.end = null }
         this.setState({ repeat });
     }
@@ -233,17 +211,30 @@ class AddEvent extends React.Component {
     handleSubmit = async () => {
 
         const { addEvent, editEvent, type } = this.props;
-        const { name, assign, dateTime, reminder, image, notes, currentUrlImg, repeatTypeOfMonth, repeatTypeOfYear, repeat } = this.state;
+        const { name, assign, dateTime, reminder, image, notes, currentUrlImg,
+            repeatTypeOfMonth, repeatTypeOfYear, repeat, endRepeatType } = this.state;
         let newRepeat = repeat;
+        console.log(newRepeat)
 
         if ((name && name.replace(/\s/g, '').length > 0) &&
-            (assign.length !== 0) &&
+            // (assign.length !== 0) &&
             (dateTime.start !== null) &&
             (dateTime.end !== null)) {
 
-            if (!newRepeat || newRepeat.type === "no-repeat") { newRepeat = null }
-            else if (newRepeat.type === "day") { delete newRepeat.day }
-            else if (newRepeat.type === "week") { delete newRepeat.date; delete newRepeat.order; }
+            if (!newRepeat || newRepeat.type === "no-repeat") {
+                newRepeat = null
+            }
+            else if (newRepeat.type === "day") {
+                delete newRepeat.day;
+                delete newRepeat.date;
+                delete newRepeat.order;
+                delete newRepeat.month;
+            }
+            else if (newRepeat.type === "week") {
+                delete newRepeat.date;
+                delete newRepeat.order;
+                delete newRepeat.month;
+            }
             else if (newRepeat.type === "month") {
                 delete newRepeat.month;
                 if (repeatTypeOfMonth === "date") {
@@ -260,6 +251,12 @@ class AddEvent extends React.Component {
                 } else {
                     delete newRepeat.date;
                 }
+            }
+
+            if (newRepeat !== null) {
+                if (endRepeatType === "times") {
+                    delete newRepeat.end;
+                } else { delete newRepeat.times; }
             }
 
             if (image) {
@@ -490,8 +487,8 @@ class AddEvent extends React.Component {
 
     render() {
 
-        const { name, assign, dateTime, reminder, notes, error, currentUrlImg, repeat,
-            repeatTypeOfMonth, repeatTypeOfYear, activeTabNestedRepeatType, showRepeatModal, errorModalForm
+        const { name, assign, dateTime, reminder, notes, error, currentUrlImg, repeat, repeatTypeOfMonth,
+            repeatTypeOfYear, activeTabNestedRepeatType, showRepeatModal, errorModalForm, endRepeatType,
         } = this.state;
 
         const {
@@ -508,23 +505,25 @@ class AddEvent extends React.Component {
                 <div className="user-add-event-container" key={index} onClick={() => this.handleAssign(item._id)}>
                     <div className="avatar-add-event-container">
                         <Avatar
-                            className="calendar-add__avatar-member" src={item.mAvatar.image}
+                            src={item.mAvatar.image}
+                            className="avatar-add-event"
                             style={{
                                 backgroundColor: item.mAvatar.color,
                                 opacity: isSelectedMember(item._id) !== -1 && 0.5,
                                 borderColor: isSelectedMember(item._id) !== -1 && "#1890ff"
                             }}
                         />
+                        {isSelectedMember(item._id) !== -1 && <CheckOutlined className="check-asign-add-event" />}
                     </div>
-                    {isSelectedMember(item._id) !== -1 && <CheckOutlined className="check-asign-add-event" />}
                     <div className="name-user-add-event">{item.mName}</div>
                 </div>
             )
 
-        const renderSpin = () =>
+        const renderSpin = () => (
             <div className="icon-loading-add-event">
                 <Spin style={{ color: 'white' }} size="large" indicator={antIcon} />
             </div>
+        )
 
         const checkDayTabActive = () => {
             if (
@@ -574,6 +573,15 @@ class AddEvent extends React.Component {
             return result;
         }
 
+        const resetRepeatData = (type) => {
+            repeat.type = type;
+            repeat.day = [];
+            repeat.order = null;
+            repeat.month = null;
+            repeat.date = null;
+            return repeat;
+        }
+
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="2" />
@@ -588,110 +596,94 @@ class AddEvent extends React.Component {
                         <div className="right-header-add-calendar-container"></div>
                     </Header>
                     <Content style={{ position: 'relative' }}>
+                        {error &&
+                            (
+                                !name ||
+                                name.replace(/\s/g, '').length === 0 ||
+                                !dateTime.start ||
+                                !dateTime.end
+                            ) &&
+                            <Alert type="error" style={{ margin: "10px 20px" }}
+                                message={`
+                                    ${(!name || name.replace(/\s/g, '').length === 0) ? "Ten " : ""}
+                                    ${!dateTime.start ? "ThoiGianBatDau " : ""}
+                                    ${!dateTime.end ? "ThoiGianKetThuc " : ""}
+                                    là bắt buộc.
+                                `}
+                            />
+                        }
                         <Form onFinish={this.handleSubmit} size="large">
-
-                            {error &&
-                                (!name ||
-                                    name.replace(/\s/g, '').length === 0 ||
-                                    assign.length === 0 ||
-                                    !dateTime.start ||
-                                    !dateTime.end) &&
-
-                                <Alert type="error" className="form-item-add-event alert-error-submit-form"
-                                    message={`
-                                                ${(!name || name.replace(/\s/g, '').length === 0) ? "Ten " : ""}
-                                                ${assign.length === 0 ? "ThanhVien " : ""}
-                                                ${!dateTime.start ? "ThoiGianBatDau " : ""}
-                                                ${!dateTime.end ? "ThoiGianKetThuc " : ""}
-                                                là bắt buộc.
-                                            `}
-                                />
-                            }
-
-                            <Form.Item className="form-item-add-event">
+                            <Form.Item className="form-item-add-event form-item-input-name-add-event">
                                 <Input
                                     name="name" value={name} onChange={this.handleChangeInput}
-                                    className="name-event-input" placeholder="Tên sự kiện" type="text"
+                                    className="name-input-add-event" placeholder="Tên sự kiện" type="text"
                                 />
                             </Form.Item>
-                            <Form.Item className="form-item-add-event" label={
-                                <div className="title-input-add-event">
-                                    <TeamOutlined
-                                        className="icon-input-add-event"
-                                        style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
-                                    />
-                                    <span
-                                        style={{ color: assign.length > 0 ? "#096dd9" : "black" }} className="calendar__label-title"
-                                    > Thành Viên </span>
-                                </div>}>
+                            <Form.Item className="form-item-add-event" >
+                                <TeamOutlined
+                                    className="icon-input-add-event"
+                                    style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
+                                />
+                                <span
+                                    style={{ color: assign.length > 0 ? "#096dd9" : "black" }} className="calendar__label-title"
+                                > Thành Viên </span>
+                                <div className="list-users-asign-add-event-container" >
+                                    {gettingListMembers && !gotListMembers
+                                        ? <Spin tip="Loading..." />
+                                        : renderListMembers()
 
-                                <Row align="middle" justify="center" className="calendar-add__body-form">
-                                    {gettingListMembers && !gotListMembers ?
-                                        <Spin tip="Loading..." />
-                                        :
-                                        <>
-                                            {listMembers && listMembers.length > 5 &&
-                                                <div onClick={this.handleClickMemberPre} className="pre-icon-add-event"> <LeftOutlined /> </div>
-                                            }
-                                            <div ref={this.scrollBarListMembers} className="list-users-asign-add-event-container" >
-                                                {renderListMembers()}
-                                            </div>
-                                            {listMembers && listMembers.length > 5 &&
-                                                <div onClick={this.handleClickMemberNext} className="next-icon-add-event"> <RightOutlined /> </div>
-                                            }
-                                        </>
                                     }
-                                </Row>
+                                </div>
                             </Form.Item>
                             <Form.Item className="form-item-add-event">
-                                <Row className="row-form-item-add-event">
-                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event">
+                                <div className="time-input-add-event-container">
+                                    <div className="lable-input-add-event-container">
                                         <CalendarOutlined
                                             className="icon-input-add-event"
                                             style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }}
                                         />
-                                        <span style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }} className="calendar__label-title">Thời gian</span>
-                                    </Col>
-                                    <Col xl={18} lg={17} sm={16} xs={17}>
-                                        <div className="width-70-percent" style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <DatePicker
-                                                value={dateTime.start ? moment(dateTime.start) : null}
-                                                onChange={this.handleSelectStartDate}
-                                                style={{ float: 'right' }} showTime placeholder="Bắt đầu" showTime
-                                            />
-                                            <div className=""><ArrowRightOutlined /></div>
-
-                                            <DatePicker
-                                                showTime onChange={this.handleSelectEndDate} placeholder="Kết thúc"
-                                                value={dateTime.end ? moment(dateTime.end) : null}
-                                            />
-                                        </div>
-                                    </Col>
-
-                                </Row>
-                                <Row className="row-form-item-add-event">
-                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event">
+                                        &ensp;
+                                        <span
+                                            style={{ color: dateTime.start && dateTime.end ? "#096dd9" : "black" }}
+                                            className="calendar__label-title"
+                                        >Thời gian</span>
+                                    </div>
+                                    <div className="content-input-add-event-container">
+                                        <DatePicker
+                                            style={{ width: '40%' }}
+                                            value={dateTime.start ? moment(dateTime.start) : null}
+                                            onChange={this.handleSelectStartDate}
+                                            showTime placeholder="Bắt đầu" showTime
+                                        />
+                                        <ArrowRightOutlined style={{ width: '20%' }} />
+                                        <DatePicker
+                                            style={{ width: '40%' }}
+                                            showTime onChange={this.handleSelectEndDate} placeholder="Kết thúc"
+                                            value={dateTime.end ? moment(dateTime.end) : null}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="time-input-add-event-container">
+                                    <div className="lable-input-add-event-container">
                                         <BellOutlined
                                             className="icon-input-add-event"
                                             style={{ color: "#096dd9" }}
                                         />
+                                        &ensp;
                                         <span style={{ color: "#096dd9" }} className="calendar__label-title">Nhắc nhở</span>
-                                    </Col>
-                                    <Col xl={18} lg={17} sm={16} xs={17} className="col-form-item-add-event">
-                                        <Input
-                                            name="reminder" value={reminder} onChange={this.handleChangeInput}
-                                            className="width-70-percent" type="number" suffix="Phút"
-                                        />
-                                    </Col>
-                                </Row>
-                                <Row className="row-form-item-add-event">
-                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event">
+                                    </div>
+                                    <Input className="content-input-add-event-container"
+                                        name="reminder" value={reminder} onChange={this.handleChangeInput}
+                                        type="number" suffix="Phút"
+                                    />
+                                </div>
+                                <div className="time-input-add-event-container">
+                                    <div className="lable-input-add-event-container">
                                         <RedoOutlined className="icon-input-add-event" style={{ color: "#096dd9" }} />
+                                        &ensp;
                                         <span style={{ color: "#096dd9" }} className="calendar__label-title">Lặp lại</span>
-                                    </Col>
-                                    <Col xl={18} lg={17} sm={16} xs={17} className="col-form-item-add-event">
-                                        <Button className="width-70-percent " onClick={() => this.setState({ showRepeatModal: true })} >{convertRepeatType()}</Button>
-                                    </Col>
+                                    </div>
+                                    <Button className="content-input-add-event-container" style={{ justifyContent: 'center' }} onClick={() => this.setState({ showRepeatModal: true })} >{convertRepeatType()}</Button>
 
                                     <Modal width={450} closable={false} footer={null} title={null} visible={showRepeatModal} >
                                         <div className="body-modal">
@@ -706,44 +698,16 @@ class AddEvent extends React.Component {
                                                         onClick={() => { repeat.type = "no-repeat"; this.setState({ repeat }); }}
                                                     >Không</div>
                                                     <div className={`repeat-type-item-modal ${repeat.type === "day" && "repeat-type-item-modal-selected"} `}
-                                                        onClick={() => {
-                                                            repeat.type = "day";
-                                                            repeat.day = [];
-                                                            repeat.order = null;
-                                                            repeat.month = null;
-                                                            repeat.date = null;
-                                                            this.setState({ repeat });
-                                                        }}
+                                                        onClick={() => this.setState({ repeat: resetRepeatData("day") })}
                                                     >Ngày</div>
                                                     <div className={`repeat-type-item-modal ${repeat.type === "week" && "repeat-type-item-modal-selected"} `}
-                                                        onClick={() => {
-                                                            repeat.type = "week";
-                                                            repeat.day = [];
-                                                            repeat.order = null;
-                                                            repeat.month = null;
-                                                            repeat.date = null;
-                                                            this.setState({ repeat });
-                                                        }}
+                                                        onClick={() => this.setState({ repeat: resetRepeatData("week") })}
                                                     >Tuần</div>
                                                     <div className={`repeat-type-item-modal ${repeat.type === "month" && "repeat-type-item-modal-selected"} `}
-                                                        onClick={() => {
-                                                            repeat.type = "month";
-                                                            repeat.day = [];
-                                                            repeat.order = null;
-                                                            repeat.month = null;
-                                                            repeat.date = null;
-                                                            this.setState({ repeat });
-                                                        }}
+                                                        onClick={() => this.setState({ repeat: resetRepeatData("month") })}
                                                     >Tháng</div>
                                                     <div className={`repeat-type-item-modal ${repeat.type === "year" && "repeat-type-item-modal-selected"} `}
-                                                        onClick={() => {
-                                                            repeat.type = "year";
-                                                            repeat.day = [];
-                                                            repeat.order = null;
-                                                            repeat.month = null;
-                                                            repeat.date = null;
-                                                            this.setState({ repeat });
-                                                        }}
+                                                        onClick={() => this.setState({ repeat: resetRepeatData("year") })}
                                                     >Năm</div>
                                                 </div>
                                             </div>
@@ -752,16 +716,39 @@ class AddEvent extends React.Component {
 
                                             {repeat.type === "no-repeat"
                                                 ? null
-                                                : <DatePicker
-                                                    style={{ width: '80%' }}
-                                                    value={repeat.end ? moment(repeat.end) : null}
-                                                    onChange={this.handleSelectEndtDateRepeat}
-                                                    placeholder="Ngày kết thúc"
-                                                />
+                                                : <>
+
+                                                    <div className="end-repeat-type-container">
+                                                        <div>Loại kết thúc lặp: </div>
+                                                        <Select style={{ width: '65%' }} value={endRepeatType === "times" ? "Số lần" : "Ngày"} onChange={(value) => this.setState({ endRepeatType: value })}>
+                                                            <Option value='date'>Ngày</Option>
+                                                            <Option value='times'>Số lần</Option>
+                                                        </Select>
+                                                    </div>
+                                                    {endRepeatType === "date"
+                                                        ? (
+                                                            <DatePicker
+                                                                style={{ width: '80%' }}
+                                                                value={repeat.end ? moment(repeat.end) : null}
+                                                                onChange={this.handleSelectEndtDateRepeat}
+                                                                placeholder="Ngày kết thúc"
+                                                            />
+                                                        ) : (
+                                                            <Input
+                                                                value={repeat.times} style={{ width: '80%' }} type="number" suffix="(1-100)" max={100} min={1}
+                                                                onChange={(e) => {
+                                                                    const { value } = e.target;
+                                                                    value > -1 && value < 101 && (repeat.times = e.target.value, repeat.end = null, this.setState({ repeat }))
+                                                                }}
+                                                            />
+                                                        )
+                                                    }
+                                                    <Divider />
+                                                </>
                                             }
 
                                             {(repeat.type === "month" || repeat.type === "year") &&
-                                                <div style={{ width: "80%", display: 'flex', justifyContent: 'space-between', margin: '10px 0px' }}>
+                                                <div style={{ width: "80%", display: 'flex', justifyContent: 'space-between' }}>
                                                     <Button
                                                         style={{ width: "48%" }}
                                                         type={
@@ -876,12 +863,11 @@ class AddEvent extends React.Component {
 
                                             {
                                                 (repeat.type === "week" ||
-                                                    (
-                                                        (
-                                                            (repeat.type === "month" && repeatTypeOfMonth === "day")
-                                                            ||
-                                                            (repeat.type === "year" && repeatTypeOfYear === "day")
-                                                        ) && activeTabNestedRepeatType === "day")
+                                                    ((
+                                                        (repeat.type === "month" && repeatTypeOfMonth === "day")
+                                                        ||
+                                                        (repeat.type === "year" && repeatTypeOfYear === "day")
+                                                    ) && activeTabNestedRepeatType === "day")
                                                 ) &&
                                                 <div className="day-of-week-modal-container">
                                                     {this.renderDayOfWeek()}
@@ -935,58 +921,55 @@ class AddEvent extends React.Component {
                                         </div>
                                     </Modal>
 
-                                </Row>
+                                </div>
                             </Form.Item>
                             <Form.Item className="form-item-add-event">
-                                <Row className="row-form-item-add-event">
-                                    <Col xl={6} lg={7} sm={8} xs={7} className="title-input-add-event" >
-                                        <PictureOutlined
-                                            className="icon-input-add-event"
-                                            style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }}
-                                        />
-                                        <span style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }} className="calendar__label-title"> Hình ảnh </span>
-                                    </Col>
-                                    <Col xl={18} lg={17} sm={16} xs={17} className="col-form-item-add-event" >
-                                        {currentUrlImg !== "" && <img src={currentUrlImg} style={{ width: 300, height: 'auto' }} />}
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <div className="upload-img-add-calendar-container" style={{ marginTop: currentUrlImg ? 5 : 0 }}>
-                                                <div className="upload-img-ui-add-canlendar" >
-                                                    <UploadOutlined style={{ fontSize: 16 }} />
-                                                    &emsp;
-                                                    <span style={{ fontSize: 16 }}> {!currentUrlImg ? "Chọn ảnh" : "Thay đổi ảnh"} </span>
-                                                </div>
-                                                <input ref={this.inputFile} className="input-file-add-calendar" type="file" onChange={this.handleChangeImg} />
+                                <PictureOutlined
+                                    className="icon-input-add-event"
+                                    style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }}
+                                />
+                                &ensp;
+                                <span
+                                    style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }}
+                                    className="calendar__label-title"
+                                > Hình ảnh </span>
+                                <div className="image-add-calendar-container">
+                                    {currentUrlImg !== "" && <img src={currentUrlImg} className="image-add-calendar" />}
+                                    <div className="button-image-add-calendar-container" >
+                                        <div className="upload-img-add-calendar-container" style={{ marginTop: currentUrlImg ? 5 : 0 }}>
+                                            <div className="upload-img-ui-add-canlendar" >
+                                                <UploadOutlined style={{ fontSize: 16 }} />
+                                                &emsp;
+                                                <span style={{ fontSize: 16 }}> {!currentUrlImg ? "Chọn ảnh" : "Thay đổi ảnh"} </span>
                                             </div>
-                                            {currentUrlImg && <div className="delete-img-button" onClick={this.handleClickDeleteImg}>Xóa ảnh</div>}
+                                            <input ref={this.inputFile} className="input-file-add-calendar" type="file" onChange={this.handleChangeImg} />
                                         </div>
-                                    </Col>
-                                </Row>
-                            </Form.Item>
-                            <Form.Item className="form-item-add-event">
-                                <Row className="row-form-item-add-event">
-                                    <div className="title-input-add-event">
-                                        <SnippetsOutlined
-                                            className="icon-input-add-event"
-                                            style={{ color: notes ? "#096dd9" : "black" }}
-                                        />
-                                        <span style={{ color: notes ? "#096dd9" : "black" }} className="calendar__label-title">Ghi chú</span>
+                                        {currentUrlImg && <div className="delete-img-button" onClick={this.handleClickDeleteImg}>Xóa ảnh</div>}
                                     </div>
-                                    <TextArea
-                                        name="notes" value={notes} onChange={this.handleChangeInput}
-                                        style={{ margin: "5px 20px 0px 20px" }} autoSize={{ minRows: 2 }}
-                                    />
-                                </Row>
+                                </div>
                             </Form.Item>
                             <Form.Item className="form-item-add-event">
-                                <Row className="row-form-item-add-event calendar-add__btn" style={{ marginRight: 10, marginLeft: 10 }}>
+                                <SnippetsOutlined
+                                    className="icon-input-add-event"
+                                    style={{ color: notes ? "#096dd9" : "black" }}
+                                />
+                                &ensp;
+                                <span style={{ color: notes ? "#096dd9" : "black" }} className="calendar__label-title">Ghi chú</span>
+                                <TextArea
+                                    name="notes" value={notes} onChange={this.handleChangeInput}
+                                    autoSize={{ minRows: 2 }}
+                                />
+                            </Form.Item>
+                            <Form.Item className="form-item-add-event">
+                                <div className="button-container-add-calendar">
                                     {type === "add" ?
                                         <Button className="calendar-add__btn-cancel" type="primary" ghost size="large"> Hủy </Button>
                                         :
                                         <Button className="calendar-add__btn-cancel" onClick={this.handleDeleteEvent} type="primary" ghost size="large"> Xóa </Button>
                                     }
-                                &emsp;
-                                <Button className="calendar-add__btn-add" htmlType="submit" type="primary" size="large"> {type === "add" ? "Thêm" : "Cập nhật"} </Button>
-                                </Row>
+                                    &emsp;
+                                    <Button className="calendar-add__btn-add" htmlType="submit" type="primary" size="large"> {type === "add" ? "Thêm" : "Cập nhật"} </Button>
+                                </div>
                             </Form.Item>
                         </Form>
 

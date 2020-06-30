@@ -61,18 +61,6 @@ class Setting extends React.Component {
 
                             </div>
                         </Link>
-                        {/* <Link to="#">
-                            <div className="panel-container">
-                                <span className="panel-content"> <i className="fa fa-question-circle-o custom-icon" /> Helper Center </span> 
-                                <CaretRightOutlined className="caretright-icon"/> 
-                            </div>
-                        </Link>
-                        <Link to="#">
-                            <div className="panel-container">
-                                <span className="panel-content"> <i className="fa fa-commenting-o custom-icon" /> Feedback </span> 
-                                <CaretRightOutlined className="caretright-icon"/> 
-                            </div>
-                        </Link> */}
                         <div className="panel-container" onClick={this.handleClickLogout}>
                             <span className="panel-content"> <i className="fa fa-sign-out custom-icon" /> Đăng xuất </span>
                         </div>

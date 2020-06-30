@@ -1,52 +1,116 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-    LeftOutlined,
-    PlusOutlined,
-    StarOutlined,
-    TeamOutlined,
-    RightOutlined,
-    CheckOutlined,
-    PictureOutlined,
-    UploadOutlined,
-    SnippetsOutlined,
+    LeftOutlined, PlusOutlined, StarOutlined, TeamOutlined, CheckOutlined,
 } from "@ant-design/icons";
-import { Layout, Button, Input, Form, Select, Divider, Avatar, Row, Spin, Col } from "antd";
+import { Layout, Button, Input, Form, Select, Divider, Avatar, Spin, Alert } from "antd";
 
 import "./AddReward.css";
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
 import { familyActions } from '../../../actions/family.actions';
 import { alertActions } from "../../../actions/alert.actions";
+import history from '../../../helpers/history';
+import { rewardActions } from "../../../actions/reward.actions";
+import Loading from "../../Common/Loading/Loading";
 
-const { Option } = Select;
 const { TextArea } = Input;
+const { Option } = Select;
 const { Header, Content, Footer } = Layout;
 
 class AddReward extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            notes: "",
-            photo: null,
-            assign: [],
-            points: 0,
-            pointItem: '',
-            idCurrentItem: 1,
-            currentUrlImg: "",
-            pointItems: [5, 10, 15, 20]
+
+        const { type } = this.props;
+        if (type === "edit") {
+            const { reward } = history.location.state;
+            let assign = [];
+            reward && reward.assign && reward.assign.forEach(element => {
+                assign.push(element._id);
+            });
+            this.state = {
+                name: reward.name,
+                assign: assign,
+                points: reward.points,
+                pointItem: '',
+                currentUrlImg: reward.photo,
+                isErrorForm: false,
+                pointItems: [5, 10, 15, 20]
+            }
+        } else {
+            this.state = {
+                name: "",
+                assign: [],
+                points: 0,
+                pointItem: '',
+                currentUrlImg: "",
+                isErrorForm: false,
+                pointItems: [5, 10, 15, 20]
+            }
         }
-        this.scrollBar = React.createRef();
         this.inputFile = React.createRef();
     }
 
     componentDidMount() {
         const { getListMembers } = this.props;
         getListMembers();
+
+    }
+
+    handleClickBack = () => {
+        history.push("/rewards");
+    }
+
+    compareTwoArray = (newAssigns, currentAssigns) => {
+        if (newAssigns.length === 0 && !currentAssigns) {
+            return true;
+        }
+        else if (
+            (newAssigns.length > 0 && !currentAssigns)
+            ||
+            (newAssigns.length !== currentAssigns.length)
+        ) { return false; }
+        else {
+            for (let i = 0; i < newAssigns.length; i++) {
+                let check = false;
+                for (let j = 0; j < currentAssigns.length; j++) {
+                    if (newAssigns[i] === currentAssigns[j]._id) {
+                        check = true;
+                        break;
+                    }
+                }
+                if (!check) return false;
+                else continue;
+            }
+            return true;
+        }
     }
 
     handleSubmit = () => {
 
+        const { type, editReward, addReward, errorAlert } = this.props;
+        const { name, points, assign } = this.state;
+
+        if (!name || name.replace(/\s/g, '').length === 0 || points < 1 || points > 100) {
+            this.setState({ isErrorForm: true });
+        } else {
+
+            let rID = "";
+            if (type === "edit") {
+                const { reward } = history.location.state;
+                if (
+                    name === reward.name &&
+                    points === reward.points &&
+                    this.compareTwoArray(assign, reward.assign)
+                ) return errorAlert("Không có thay đổi gì so với hiện tại")
+                rID = reward._id;
+            }
+
+            type === "add"
+                ? addReward({ name, points, assign })
+                : editReward({ rID, name, points, assign })
+        }
     }
 
     handleInputChange = (e) => {
@@ -54,23 +118,13 @@ class AddReward extends React.Component {
         this.setState({ [name]: value });
     }
 
-    handleAssign = (mID) => {
+    handleAssign = (member) => {
         let { assign } = this.state;
-        const indexMember = assign.findIndex(item => item === mID);
-        indexMember !== -1 ?
-            assign.splice(indexMember, 1)
-            :
-            assign = [...assign, mID];
+        const indexMember = assign.findIndex(item => item === member._id);
+        indexMember !== -1
+            ? assign.splice(indexMember, 1)
+            : assign = [...assign, member._id]
         this.setState({ assign });
-    }
-
-    handleChangeImg = (e) => {
-        this.setState({ currentUrlImg: URL.createObjectURL(e.target.files[0]), photo: e.target.files[0] });
-    }
-
-    handleClickDeleteImg = () => {
-        this.inputFile.current.value = "";
-        this.setState({ currentUrlImg: "", photo: null });
     }
 
     handlePointItemChange = (e) => {
@@ -92,83 +146,87 @@ class AddReward extends React.Component {
     }
 
     handleDeleteReward = () => {
-
-    }
-
-    handleClickPre = () => {
-        const { idCurrentItem } = this.state;
-        if (idCurrentItem > 1) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft - 160;
-            this.setState({ idCurrentItem: idCurrentItem - 1 })
-        }
-    }
-
-    handleClickNext = () => {
-
-        const { idCurrentItem } = this.state;
-        const { listMembers } = this.props;
-        const numberOfMembers = listMembers ? listMembers.length : 0
-
-        if (idCurrentItem < numberOfMembers) {
-            this.scrollBar.current.scrollLeft = this.scrollBar.current.scrollLeft + 160;
-            this.setState({ idCurrentItem: idCurrentItem + 1 });
-        }
+        const { deleteReward } = this.props;
+        const { reward } = history.location.state;
+        deleteReward({ rID: reward._id });
     }
 
     render() {
 
-        const { type, gettingListMembers, gotListMembers, listMembers } = this.props;
-        const { pointItems, assign, currentUrlImg, notes, name, points, pointItem } = this.state;
+        const {
+            type, gettingListMembers, gotListMembers, listMembers,
+            addingReward, addedReward, editingReward, editedReward,
+            deletingReward, deletedReward,
+        } = this.props;
+        const {
+            name, pointItems, assign, points, pointItem, isErrorForm
+        } = this.state;
 
-        const isSelectedMember = (mID) => assign && assign.findIndex(item => item === mID);
+        const isSelectedMember = (mID) => assign && assign.findIndex(item => item === mID)
 
-        const renderListMembers = () =>
-            listMembers && listMembers.map((item, index) =>
-                <div className="user-add-event-container" key={index} onClick={() => this.handleAssign(item._id)}>
-                    <div className="avatar-add-event-container">
+        const renderListMembers = () => (
+            listMembers && listMembers.map((item, index) => (
+                <div className="user-add-reward-container" key={index} onClick={() => this.handleAssign(item)}>
+                    <div className="avatar-add-reward-container">
                         <Avatar
-                            size={50} src={item.mAvatar.image}
-                            style={{ backgroundColor: item.mAvatar.color, opacity: isSelectedMember(item._id) !== -1 && 0.5, border: "groove thin" }}
+                            className="avatar-add-reward"
+                            style={{ backgroundColor: item.mAvatar.color, opacity: isSelectedMember(item._id) !== -1 && 0.5 }}
+                            src={item.mAvatar.image}
                         />
+                        {isSelectedMember(item._id) !== -1 && <CheckOutlined className="check-asign-add-reward" />}
                     </div>
-                    {isSelectedMember(item._id) !== -1 && <CheckOutlined className="check-asign-add-event" />}
-                    <div className="name-user-add-event">{item.mName}</div>
+                    <div className="name-user-add-reward">{item.mName}</div>
                 </div>
-            )
+            ))
+        )
+
+        // const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
+        // const renderSpin = () => (
+        //     <div className="icon-loading-add-reward">
+        //         <Spin style={{ color: 'white' }} size="large" indicator={antIcon} />
+        //     </div>
+        // )
 
         return (
-            <Layout style={{ minHeight: '100vh' }}>
+            <Layout style={{ minHeight: '100vh', position: 'relative' }}>
                 <DashboardMenu menuItem="4" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
                         <div className="left-header-add-reward-container">
-                            <Button onClick={this.handleClickBack} size="large" >
-                                <LeftOutlined />
-                            </Button>
+                            <div onClick={this.handleClickBack} className="header__btn-link">
+                                <LeftOutlined className="header__icon-btn" />
+                            </div>
                         </div>
                         <div className="center-header-add-reward-container"> {type === "add" ? "Thêm Phần Thưởng" : "Cập Nhật Phần Thưởng"} </div>
                         <div className="right-header-add-reward-container"></div>
                     </Header>
-                    <Content >
+                    <Content>
+                        {isErrorForm && (!name || name.replace(/\s/g, '').length === 0 || points < 1 || points > 100) &&
+                            <Alert message={`
+                                ${(!name || name.replace(/\s/g, '').length === 0) ? "Ten" : ""}
+                                ${(points < 1 || points > 100) ? "Diem" : ""}  
+                                là bắt buộc.
+                            `} type="error" style={{ margin: '10px 20px' }} />
+                        }
                         <Form onFinish={this.handleSubmit} size="large" className="form-add-reward">
-                            <Form.Item className="form-item-add-reward">
+                            <Form.Item className="form-item-add-reward form-item-input-name">
                                 <Input
                                     name="name" value={name} onChange={this.handleInputChange}
-                                    className="name-reward-input" placeholder="Tên phần thưởng" type="text"
+                                    className="name-input-add-reward" placeholder="Tên phần thưởng" type="text"
                                 />
                             </Form.Item>
                             <Form.Item className="form-item-add-reward form-item-point-reward" >
-                                <div className="point-reward-input-fake">
+                                <div className="point-input-fake-add-reward">
                                     <StarOutlined /> &nbsp; {points == 0 ? "Điểm thưởng" : `${points} Điểm`}
                                 </div>
                                 <Select
                                     placeholder="Điểm thưởng"
-                                    className="point-reward-input"
+                                    className="point-input-add-reward"
                                     onChange={(value) => this.setState({ points: value })}
                                     dropdownRender={menu => (
                                         <div>
                                             {menu}
-                                            <Divider style={{ margin: '4px 0' }} />
+                                            <Divider />
                                             <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
                                                 <Input style={{ flex: 'auto' }} type="number" value={pointItem} onChange={this.handlePointItemChange} />
                                                 <a
@@ -186,88 +244,42 @@ class AddReward extends React.Component {
                             </Form.Item>
                             <Form.Item className="form-item-add-reward">
                                 <TeamOutlined
-                                    className="icon-input-add-event"
-                                    style={{ color: assign.length > 0 ? "#096dd9" : "black", marginTop: 20 }}
+                                    className="icon-input-add-reward"
+                                    style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
                                 />
                                 <span
-                                    className="title-input-add-event"
+                                    className="title-input-add-reward"
                                     style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
                                 > Thành Viên: </span>
-                                <Row align="middle" justify="center" style={{ marginBottom: 20 }}>
-                                    {gettingListMembers && !gotListMembers ?
-                                        <Spin tip="Loading..." />
-                                        :
-                                        <>
-                                            {listMembers && listMembers.length > 5 &&
-                                                <div onClick={this.handleClickPre} className="pre-icon-add-event"> <LeftOutlined /> </div>
-                                            }
-                                            <div ref={this.scrollBar} className="list-users-asign-add-event-container" >
-                                                {renderListMembers()}
-                                            </div>
-                                            {listMembers && listMembers.length > 5 &&
-                                                <div onClick={this.handleClickNext} className="next-icon-add-event"> <RightOutlined /> </div>
-                                            }
-                                        </>
-                                    }
-                                </Row>
-                            </Form.Item>
-
-                            <Form.Item className="form-item-add-reward">
-                                <Row className="row-form-item-add-event">
-                                    <Col span={4} className="title-input-add-event" >
-                                        <PictureOutlined
-                                            className="icon-input-add-event"
-                                            style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }}
-                                        />
-                                        <span style={{ color: currentUrlImg !== "" ? "#096dd9" : "black" }}> Hình ảnh </span>
-                                    </Col>
-                                    <Col span={16} className="col-form-item-add-event" >
-                                        {currentUrlImg !== "" && <img src={currentUrlImg} style={{ width: 300, height: 'auto' }} />}
-                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                            <div className="upload-img-add-calendar-container" style={{ marginTop: currentUrlImg ? 5 : 0 }}>
-                                                <div className="upload-img-ui-add-canlendar" >
-                                                    <UploadOutlined style={{ fontSize: 16 }} />
-                                                    &emsp;
-                                                    <span style={{ fontSize: 16 }}> {!currentUrlImg ? "Chọn ảnh" : "Thay đổi ảnh"} </span>
-                                                </div>
-                                                <input ref={this.inputFile} className="input-file-add-calendar" type="file" onChange={this.handleChangeImg} />
-                                            </div>
-                                            {currentUrlImg && <div className="delete-img-button" onClick={this.handleClickDeleteImg}>Xóa ảnh</div>}
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </Form.Item>
-                            <Form.Item className="form-item-add-reward">
-                                <Row className="row-form-item-add-event">
-                                    <div className="title-input-add-event">
-                                        <SnippetsOutlined
-                                            className="icon-input-add-event"
-                                            style={{ color: notes ? "#096dd9" : "black" }}
-                                        />
-                                        <span style={{ color: notes ? "#096dd9" : "black" }}>Ghi chú</span>
+                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <div className="list-users-asign-add-reward-container" >
+                                        {(gettingListMembers && !gotListMembers)
+                                            ? <Spin tip="Loading..." />
+                                            : renderListMembers()
+                                        }
                                     </div>
-                                    <TextArea
-                                        name="notes" value={notes} onChange={this.handleInputChange}
-                                        style={{ margin: "5px 20px 0px 20px" }} autoSize={{ minRows: 2 }}
-                                    />
-                                </Row>
+                                </div>
+
                             </Form.Item>
                             <Form.Item className="form-item-add-reward">
-                                <Row className="row-form-item-add-event" style={{ float: "right", marginRight: 20 }}>
-                                    {type === "add" ?
-                                        <Button type="primary" ghost size="large"> Hủy </Button>
-                                        :
-                                        <Button onClick={this.handleDeleteReward} type="primary" ghost size="large"> Xóa </Button>
+                                <div className="button-container-add-reward">
+                                    {type === "add"
+                                        ? <Button type="primary" ghost size="large"> Hủy </Button>
+                                        : <Button onClick={this.handleDeleteReward} type="primary" ghost size="large"> Xóa </Button>
                                     }
-                                &emsp;
-                                <Button htmlType="submit" type="primary" size="large"> {type === "add" ? "Thêm" : "Cập nhật"} </Button>
-                                </Row>
+                                    &emsp;
+                                    <Button htmlType="submit" type="primary" size="large"> {type === "add" ? "Thêm" : "Cập nhật"} </Button>
+                                </div>
                             </Form.Item>
                         </Form>
                     </Content>
-                    <Footer style={{ textAlign: 'center', padding: "10px 0px", margin: "0px 20px" }}></Footer>
                 </Layout>
-            </Layout>
+                {(
+                    (addingReward && !addedReward) ||
+                    (editingReward && !editedReward) ||
+                    (deletingReward && !deletedReward)
+                ) && <Loading />}
+            </Layout >
         );
     }
 }
@@ -275,12 +287,21 @@ class AddReward extends React.Component {
 const actionCreators = {
     errorAlert: alertActions.error,
     getListMembers: familyActions.getListMembers,
+    addReward: rewardActions.addReward,
+    editReward: rewardActions.editReward,
+    deleteReward: rewardActions.deleteReward,
 }
 
 const mapStateToProps = (state) => ({
     listMembers: state.family.listMembers,
     gettingListMembers: state.family.gettingListMembers,
     gotListMembers: state.family.gotListMembers,
+    addingReward: state.reward.addingReward,
+    addedReward: state.reward.addedReward,
+    editingReward: state.reward.editingReward,
+    editedReward: state.reward.editedReward,
+    deletingReward: state.reward.deletingReward,
+    deletedReward: state.reward.deletedReward,
 })
 
 export default connect(mapStateToProps, actionCreators)(AddReward);

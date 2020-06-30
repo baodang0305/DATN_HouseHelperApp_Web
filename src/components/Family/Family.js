@@ -14,7 +14,7 @@ import moment from 'moment';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import socketIoClient from "socket.io-client";
-import { Layout, List, Avatar, Button, Skeleton, Badge, Spin, Divider } from "antd";
+import { Layout, List, Avatar, Skeleton, Badge, Spin, Divider } from "antd";
 
 import "./Family.css";
 import history from "../../helpers/history";
@@ -144,8 +144,8 @@ class Family extends React.Component {
                             <Link to="/family/setting" className="header__btn-link">
                                 <SettingOutlined className="icon-header-family" />
                             </Link>
-                                &emsp;
-                                <Link to="/family/chat" className="header__btn-link">
+                            &emsp;
+                            <Link to="/family/chat" className="header__btn-link">
                                 <Badge count={numberOfIncomingMessages}>
                                     <MailOutlined className="icon-header-family" />
                                 </Badge>
@@ -240,33 +240,25 @@ class Family extends React.Component {
                                 />
                             }
                         </div>
-
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}></Footer>
                 </Layout>
             </Layout>
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    const { inforLogin } = state.authentication;
-    const { listTasks, numberOfIncomingMessages } = state.index;
-    const { listMembers, gettingListNews, gotListNews, gettingListMembers, gotListMembers, listNews } = state.family;
-    return {
-        listNews,
-        listTasks,
-        gotListNews,
-        listMembers,
-        gotListMembers,
-        gettingListNews,
-        gettingListMembers,
-        user: inforLogin.user,
-        token: inforLogin.token,
-        numberOfIncomingMessages
-    };
-
-}
+const mapStateToProps = (state) => ({
+    listNews: state.family.listNews,
+    listTasks: state.index.listTasks,
+    gotListNews: state.family.gotListMembers,
+    listMembers: state.family.listMembers,
+    gotListMembers: state.family.gotListMembers,
+    gettingListNews: state.family.gettingListNews,
+    gettingListMembers: state.family.gettingListMembers,
+    user: state.authentication.inforLogin.user,
+    token: state.authentication.inforLogin.token,
+    numberOfIncomingMessages: state.index.numberOfIncomingMessages,
+});
 
 const actionCreators = {
     deleteNew: memberActions.deleteNew,

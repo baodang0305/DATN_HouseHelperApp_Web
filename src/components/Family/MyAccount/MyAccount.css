@@ -11,31 +11,83 @@
 
 .content-my-account {
     background-color: white;
-    margin: 20px;
+    margin: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.delete-button,
-.save-button {
-    width: 100%;
-    border-style: ridge;
-    border-radius: 5px;
-    font-size: 20px;
-    height: auto;
-}
-
-.delete-button {
-    background-color: darkgrey;
-}
-
-.save-button {
-    float: right;
-}
-
 .title-forgot {
     color: #1890ff;
     cursor: pointer;
-    font-size: 17px ;
+    font-size: 17px;
+}
+
+.img-account-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.img-account {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: relative;
+    border: groove thin;
+}
+
+.input-img-account {
+    position: absolute;
+    top: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.title-reset-personal-pass-form,
+.title-reset-family-pass-form {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.button-modal-my-account-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.button-my-account-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.button-item-my-account {
+    width: 48%;
+    font-size: 18px;
+}
+
+@media all and (min-width: 320px) and (max-width: 599px) {
+}
+
+@media all and (min-width: 600px) and (max-width: 1023px) {
+    .my-account-form {
+        width: 50%;
+    }
+}
+
+@media all and (min-width: 1024px) {
+    .my-account-form {
+        width: 40%;
+    }
+}
+
+@media all and (min-width: 1280px) {
+    .my-account-form {
+        width: 35%;
+    }
 }

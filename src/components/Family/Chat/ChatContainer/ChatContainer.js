@@ -3,7 +3,7 @@ import { Picker } from "emoji-mart";
 import { connect } from "react-redux";
 import { Prompt } from "react-router-dom";
 import socketIoClient from "socket.io-client";
-import { LeftOutlined } from "@ant-design/icons";
+import { LeftOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Layout, Row, Col, Button, Input, Tabs, Menu, Modal, Avatar } from "antd";
 import { faPhone, faPhoneSlash } from "@fortawesome/free-solid-svg-icons";
@@ -212,34 +212,27 @@ class ChatContainer extends React.Component {
             updateStateMessage.seen = isSeen;
 
             if (indexActive !== -1) {
-
                 let newUsersActive = [...usersActive];
                 newUsersActive[indexActive].messages = [...newUsersActive[indexActive].messages, updateStateMessage]
                 this.setState({ usersActive: newUsersActive, filteredUsersActive: newUsersActive });
-
             }
 
             if (indexRecent !== -1) {
-
                 let newUsersRecent = [...usersRecent];
                 newUsersRecent[indexRecent].messages = [...newUsersRecent[indexRecent].messages, updateStateMessage]
                 this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
-
             }
 
         });
 
         socket.on("server-response-user-is-entering-to-partner", (sender) => {
-
             const { activeTab, receiverActive, receiverRecent } = this.state;
-
             if (activeTab === "recent") {
                 if (receiverRecent) {
                     if (sender.mID === receiverRecent.mID) {
                         this.setState({ userIsEnteringSingle: sender });
                     }
                 }
-
             } else if (activeTab === "active") {
                 if (receiverActive) {
                     if (sender.mID === receiverActive.mID) {
@@ -250,88 +243,57 @@ class ChatContainer extends React.Component {
         });
 
         socket.on("server-response-user-is-stoped-entering-to-partner", (sender) => {
-
             const { activeTab, receiverActive, receiverRecent } = this.state;
-
             if (activeTab === "recent") {
-
                 if (sender.mID === receiverRecent.mID) {
-
                     this.setState({ userIsEnteringSingle: null });
-
                 }
-
             } else if (activeTab === "active") {
-
                 if (sender.mID === receiverActive.mID) {
-
                     this.setState({ userIsEnteringSingle: null });
-
                 }
-
             }
-
         });
 
         socket.on("server-response-message-has-seen", ({ sender, messageContainer }) => {
-
             const { usersActive, usersRecent } = this.state;
-
             if (usersActive.length !== 0) {
-
                 const indexActive = usersActive.findIndex(element => element.mID === sender.mID);
-
                 if (indexActive !== -1) {
-
                     let newUsersActive = [...usersActive];
                     let messagesActive = [...newUsersActive[indexActive].messages];
                     messagesActive[messagesActive.length - 1].seen = true;
                     newUsersActive[indexActive].messages = messagesActive;
                     this.setState({ usersActive: newUsersActive, filteredUsersActive: newUsersActive });
-
                 }
-
             }
 
             if (usersRecent.length !== 0) {
-
                 const indexRecent = usersRecent.findIndex(element => element.mID === sender.mID);
-
                 if (indexRecent !== -1) {
-
                     let newUsersRecent = [...usersRecent];
                     let messagesRecent = [...newUsersRecent[indexRecent].messages];
                     messagesRecent[messagesRecent.length - 1].seen = true;
                     newUsersRecent[indexRecent].messages = messagesRecent;
                     this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
-
                 }
-
             }
-
         });
 
         socket.on("server-send-family-group", (familyGroup) => {
-
             const newFamilyGroup = { ...familyGroup }
-
             if (familyGroup) {
                 this.setState({ familyGroup: newFamilyGroup });
             }
         });
 
         socket.on("server-response-messages-chat-group", (messageContainer) => {
-
             const { familyGroup } = this.state;
-
             if (messageContainer) {
-
                 let newFamilyGroup = { ...familyGroup };
                 newFamilyGroup.messages = [...newFamilyGroup.messages, messageContainer];
                 this.setState({ familyGroup: newFamilyGroup });
-
             }
-
         });
 
         socket.on("server-response-user-is-entering-to-group", (sender) => {
@@ -400,65 +362,44 @@ class ChatContainer extends React.Component {
 
         const { user } = this.props;
         const { usersActive, usersRecent } = this.state;
-
         const indexActive = usersActive.findIndex(item => item.mSocketID === e.key);
-
         if (indexActive !== -1) {
-
             let newUsersActive = [...usersActive];
             const lengthMessagesActive = newUsersActive[indexActive].messages.length;
-
             if (lengthMessagesActive !== 0) {
-
                 let lastMessage = { ...newUsersActive[indexActive].messages[lengthMessagesActive - 1] }
-
                 if (lastMessage.seen === false && lastMessage.id !== user._id) {
-
                     lastMessage.seen = true;
                     newUsersActive[indexActive].messages[lengthMessagesActive - 1] = lastMessage;
                     this.setState({ usersActive: newUsersActive, filteredUsersActive: newUsersActive });
-
                     //update tab recent nếu có
                     const mID = newUsersActive[indexActive].mID;
-
                     if (usersRecent.length !== 0 && mID) {
-
                         const indexRecent = usersRecent.findIndex(element => element.mID === mID);
-
                         if (indexRecent !== -1) {
-
                             let newUsersRecent = [...usersRecent];
                             newUsersRecent[indexRecent].messages = newUsersActive[indexActive].messages;
                             this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
-
                         }
-
                     }
-
                     //emit to server that server update state of last message is seen
                     let receiver = { ...newUsersActive[indexActive] };
                     delete receiver.messages;
                     let sender = { ...user, "mID": user._id };
                     delete sender._id;
                     socket.emit("message-has-seen", { sender, receiver, "messageContainer": lastMessage });
-
                 }
             }
-
             this.setState({ message: "", receiverActive: newUsersActive[indexActive] });
         }
     }
 
     handleKeyPressMessage = (e) => {
-
         const { user } = this.props;
         const { message, receiverActive, receiverRecent, activeTab, usersActive, usersRecent, familyGroup } = this.state;
-
         const messageTemp = message.trim();
-
         if (messageTemp !== "") {
             if (e.key === "Enter") {
-
                 const messageContainer = {
                     "seen": false,
                     "id": user._id,
@@ -466,7 +407,6 @@ class ChatContainer extends React.Component {
                     "message": messageTemp,
                     "avatar": { "image": user.mAvatar.image, "color": user.mAvatar.color }
                 }
-
                 if (activeTab === "family-group") {
                     let member = { ...user, "mID": user._id };
                     delete member._id;
@@ -505,45 +445,28 @@ class ChatContainer extends React.Component {
     }
 
     handleClickMenuRecent = (e) => {
-
         const { user } = this.props;
         const { usersRecent, usersActive } = this.state;
-
         const indexRecent = usersRecent.findIndex(element => element.mID === e.key);
-
         if (indexRecent !== -1) {
-
             let newUsersRecent = [...usersRecent];
             const lengthMessagesRecent = newUsersRecent[indexRecent].messages.length;
-
             if (lengthMessagesRecent !== 0) {
-
                 let lastMessage = { ...newUsersRecent[indexRecent].messages[lengthMessagesRecent - 1] }
-
                 if (lastMessage.seen === false && lastMessage.id !== user._id) {
-
                     lastMessage.seen = true;
                     newUsersRecent[indexRecent].messages[lengthMessagesRecent - 1] = lastMessage;
-
                     this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
-
                     // update tab active nếu có
                     let mSocketID = newUsersRecent[indexRecent].mSocketID;
-
                     if (usersActive.length !== 0 && mSocketID) {
-
                         const indexActive = usersActive.findIndex(element => element.mSocketID === mSocketID);
-
                         if (indexActive !== -1) {
-
                             let newUsersActive = [...usersActive];
                             newUsersActive[indexActive].messages = newUsersRecent[indexRecent].messages;
-
                             this.setState({ usersActive: newUsersActive, filteredUsersActive: newUsersActive })
                         }
-
                     }
-
                     //emit to server that server update state of last message is seen
                     let receiver = { ...newUsersRecent[indexRecent] };
                     delete receiver.messages;
@@ -557,10 +480,8 @@ class ChatContainer extends React.Component {
     }
 
     handleChangeSearchInput = (e) => {
-
         const { name, value } = e.target;
         const { usersRecent, usersActive, activeTab } = this.state;
-
         if (activeTab === "recent") {
             const filteredUsersRecent = usersRecent.filter(element => {
                 return element.mName.toLowerCase().includes(value.toLowerCase());
@@ -584,54 +505,37 @@ class ChatContainer extends React.Component {
     }
 
     handleOnFocus = () => {
-
         let receiver;
         const { user } = this.props;
         const { activeTab, receiverActive, receiverRecent, familyGroup } = this.state;
-
         if (activeTab === "active") {
             receiver = { ...receiverActive };
-
         } else if (activeTab === "recent") {
             receiver = { ...receiverRecent };
-
         } else {
             receiver = { ...familyGroup }
-
         }
-
         delete receiver.messages;
         let sender = { ...user, "mID": user._id }
         delete sender._id;
         socket.emit("client-notification-is-entering", { sender, receiver });
-
     }
 
     handleOnBlur = () => {
-
         let receiver;
         const { user } = this.props;
         const { activeTab, receiverRecent, receiverActive, familyGroup } = this.state;
-
         if (activeTab === "active") {
-
             receiver = { ...receiverActive };
-
         } else if (activeTab === "recent") {
-
             receiver = { ...receiverRecent };
-
         } else {
-
             receiver = { ...familyGroup };
-
         }
-
         delete receiver.messages;
         let sender = { ...user, "mID": user._id };
         delete sender._id;
         socket.emit("client-notification-is-stoped-entering", { sender, receiver });
-
     }
 
     addEmoji = e => {
@@ -644,9 +548,7 @@ class ChatContainer extends React.Component {
     }
 
     handleOfferCall = () => {
-
         const { userIsOffer, userOffer, receiverActive } = this.state;
-
         if (!userIsOffer && !userOffer) {
             this.outgoingCallingBell.play();
             this.outgoingCallingBell.loop = true;
@@ -657,25 +559,19 @@ class ChatContainer extends React.Component {
         } else {
             alert("Bạn không thể gọi 1 lúc 2 người");
         }
-
     }
 
     handleAccept = async () => {
-
         const { userOffer } = this.state;
-
         this.ringtone.pause();
         const newConfig = await this.getIceServers();
         const newPeerConn = new RTCPeerConnection(newConfig);
         this.setState({ peerConn: newPeerConn, isAccepted: true });
         socket.emit("answer-offer-a-call", { "receiver": userOffer, "content": { "accept": true } });
-
     }
 
     handleClose = async () => {
-
         const { isAccepted, userIsOffer, userOffer, localStream, peerConn } = this.state;
-
         if (!isAccepted) {
             if (userIsOffer) {
                 this.outgoingCallingBell.pause();
@@ -686,7 +582,6 @@ class ChatContainer extends React.Component {
                 this.setState({ userOffer: null });
                 socket.emit("answer-offer-a-call", { "receiver": userOffer, "content": { "accept": false, "message": "từ chối cuộc gọi" } });
             }
-
         } else {
             if (localStream) {
                 localStream.getAudioTracks()[0].stop();
@@ -700,30 +595,23 @@ class ChatContainer extends React.Component {
             this.remoteVideo.current.srcObject = null;
             this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
         }
-
     }
 
     handleMakeCall = async ({ mSocketID }) => {
-
         const { peerConn } = this.state;
-
         const newLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         this.localVideo.current.srcObject = newLocalStream;
         peerConn.addStream(newLocalStream);
-
         this.setState({ localStream: newLocalStream });
-
         peerConn.createOffer((offer) => {
             peerConn.setLocalDescription(offer);
             socket.emit("offer", { mSocketID, offer });
         }, function (error) {
             console.log("error when create an offer");
         });
-
         peerConn.onaddstream = (e) => {
             this.remoteVideo.current.srcObject = e.stream;
         };
-
         peerConn.onicecandidate = (event) => {
             const cand = event.candidate;
             if (cand) {
@@ -734,9 +622,7 @@ class ChatContainer extends React.Component {
                     socket.emit("candidate", { "mSocketID": userIsOffer.mSocketID, "candidate": cand });
                 }
             }
-
         };
-
         peerConn.onconnectionstatechange = async (event) => {
             if (peerConn.connectionState === "disconnected") {
                 const { localStream } = this.state;
@@ -751,17 +637,13 @@ class ChatContainer extends React.Component {
                 this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
             }
         }
-
     }
 
     handleOffer = async (mSocketID, offer) => {
-
         const { peerConn } = this.state;
-
         peerConn.onaddstream = (e) => {
             this.remoteVideo.current.srcObject = e.stream;
         };
-
         peerConn.onicecandidate = (event) => {
             const cand = event.candidate;
             if (cand) {
@@ -772,7 +654,6 @@ class ChatContainer extends React.Component {
                     socket.emit("candidate", { "mSocketID": userIsOffer.mSocketID, "candidate": cand });
                 }
             }
-
         };
 
         peerConn.onconnectionstatechange = async (event) => {
@@ -789,13 +670,10 @@ class ChatContainer extends React.Component {
                 this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
             }
         }
-
         peerConn.setRemoteDescription(new RTCSessionDescription(offer));
-
         const newLocalStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         this.localVideo.current.srcObject = newLocalStream;
         peerConn.addStream(newLocalStream);
-
         peerConn.createAnswer((answer) => {
             peerConn.setLocalDescription(answer);
             socket.emit("answer", { mSocketID, answer });
@@ -803,9 +681,7 @@ class ChatContainer extends React.Component {
         }, function (error) {
             console.log("error when create an answer");
         });
-
         this.setState({ localStream: newLocalStream });
-
     }
 
     handleAnswer = (mSocketID, answer) => {
@@ -834,7 +710,6 @@ class ChatContainer extends React.Component {
     };
 
     handleConfirmNavigationClick = () => {
-
         const { isAccepted, userOffer, userIsOffer, localStream, peerConn } = this.state;
         if (userIsOffer || userOffer) {
             if (!isAccepted) {
@@ -846,7 +721,6 @@ class ChatContainer extends React.Component {
                     socket.emit("answer-offer-a-call", { "receiver": userOffer, "content": { "accept": false, "message": "từ chối cuộc gọi" } });
                 }
                 this.setState({ userOffer: null, userIsOffer: null });
-
             } else {
                 if (localStream) {
                     localStream.getAudioTracks()[0].stop();
@@ -861,10 +735,7 @@ class ChatContainer extends React.Component {
                 this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
             }
         }
-
         socket.emit("leave-chat");
-
-
         this.closeModal(() => {
             const { lastLocation } = this.state;
             if (lastLocation) {
@@ -884,27 +755,12 @@ class ChatContainer extends React.Component {
     }
 
     render() {
-
         const {
-            message,
-            activeTab,
-            activeKeyTabMobileChat,
-            userOffer,
-            isAccepted,
-            userIsOffer,
-            searchInput,
-            familyGroup,
-            modalVisible,
-            receiverActive,
-            receiverRecent,
-            userIsEnteringGroup,
-            filteredUsersActive,
-            filteredUsersRecent,
-            userIsEnteringSingle,
-
+            message, activeTab, activeKeyTabMobileChat, userOffer, isAccepted, userIsOffer,
+            familyGroup, modalVisible, receiverActive, receiverRecent, userIsEnteringGroup,
+            filteredUsersActive, filteredUsersRecent, userIsEnteringSingle, searchInput,
         } = this.state;
         const { user } = this.props;
-
         const toolBar = () => (
             <div ref={this.toggleContainer}>
                 <Row className="tool-bar-container" >
@@ -943,29 +799,15 @@ class ChatContainer extends React.Component {
             </div>
         );
 
-        const showToolBar = () => {
-
-            if (activeTab === "active") {
-                if (receiverActive) {
-                    return toolBar();
-                }
-
-            } else if (activeTab === "recent") {
-                if (receiverRecent) {
-                    return toolBar();
-                }
-
-            } else {
-                if (familyGroup) {
-                    return toolBar();
-                }
-
-            }
-
-        }
+        const showToolBar = () => (
+            (activeTab === "active" && receiverActive)
+            ||
+            (activeTab === "recent" && receiverRecent)
+            ||
+            (activeTab === "family" && receiverRecent)
+        ) && toolBar();
 
         const headerBodyMessage = () => {
-
             if (activeTab === "active") {
                 if (receiverActive) {
                     return (
@@ -1005,7 +847,6 @@ class ChatContainer extends React.Component {
                         </>
                     );
                 }
-
             } else {
                 if (familyGroup) {
                     return (
@@ -1049,16 +890,22 @@ class ChatContainer extends React.Component {
             <Layout style={{ minHeight: "100vh" }}>
                 <Prompt when={true} message={this.handleBlockedNavigation} />
                 <Modal
-                    title={"Alert"}
-                    visible={modalVisible}
-                    onCancel={() => this.closeModal(() => { })}
-                    onOk={this.handleConfirmNavigationClick}
+                    title={null} footer={null} width={300}
+                    visible={modalVisible} closable={false}
                 >
-                    {!userIsOffer && !userOffer ?
-                        <p>Bạn muốn rời khỏi?</p>
-                        :
-                        <p>Bạn muốn rời khỏi và kết thúc cuộc gọi hiện tại?</p>
-                    }
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+                        <ExclamationCircleOutlined style={{ color: '#fab324', fontSize: 20 }} />
+                        &nbsp;
+                        {!userIsOffer && !userOffer
+                            ? <div style={{ fontSize: 15, fontWeight: 'bold' }}>Bạn muốn rời khỏi?</div>
+                            : <div style={{ fontSize: 15, fontWeight: 'bold' }}>Bạn muốn rời khỏi và kết thúc cuộc gọi hiện tại?</div>
+                        }
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button onClick={() => this.closeModal(() => { })}>Đóng</Button>
+                    &ensp;
+                    <Button onClick={this.handleConfirmNavigationClick} type="primary">Đồng ý</Button>
+                    </div>
                 </Modal>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
@@ -1111,28 +958,14 @@ class ChatContainer extends React.Component {
                                                                     <div className="icon-active" />
                                                                 </div>
                                                                 <div style={{ float: "right", marginLeft: 10 }} >
-                                                                    {item.messages.length === 0 ?
-                                                                        <div className="name-item-chat-list">{item.mName}</div>
-                                                                        :
-                                                                        <>
-                                                                            {user.mName === item.messages[item.messages.length - 1].name ?
-                                                                                <>
-                                                                                    <div className="name-item-chat-list">{item.mName}</div>
-                                                                                    <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
-                                                                                </>
-                                                                                :
-                                                                                item.messages[item.messages.length - 1].seen ?
-                                                                                    <>
-                                                                                        <div className="name-item-chat-list">{item.mName}</div>
-                                                                                        <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
-                                                                                    </>
-                                                                                    :
-                                                                                    <>
-                                                                                        <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
-                                                                                        <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
-                                                                                    </>
-                                                                            }
-                                                                        </>
+                                                                    <div className="name-item-chat-list">{item.mName}</div>
+                                                                    {item.messages.length !== 0
+                                                                        ? user.mName === item.messages[item.messages.length - 1].name
+                                                                            ? <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                            : item.messages[item.messages.length - 1].seen
+                                                                                ? <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
+                                                                                : <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
+                                                                        : null
                                                                     }
                                                                 </div>
                                                             </Row>
@@ -1152,7 +985,6 @@ class ChatContainer extends React.Component {
                                                     {filteredUsersRecent && filteredUsersRecent.map((item, index) =>
                                                         <Menu.Item className="menu-item-container" key={item.mID}>
                                                             <Row align="middle" justify="start">
-
                                                                 <div className="img-chat-list-container">
                                                                     <Avatar
                                                                         src={item.mAvatar.image}
@@ -1162,29 +994,14 @@ class ChatContainer extends React.Component {
                                                                     {item.mSocketID && <div className="icon-active" />}
                                                                 </div>
                                                                 <div style={{ float: "right", marginLeft: 10 }} >
-
-                                                                    {item.messages.length === 0 ?
-                                                                        <div className="name-item-chat-list">{item.mName}</div>
-                                                                        :
-                                                                        <>
-                                                                            {user.mName === item.messages[item.messages.length - 1].name ?
-                                                                                <>
-                                                                                    <div className="name-item-chat-list">{item.mName}</div>
-                                                                                    <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
-                                                                                </>
-                                                                                :
-                                                                                item.messages[item.messages.length - 1].seen ?
-                                                                                    <>
-                                                                                        <div className="name-item-chat-list">{item.mName}</div>
-                                                                                        <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
-                                                                                    </>
-                                                                                    :
-                                                                                    <>
-                                                                                        <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
-                                                                                        <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
-                                                                                    </>
-                                                                            }
-                                                                        </>
+                                                                    <div className="name-item-chat-list">{item.mName}</div>
+                                                                    {item.messages.length !== 0
+                                                                        ? user.mName === item.messages[item.messages.length - 1].name
+                                                                            ? <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                            : item.messages[item.messages.length - 1].seen
+                                                                                ? <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
+                                                                                : <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
+                                                                        : null
                                                                     }
                                                                 </div>
                                                             </Row>
@@ -1230,15 +1047,12 @@ class ChatContainer extends React.Component {
                                 {userIsOffer && <div className="callee-name"> {`${userIsOffer.mName} contacting...`} </div>}
 
                                 <Row justify="center" >
-
                                     {userOffer && !isAccepted &&
                                         <Button onClick={this.handleAccept} className="accept-btn green-btn color-btn">
                                             <FontAwesomeIcon icon={faPhone} size="lg" />
                                         </Button>
                                     }
-
                                     &emsp;&emsp;&emsp;
-
                                     {(userIsOffer || userOffer) &&
                                         <Button onClick={this.handleClose} className="cancel-btn red-btn color-btn">
                                             <FontAwesomeIcon icon={faPhoneSlash} size="lg" />
@@ -1279,7 +1093,7 @@ class ChatContainer extends React.Component {
                                                         selectedKeys={[receiverActive.mSocketID]}
                                                     >
                                                         {filteredUsersActive.length !== 0 && filteredUsersActive.map((item, index) =>
-                                                            <Menu.Item className="menu-item-container" key={item.mSocketID} onClick={(e) => { this.handleChangeTabMobileChat("messages") }}>
+                                                            <Menu.Item className="menu-item-container" key={item.mSocketID}>
                                                                 <Row align="middle" justify="start">
                                                                     <div className="img-chat-list-container">
                                                                         <Avatar
@@ -1290,28 +1104,14 @@ class ChatContainer extends React.Component {
                                                                         <div className="icon-active" />
                                                                     </div>
                                                                     <div style={{ float: "right", marginLeft: 10 }} >
-                                                                        {item.messages.length === 0 ?
-                                                                            <div className="name-item-chat-list">{item.mName}</div>
-                                                                            :
-                                                                            <>
-                                                                                {user.mName === item.messages[item.messages.length - 1].name ?
-                                                                                    <>
-                                                                                        <div className="name-item-chat-list">{item.mName}</div>
-                                                                                        <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
-                                                                                    </>
-                                                                                    :
-                                                                                    item.messages[item.messages.length - 1].seen ?
-                                                                                        <>
-                                                                                            <div className="name-item-chat-list">{item.mName}</div>
-                                                                                            <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
-                                                                                        </>
-                                                                                        :
-                                                                                        <>
-                                                                                            <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
-                                                                                            <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
-                                                                                        </>
-                                                                                }
-                                                                            </>
+                                                                        <div className="name-item-chat-list">{item.mName}</div>
+                                                                        {item.messages.length !== 0
+                                                                            ? user.mName === item.messages[item.messages.length - 1].name
+                                                                                ? <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                                : item.messages[item.messages.length - 1].seen
+                                                                                    ? <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
+                                                                                    : <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
+                                                                            : null
                                                                         }
                                                                     </div>
                                                                 </Row>
@@ -1331,7 +1131,6 @@ class ChatContainer extends React.Component {
                                                         {filteredUsersRecent && filteredUsersRecent.map((item, index) =>
                                                             <Menu.Item className="menu-item-container" key={item.mID}>
                                                                 <Row align="middle" justify="start">
-
                                                                     <div className="img-chat-list-container">
                                                                         <Avatar
                                                                             src={item.mAvatar.image}
@@ -1341,29 +1140,14 @@ class ChatContainer extends React.Component {
                                                                         {item.mSocketID && <div className="icon-active" />}
                                                                     </div>
                                                                     <div style={{ float: "right", marginLeft: 10 }} >
-
-                                                                        {item.messages.length === 0 ?
-                                                                            <div className="name-item-chat-list">{item.mName}</div>
-                                                                            :
-                                                                            <>
-                                                                                {user.mName === item.messages[item.messages.length - 1].name ?
-                                                                                    <>
-                                                                                        <div className="name-item-chat-list">{item.mName}</div>
-                                                                                        <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
-                                                                                    </>
-                                                                                    :
-                                                                                    item.messages[item.messages.length - 1].seen ?
-                                                                                        <>
-                                                                                            <div className="name-item-chat-list">{item.mName}</div>
-                                                                                            <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
-                                                                                        </>
-                                                                                        :
-                                                                                        <>
-                                                                                            <div style={{ fontWeight: "bold" }} className="name-item-chat-list">{item.mName}</div>
-                                                                                            <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
-                                                                                        </>
-                                                                                }
-                                                                            </>
+                                                                        <div className="name-item-chat-list">{item.mName}</div>
+                                                                        {item.messages.length !== 0
+                                                                            ? user.mName === item.messages[item.messages.length - 1].name
+                                                                                ? <div className="message-under-name-chat-list"> You: {item.messages[item.messages.length - 1].message} </div>
+                                                                                : item.messages[item.messages.length - 1].seen
+                                                                                    ? <div className="message-under-name-chat-list"> {item.messages[item.messages.length - 1].message} </div>
+                                                                                    : <div className="message-under-name-chat-list" style={{ fontWeight: "bold" }} > {item.messages[item.messages.length - 1].message} </div>
+                                                                            : null
                                                                         }
                                                                     </div>
                                                                 </Row>
@@ -1400,27 +1184,19 @@ class ChatContainer extends React.Component {
                             </TabPane>
                             <TabPane tab="Cuộc gọi" key="calls">
                                 <div >
-
                                     <div className="video-call-title"> Video Call </div>
-
                                     <video ref={this.remoteVideo} id="remote-video" autoPlay controls />
                                     <video ref={this.localVideo} id="local-video" autoPlay controls />
-
                                     {userOffer && <div className="caller-name"> {`${userOffer.mName} contacting...`} </div>}
-
                                     {userIsOffer && <div className="callee-name"> {`${userIsOffer.mName} contacting...`} </div>}
-
                                     <Row justify="center" >
-
                                         {userOffer && !isAccepted &&
                                             <Button onClick={this.handleAccept} className="accept-btn green-btn color-btn">
                                                 <FontAwesomeIcon icon={faPhone} size="lg" />
                                             </Button>
                                         }
-
-    &emsp;&emsp;&emsp;
-
-    {(userIsOffer || userOffer) &&
+                                        &emsp;&emsp;&emsp;
+                                        {(userIsOffer || userOffer) &&
                                             <Button onClick={this.handleClose} className="cancel-btn red-btn color-btn">
                                                 <FontAwesomeIcon icon={faPhoneSlash} size="lg" />
                                             </Button>
@@ -1430,18 +1206,14 @@ class ChatContainer extends React.Component {
                             </TabPane>
                         </Tabs>
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}> </Footer>
-                </Layout>
-            </Layout>
+                </Layout >
+            </Layout >
         );
     }
 }
 
-const mapStateToProps = (state) => {
-    const { inforLogin } = state.authentication;
-    return {
-        user: inforLogin.user
-    }
-}
+const mapStateToProps = (state) => ({
+    user: state.authentication.inforLogin.user
+})
 
 export default connect(mapStateToProps)(ChatContainer);

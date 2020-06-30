@@ -34,59 +34,62 @@ const Root = () => {
     return (
         <div>
             <Alert />
-
             <Router history={history}>
                 <Switch>
-                    <Route path="/login" component={Login} />
-                    <Route path="/create-family" component={RegisterFamily} />
-                    <Route path="/create-account" component={RegisterAccount} />
-                    <Route path="/reset-password&:id" component={ResetPassword} />
-                    <Route path="/activate-account&:id" component={ActiveAccount} />
+                    <PrivateRoute.IsNotLogin path="/login" component={Login} />
+                    <PrivateRoute.IsNotLogin path="/create-family" component={RegisterFamily} />
+                    <PrivateRoute.IsNotLogin path="/create-account" component={RegisterAccount} />
+                    <PrivateRoute.IsNotLogin path="/reset-password&:id" component={ResetPassword} />
+                    <PrivateRoute.IsNotLogin path="/activate-account&:id" component={ActiveAccount} />
 
-                    <PrivateRoute path="/tasks/edit-task">
+                    <PrivateRoute.IsLogin path="/tasks/edit-task">
                         <FormCreateTask type="edit"></FormCreateTask>
-                    </PrivateRoute>
-                    <PrivateRoute path='/tasks/add-task'>
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin path='/tasks/add-task'>
                         <FormCreateTask type="add"></FormCreateTask>
-                    </PrivateRoute>
-                    <PrivateRoute path="/tasks" component={Task} />
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin path="/tasks" component={Task} />
 
-                    <PrivateRoute path="/add-task-category">
+                    <PrivateRoute.IsLogin path="/add-task-category">
                         <DataFormTaskCate type="add" />
-                    </PrivateRoute>
-                    <PrivateRoute path="/edit-task-category">
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin path="/edit-task-category">
                         <DataFormTaskCate type="edit" />
-                    </PrivateRoute>
-                    <PrivateRoute path="/task-category" component={TaskCategory} />
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin path="/task-category" component={TaskCategory} />
 
-                    <PrivateRoute exact path="/family" component={Family} />
-                    <PrivateRoute exact path="/family/chat" component={Chat} />
-                    <PrivateRoute exact path="/family/member" component={Member} />
-                    <PrivateRoute exact path="/family/setting" component={Setting} />
-                    <PrivateRoute exact path="/family/add-member" component={AddMember} />
-                    <PrivateRoute exact path="/family/setting/my-account" component={MyAccount} />
-                    <PrivateRoute exact path="/family/setting/update-family" component={UpdateFamily} />
+                    <PrivateRoute.IsLogin exact path="/family" component={Family} />
+                    <PrivateRoute.IsLogin exact path="/family/chat" component={Chat} />
+                    <PrivateRoute.IsLogin exact path="/family/member" component={Member} />
+                    <PrivateRoute.IsLogin exact path="/family/setting" component={Setting} />
+                    <PrivateRoute.IsLogin exact path="/family/add-member" component={AddMember} />
+                    <PrivateRoute.IsLogin exact path="/family/setting/my-account" component={MyAccount} />
+                    <PrivateRoute.IsLogin exact path="/family/setting/update-family" component={UpdateFamily} />
 
-                    <PrivateRoute exact path="/calendar" component={Calendar} />
-                    <PrivateRoute exact path="/calendar/add-event">
+                    <PrivateRoute.IsLogin exact path="/calendar" component={Calendar} />
+                    <PrivateRoute.IsLogin exact path="/calendar/add-event">
                         <AddEvent type="add" />
-                    </PrivateRoute>
-                    <PrivateRoute exact path="/calendar/edit-event">
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin exact path="/calendar/edit-event">
                         <AddEvent type="edit" />
-                    </PrivateRoute>
+                    </PrivateRoute.IsLogin>
 
-                    <PrivateRoute exact path="/rewards" component={Reward} />
-                    <PrivateRoute exact path="/rewards/add-reward" >
+                    <PrivateRoute.IsLogin exact path="/rewards" component={Reward} />
+                    <PrivateRoute.IsLogin exact path="/rewards/add-reward" >
                         <AddReward type="add" />
-                    </PrivateRoute>
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin exact path="/rewards/edit-reward" >
+                        <AddReward type="edit" />
+                    </PrivateRoute.IsLogin>
 
-                    <PrivateRoute exact path="/groceries/add-grocery" >
+                    <PrivateRoute.IsLogin exact path="/groceries/add-grocery" >
                         <DataFormGrocery type="add" />
-                    </PrivateRoute>
-                    <PrivateRoute exact path="/grocery" component={Grocery} />
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin exact path="/grocery" component={Grocery} />
 
-                    <Route exact path="/" component={Home} />
+                    <PrivateRoute.IsNotLogin exact path="/" component={Home} />
                 </Switch>
+
             </Router>
             <ToastContainer />
         </div>

@@ -1,8 +1,8 @@
 import React from "react";
 import firebase from "firebase/app";
 import { connect } from "react-redux";
-import { LeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Layout, Row, Col, Button, Form, Input, Checkbox, Modal, Spin } from "antd";
+import { LeftOutlined, LockOutlined, UserOutlined, ExclamationCircleOutlined, LoadingOutlined } from "@ant-design/icons";
+import { Layout, Button, Form, Input, Checkbox, Modal, Spin } from "antd";
 
 import "./UpdateFamily.css";
 import history from "../../../helpers/history";
@@ -11,32 +11,22 @@ import DashboardMenu from "../../DashboardMenu/DashboardMenu";
 import { alertActions } from "../../../actions/alert.actions";
 import { familyActions } from "../../../actions/family.actions";
 import { memberActions } from "../../../actions/member.actions";
+import Loading from "../../Common/Loading/Loading";
 
 const { Header, Content, Footer } = Layout;
 
 class UpdateFamily extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
-
             newPass: "",
             fImage: null,
-            visible: false,
             currentPass: "",
             confirmPass: "",
             isSetPass: false,
-            stateNewPass: "",
             currentUrlImg: "",
-            emailResetPass: "",
-            errorNewPass: null,
-            stateCurrentPass: "",
-            stateConfirmPass: "",
-            errorCurrentPass: null,
-            errorConfirmPass: null,
-            errorEmailResetPass: null,
-            stateEmailResetPass: "error"
-
+            emailResetFP: "",
+            showResetFPModal: false,
         }
     }
 
@@ -44,93 +34,16 @@ class UpdateFamily extends React.Component {
         history.push("/family/setting");
     }
 
-    showBoxInputEmail = () => {
-        this.setState({ visible: true });
-    };
-
     handleSend = (e) => {
-
         const { requestResetPassword } = this.props;
-        const { stateEmailResetPass, emailResetPass } = this.state;
-
-        if (stateEmailResetPass === "") {
-            this.setState({ visible: false });
-            requestResetPassword({ "email": emailResetPass, "type": "family" });
-        }
+        const { emailResetFP } = this.state;
+        this.setState({ showResetFPModal: false });
+        requestResetPassword({ "email": emailResetFP, "type": "family" });
     };
 
-    handleCancel = (e) => {
-        this.setState({ visible: false });
-    };
-
-    handleChangeInput = (e) => {
-
+    handleInputChange = (e) => {
         const { name, value } = e.target;
-        let stateCurrentPass, stateNewPass, stateConfirmPass;
-        let errorCurrentPass, errorNewPass, errorConfirmPass;
-
-        if (name === "currentPass") {
-            if (value === "") {
-                stateCurrentPass = "error";
-                errorCurrentPass = "Vui lòng nhập mật khẩu hiện tại";
-                this.setState({ stateCurrentPass, errorCurrentPass, currentPass: value });
-            } else {
-                this.setState({ stateCurrentPass: "", errorCurrentPass: null, currentPass: value });
-            }
-        }
-
-        if (name === "newPass") {
-            if (value === "") {
-                stateNewPass = "error";
-                errorNewPass = "Vui lòng nhập mật khẩu mới";
-                this.setState({ stateNewPass, errorNewPass, newPass: value });
-            } else {
-                this.setState({ stateNewPass: "", errorNewPass: null, newPass: value });
-            }
-        }
-
-        if (name === "confirmPass") {
-
-            const { newPass } = this.state;
-            if (value === "" || value !== newPass) {
-                stateConfirmPass = "error";
-                errorConfirmPass = "Vui lòng nhập mật khẩu xác nhận";
-                this.setState({ stateConfirmPass, errorConfirmPass, confirmPass: value });
-            } else {
-                this.setState({ stateConfirmPass: "", errorConfirmPass: null, confirmPass: value });
-            }
-        }
-        if (name === "emailResetPass") {
-
-            if (value !== "") {
-                this.setState({ emailResetPass: value, stateEmailResetPass: "", errorEmailResetPass: null });
-            } else {
-                this.setState({ emailResetPass: value, stateEmailResetPass: "error", errorEmailResetPass: "Vui lòng nhập email" });
-            }
-        }
-    }
-
-    handleClickSetPassword = (e) => {
-
-        if (e.target.checked) {
-            this.setState({ stateNewPass: "error", stateCurrentPass: "error", stateConfirmPass: "error", isSetPass: e.target.checked });
-        } else {
-
-            this.setState({
-                newPass: "",
-                currentPass: "",
-                confirmPass: "",
-                stateNewPass: "",
-                errorNewPass: null,
-                stateCurrentPass: "",
-                stateConfirmPass: "",
-                errorCurrentPass: null,
-                errorConfirmPass: null,
-                isSetPass: e.target.checked
-            });
-
-        }
-
+        this.setState({ [name]: value });
     }
 
     handleChangeImg = (e) => {
@@ -142,91 +55,70 @@ class UpdateFamily extends React.Component {
 
     handleSubmit = (fieldsValue) => {
 
-        const { updateFamily, alertError } = this.props;
-        const { fImage, isSetPass, stateNewPass, stateCurrentPass, stateConfirmPass } = this.state;
+        const { updateFamily, alertError, changePasswordFamily } = this.props;
+        const { fImage, isSetPass, currentPass, newPass, confirmPass } = this.state;
         const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
-        const { user } = inforLogin;
 
-        if (fImage === null && user.fName === fieldsValue.fName && !isSetPass) {
-            alertError("Không có thay đổi");
-        } else if (fImage !== null || user.fName !== fieldsValue.fName) {
-            if (fImage === null) {
-                updateFamily({ "fName": fieldsValue.fName, "fImage": user.fImage });
-            } else {
-                const uploadTask = storage.ref().child(`images/${fImage.name}`).put(fImage);
-                uploadTask.on("state_changed", function (snapshot) {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log(`Upload is ${progress} %done`);
-                    switch (snapshot.state) {
-                        case firebase.storage.TaskState.PAUSED:
-                            console.log("Upload is paused");
-                            break;
-                        case firebase.storage.TaskState.RUNNING:
-                            console.log("Upload is running");
-                            break;
-                    }
-                }, function (error) {
-                    console.log(error);
-                }, async function () {
-                    const urlImg = await uploadTask.snapshot.ref.getDownloadURL();
-                    updateFamily({ "fName": fieldsValue.fName, "fImage": urlImg });
-                });
-            }
+        if (fImage === null && inforLogin.user.fName === fieldsValue.fName && !isSetPass) {
+            return alertError("Không có thay đổi!");
         }
 
-        if (isSetPass) {
-            if (stateNewPass === "" && stateCurrentPass === "" && stateConfirmPass === "") {
-                const { changePasswordFamily } = this.props;
-                const { currentPass, newPass } = this.state;
-                changePasswordFamily({ "oldPassword": currentPass, "newPassword": newPass });
-            }
+        if (isSetPass && newPass !== confirmPass) {
+            return alertError("Mật khẩu xác nhận không khớp!")
         }
+
+        if (fImage) {
+            const uploadTask = storage.ref().child(`images/${fImage.name}`).put(fImage);
+            uploadTask.on("state_changed", function (snapshot) {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(`Upload is ${progress} %done`);
+                switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED:
+                        console.log("Upload is paused");
+                        break;
+                    case firebase.storage.TaskState.RUNNING:
+                        console.log("Upload is running");
+                        break;
+                }
+            }, function (error) {
+                console.log(error);
+            }, async function () {
+                const urlImg = await uploadTask.snapshot.ref.getDownloadURL();
+                updateFamily({ "fName": fieldsValue.fName, "fImage": urlImg });
+            });
+        } else {
+            updateFamily({ "fName": fieldsValue.fName, "fImage": inforLogin.user.fImage });
+        }
+        isSetPass && changePasswordFamily({ "oldPassword": currentPass, "newPassword": newPass });
     }
 
     render() {
 
-        const {
-
-            newPass,
-            visible,
-            isSetPass,
-            currentPass,
-            confirmPass,
-            stateNewPass,
-            errorNewPass,
-            currentUrlImg,
-            emailResetPass,
-            stateCurrentPass,
-            stateConfirmPass,
-            errorCurrentPass,
-            errorConfirmPass,
-            stateEmailResetPass,
-            errorEmailResetPass,
-
-        } = this.state;
-
+        const { newPass, showResetFPModal, isSetPass, currentPass, confirmPass, currentUrlImg, emailResetFP } = this.state;
         const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
-        const { user } = inforLogin;
 
         return (
-            <Layout style={{ minHeight: '100vh' }}>
+            <Layout style={{ position: 'relative', height: "100vh" }}>
                 <DashboardMenu menuItem="1" />
                 <Layout className="site-layout">
                     <Header className="header-container">
                         <div className="left-header-update-family-container">
-                            <Button onClick={this.handleClickBack} size="large" >
-                                <LeftOutlined />
-                            </Button>
+                            <div onClick={this.handleClickBack} className="header__btn-link">
+                                <LeftOutlined className="header__icon-btn" />
+                            </div>
                         </div>
                         <div className="center-header-update-family-container"> Tài Khoản Gia Đình </div>
                         <div style={{ width: "20%" }}></div>
                     </Header>
                     <Content className="content-update-family">
-                        <Form initialValues={{ "fName": user.fName }} size="large" onFinish={this.handleSubmit} style={{ width: '35%' }} >
+                        <Form
+                            onFinish={this.handleSubmit}
+                            initialValues={{ "fName": inforLogin.user.fName }}
+                            size="large" className="update-family-form" >
                             <Form.Item style={{ textAlign: "center", marginTop: 20 }}>
-                                <div className="container-family-img">
-                                    {currentUrlImg === "" ? <img src={user.fImage} className="family-img" /> : <img src={currentUrlImg} className="family-img" />}
-                                    <input onChange={this.handleChangeImg} type="file" className="input-family-img" />
+                                <div className="img-update-family-container">
+                                    <img src={currentUrlImg === "" ? inforLogin.user.fImage : currentUrlImg} className="img-update-family" />
+                                    <input onChange={this.handleChangeImg} type="file" className="input-img-update-family" />
                                 </div>
                             </Form.Item>
 
@@ -235,62 +127,73 @@ class UpdateFamily extends React.Component {
                             </Form.Item>
 
                             <Form.Item >
-                                <Checkbox onChange={this.handleClickSetPassword}>
+                                <Checkbox onChange={(e) => this.setState({ isSetPass: e.target.checked })}>
                                     <span style={{ fontSize: "18px" }}> <LockOutlined /> Đặt lại mật khẩu gia đình </span>
                                 </Checkbox>
                             </Form.Item>
 
-                            <Form.Item validateStatus={stateCurrentPass} help={errorCurrentPass} >
+                            <Form.Item
+                                name={isSetPass ? "currentPass" : null}
+                                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu hiện tại!' }]}
+                            >
                                 <Input
-                                    name="currentPass" value={currentPass} onChange={this.handleChangeInput}
+                                    name="currentPass" value={currentPass} onChange={this.handleInputChange}
                                     placeholder="Mật khẩu hiện tại" type="password" disabled={!isSetPass}
                                 />
                             </Form.Item>
 
-                            <Form.Item validateStatus={stateNewPass} help={errorNewPass} >
+                            <Form.Item
+                                name={isSetPass ? "newPass" : null}
+                                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu mới!' }]}
+                            >
                                 <Input
-                                    name="newPass" value={newPass} onChange={this.handleChangeInput}
+                                    name="newPass" value={newPass} onChange={this.handleInputChange}
                                     placeholder="Mật khẩu mới" type="password" disabled={!isSetPass}
                                 />
                             </Form.Item>
 
-                            <Form.Item validateStatus={stateConfirmPass} help={errorConfirmPass}>
+                            <Form.Item
+                                name={isSetPass ? "confirmPass" : null}
+                                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu xác nhận!' }]}
+                            >
                                 <Input
-                                    name="confirmPass" value={confirmPass} onChange={this.handleChangeInput}
+                                    name="confirmPass" value={confirmPass} onChange={this.handleInputChange}
                                     placeholder="Mật khẩu xác nhận" type="password" disabled={!isSetPass}
                                 />
                             </Form.Item>
 
-                            <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
+                            <Form.Item>
+                                <div onClick={() => this.setState({ showResetFPModal: true })} className="title-forgot"> Quên mật khẩu? </div>
+                            </Form.Item>
 
-                            <Modal
-                                onOk={this.handleSend}
-                                onCancel={this.handleCancel}
-                                closable={false} visible={visible}
-                                title="Please input email to reset password!"
-                                footer={[
-                                    <Button key="back" onClick={this.handleCancel}> Đóng </Button>,
-                                    <Button key="submit" type="primary" onClick={this.handleSend}> Gửi </Button>
-                                ]}
-                            >
-                                <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
-                                    <Input
-                                        name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
-                                        prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
-                                    />
-                                </Form.Item>
+                            <Modal title={null} footer={null} closable={false} visible={showResetFPModal} width={400}>
+                                <div className="title-reset-family-pass-form" >
+                                    <ExclamationCircleOutlined style={{ color: '#1890ff' }} />
+                                    &nbsp;
+                                    Vui lòng nhập email để đặt lại mật khẩu!
+                                </div>
+                                <Form onFinish={this.handleSubmitResetFP}>
+                                    <Form.Item name="familyPassword" rules={[{ required: true, message: "Vui lòng nhập email" }]}>
+                                        <Input
+                                            name="email" value={emailResetFP} onChange={this.handleInputChange}
+                                            prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
+                                        />
+                                    </Form.Item>
+                                    <div className="button-modal-update-family-container">
+                                        <Button key="close" onClick={() => this.setState({ showResetFPModal: false })}> Đóng </Button>
+                                        &emsp;
+                                        <Button key="submit" type="primary" htmlType="submit"> Gửi </Button>
+                                    </div>
+                                </Form>
                             </Modal>
-                            <br /><br />
-                            <Form.Item style={{ textAlign: "center" }}>
-                                <Button type="primary" htmlType="submit" style={{ width: '100%' }}> Lưu </Button>
-                                {this.props.changingFamilyPassword && !this.props.changedFamilyPassword &&
-                                    <Spin tip="Đang xử lý..." />
-                                }
+
+                            <Form.Item >
+                                <Button type="primary" htmlType="submit" style={{ width: '100%', fontSize: 18 }}> Lưu Thay Đổi </Button>
                             </Form.Item>
                         </Form>
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}></Footer>
                 </Layout>
+                {this.props.changingFamilyPassword && !this.props.changedFamilyPassword && <Loading />}
             </Layout >
         );
     }

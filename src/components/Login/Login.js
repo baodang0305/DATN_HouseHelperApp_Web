@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import FormItem from 'antd/lib/form/FormItem';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Form, Input, Button, Checkbox, Modal, Spin } from 'antd';
+import { UserOutlined, LockOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Modal, Spin } from 'antd';
 
 import './Login.css';
 import { memberActions } from '../../actions/member.actions';
@@ -15,94 +15,47 @@ class Login extends React.Component {
         this.state = {
             email: "",
             password: "",
-            visible: false,
-            remember: true,
+            visibleModal: false,
             emailResetPass: "",
-            errorEmailResetPass: null,
-            stateEmailResetPass: "error"
+            isSubmitForgotForm: false,
         }
     }
 
     handleChangeInput = (e) => {
-
         const { name, value } = e.target;
-
         this.setState({ [name]: value });
-
-        if (name === "emailResetPass") {
-
-            if (value === "") {
-
-                this.setState({ stateEmailResetPass: "error",  errorEmailResetPass: "Vui lòng nhập email" });
-
-            } else {
-
-                this.setState({ stateEmailResetPass: "", errorEmailResetPass: null });
-            }
-
-        }
-
-    }
-
-    handleChangeRemember = (e) => {
-
-        this.setState({ remember: e.target.checked });
-
     }
 
     handleSubmit = () => {
-
-        const { email, password, remember } = this.state;
+        const { email, password } = this.state;
         const { login } = this.props;
-        login(email, password, remember);
-
+        login(email, password);
     }
 
-    showBoxInputEmail = () => {
-
-        this.setState({ visible: true });
-
-    };
-
     handleSend = (e) => {
-
         const { requestResetPassword } = this.props;
-        const { stateEmailResetPass, emailResetPass } = this.state;
-
-        if (stateEmailResetPass === "") {
-
-            this.setState({ visible: false });
+        const { emailResetPass } = this.state;
+        if (emailResetPass) {
+            this.setState({ visibleModal: false });
             requestResetPassword({ "email": emailResetPass, "type": "member" });
-
+        } else {
+            this.setState({ isSubmitForgotForm: true });
         }
-
-    };
-
-    handleCancel = (e) => {
-
-        this.setState({ visible: false });
 
     };
 
     render() {
-
-        const { email, password, emailResetPass, visible, stateEmailResetPass, errorEmailResetPass } = this.state;
-
+        const { email, password, emailResetPass, visibleModal, isSubmitForgotForm } = this.state;
         return (
-
             <div className="container-login">
-
                 <div className="title-login">  Đăng Nhập </div>
-
-                <Form onFinish={this.handleSubmit} initialValues={{ remember: true }}>
-
+                <Form onFinish={this.handleSubmit} >
                     <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]} >
                         <Input
                             name="email" value={email} onChange={this.handleChangeInput}
                             prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" type="text"
                         />
                     </Form.Item>
-
                     <Form.Item name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]} >
                         <Input
                             name="password" value={password} onChange={this.handleChangeInput}
@@ -110,57 +63,49 @@ class Login extends React.Component {
                             type="password" placeholder="Mật khẩu" size="large"
                         />
                     </Form.Item>
-
                     <Form.Item>
-                        <Form.Item name="remember" valuePropName="checked" noStyle>
-                            <Checkbox onChange={this.handleChangeRemember}>Ghi nhớ!</Checkbox>
-                        </Form.Item>
-                        <div onClick={this.showBoxInputEmail} className="login-form-forgot title-forgot"> Quên mật khẩu? </div>
-                        <Modal
-                            onOk={this.handleSend}
-                            onCancel={this.handleCancel}
-                            closable={false} visible={visible}
-                            title="Please input email to reset password!"
-                            footer={[
-                                <Button key="back" onClick={this.handleCancel}> Đóng </Button>,
-                                <Button key="submit" type="primary" onClick={this.handleSend}> Gửi </Button>
-                            ]}
-                        >
-                            <Form.Item validateStatus={stateEmailResetPass} help={errorEmailResetPass}>
-                                <Input
-                                    name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
-                                    prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
-                                />
-                            </Form.Item>
+                        <div onClick={() => this.setState({ visibleModal: true })} className="text-forgot"> Quên mật khẩu? </div>
+                        <Modal title={null} footer={null} closable={false} visible={visibleModal} width={400}>
+                            <div className="title-forgot-form" >
+                                <ExclamationCircleOutlined style={{ color: '#1890ff' }} />
+                                &nbsp;
+                                Please input email to reset password!
+                            </div>
+                            <Form onFinish={this.handleSend}>
+                                <div className="email-input-container">
+                                    <Input
+                                        name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
+                                        prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
+                                    />
+                                    {isSubmitForgotForm && emailResetPass === "" && <div className="error-text-forgot-form">Vui lòng nhập email</div>}
+                                </div>
+                                <div className="button-forgot-form-container">
+                                    <Button onClick={() => this.setState({ visibleModal: false })} className="button-item-forgot-form"> Đóng </Button>
+                                    <Button htmlType="submit" type="primary" className="button-item-forgot-form"> Gửi </Button>
+                                </div>
+                            </Form>
                         </Modal>
-
                     </Form.Item>
-
                     <Form.Item style={{ textAlign: "center" }}>
                         <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost> Đăng nhập </Button>
                         {this.props.loggingIn && !this.props.loggedIn &&
                             <Spin tip="Loading..." />
                         }
                     </Form.Item>
-
                     <FormItem className="register-link">
                         <Link to="/create-family">Tạo gia đình!</Link>
                     </FormItem>
-
                 </Form>
-
             </div>
-
         );
-
     }
 };
 
 const mapStateToProps = (state) => {
     const { loggingIn, loggedIn } = state.authentication;
-    return { 
+    return {
         loggedIn,
-        loggingIn 
+        loggingIn
     };
 }
 

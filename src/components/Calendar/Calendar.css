@@ -41,19 +41,25 @@
 .first-row-content-calendar-container {
     display: flex;
     margin: 10px;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: white;
     padding: 10px;
 }
 
 .list-user-calendar-container {
+    width: 100%;
     display: flex;
-    overflow-x: hidden;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .user-calendar-container {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0px;
 }
 
 .name-user-calendar {
@@ -104,7 +110,7 @@
 .calendar__show-event {
     display: none;
     width: 100%;
-    border-bottom: 1px solid #EDEDED;
+    border-bottom: 1px solid #ededed;
 }
 
 .calendar__show-event .ant-divider {
@@ -172,8 +178,11 @@
     }
 }
 
-@media all and (min-width: 600px) and (max-width: 1023px) {}
+@media all and (min-width: 600px) and (max-width: 1023px) {
+}
 
-@media all and (min-width: 1024px) {}
+@media all and (min-width: 1024px) {
+}
 
-@media all and (min-width: 1280px) {}
+@media all and (min-width: 1280px) {
+}

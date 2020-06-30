@@ -1,0 +1,102 @@
+.avatars-default-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50% !important;
+    position: relative;
+}
+
+.avatar::before {
+    width: unset !important;
+}
+
+.camera-avatar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar:hover {
+    transform: translateY(-2px);
+}
+
+.camera-avatar:hover {
+    box-shadow: 0px 0px 20px #efefef;
+}
+
+.red-avatar:hover {
+    box-shadow: 0px 0px 20px #ec6764;
+}
+
+.yellow-avatar:hover {
+    box-shadow: 0px 0px 20px #f8d769;
+}
+
+.orange-avatar:hover {
+    box-shadow: 0px 0px 20px #f2ac67;
+}
+
+.purple-avatar:hover {
+    box-shadow: 0px 0px 20px #bb80b7;
+}
+
+.blue-avatar:hover {
+    box-shadow: 0px 0px 20px #90b0dc;
+}
+
+.green-avatar:hover {
+    box-shadow: 0px 0px 20px #9dcc80;
+}
+
+.avatar::after {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    border-radius: 50% !important;
+    top: 0px;
+    left: 0px;
+    z-index: -1;
+    transition: all 1s;
+}
+
+.camera-avatar::after {
+    background-color: #a29b9b;
+}
+
+.red-avatar::after {
+    background-color: #ec6764;
+}
+
+.yellow-avatar::after {
+    background-color: #f8d769;
+}
+
+.orange-avatar::after {
+    background-color: #f2ac67;
+}
+
+.purple-avatar::after {
+    background-color: #bb80b7;
+}
+
+.blue-avatar::after {
+    background-color: #90b0dc;
+}
+
+.green-avatar::after {
+    background-color: #9dcc80;
+}
+
+.avatar:hover::after {
+    transform: scale(2);
+    opacity: 0.1;
+}

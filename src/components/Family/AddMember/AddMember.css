@@ -26,7 +26,24 @@
   background-color: white;
 }
 
-.img-profile {
+.img-add-member-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.input-img-add-member {
+  position: absolute;
+  top: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
+.img-add-member {
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -39,106 +56,6 @@ button.upload-container:hover::after {
   color: black;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50% !important;
-  position: relative;
-}
-
-.avatar::before {
-  width: unset !important;
-}
-
-.camera-icon {
-  position: absolute;
-  left: 11px;
-  top: 11px;
-  color: black;
-}
-
-.camera-avatar {
-  background-color: #efefef;
-}
-
-.avatar:hover {
-  transform: translateY(-3px);
-}
-
-.camera-avatar:hover {
-  box-shadow: 0px 0px 40px #efefef;
-}
-
-.avatar1:hover {
-  box-shadow: 0px 0px 40px #f7c2c1;
-}
-
-.avatar2:hover {
-  box-shadow: 0px 0px 40px #fcefc3;
-}
-
-.avatar3:hover {
-  box-shadow: 0px 0px 40px #fadec2;
-}
-
-.avatar4:hover {
-  box-shadow: 0px 0px 40px #e4cce2;
-}
-
-.avatar5:hover {
-  box-shadow: 0px 0px 40px #d3dff1;
-}
-
-.avatar6:hover {
-  box-shadow: 0px 0px 40px #9dcc80;
-}
-
-.avatar::after {
-  content: '';
-  display: inline-block;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  border-radius: 50% !important;
-  top: 0px;
-  left: 0px;
-  z-index: -1;
-  transition: all 1s;
-}
-
-.camera-avatar::after {
-  background-color: #a29b9b;
-}
-
-.avatar1::after {
-  background-color: #f14743;
-}
-
-.avatar2::after {
-  background-color: #efbe18;
-}
-
-.avatar3::after {
-  background-color: #f38110;
-}
-
-.avatar4::after {
-  background-color: #d652cb;
-}
-
-.avatar5::after {
-  background-color: #528fea;
-}
-
-.avatar6::after {
-  background-color: #61c722;
-}
-
-.avatar:hover::after {
-  transform: scale(2);
-  opacity: 0;
-}
-
 .fa-user,
 .fa-envelope,
 .fa-birthday-cake {
@@ -147,12 +64,11 @@ button.upload-container:hover::after {
 
 .add-member__form {
   width: 35%;
-
 }
 
 @media all and (min-width: 320px) and (max-width: 599px) {
   .add-member__form {
-    width: 90%;
+    width: 70%;
   }
 
   .left-header-add-member-container {
@@ -176,10 +92,12 @@ button.upload-container:hover::after {
 
 @media all and (min-width: 600px) and (max-width: 1023px) {
   .add-member__form {
-    width: 60%;
+    width: 70%;
   }
 }
 
-@media all and (min-width: 1024px) {}
+@media all and (min-width: 1024px) {
+}
 
-@media all and (min-width: 1280px) {}
+@media all and (min-width: 1280px) {
+}

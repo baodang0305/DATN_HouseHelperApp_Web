@@ -3,7 +3,7 @@ import apiUrlTypes from "../helpers/apiURL";
 import { alertActions } from "../actions/alert.actions";
 import { memberConstants } from "../constants/member.constants";
 
-const login = (email, password, remember) => {
+const login = (email, password) => {
 
     return dispatch => {
         dispatch(request());
@@ -17,9 +17,7 @@ const login = (email, password, remember) => {
                     const message = data.message;
                     if (data.status === "success") {
                         const inforLogin = { "user": data.user, "token": data.token }
-                        if (remember) {
-                            localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
-                        }
+                        localStorage.setItem("inforLogin", JSON.stringify(inforLogin));
                         dispatch(success(inforLogin));
                         dispatch(alertActions.success(message));
                         history.push("/family");
@@ -209,6 +207,8 @@ const requestResetPassword = ({ email, type }) => {
                 .then(data => {
                     if (data.status === "success") {
                         dispatch(alertActions.success(data.message));
+                        localStorage.removeItem("inforLogin");
+                        history.push("/login");
                     } else {
                         dispatch(alertActions.error(data.message));
                     }

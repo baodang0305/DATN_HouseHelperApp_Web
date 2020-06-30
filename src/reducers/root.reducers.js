@@ -8,6 +8,7 @@ import calendar from './calendar.reducers';
 import authentication from './authentication.reducers';
 import grocery from './grocery.reducers';
 import groceryType from './grocery.type.reducers';
+import reward from './reward.reducers';
 
 const rootReducer = combineReducers({
     taskCate,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     calendar,
     authentication,
     grocery,
-    groceryType
+    groceryType,
+    reward,
 });
 export default rootReducer;

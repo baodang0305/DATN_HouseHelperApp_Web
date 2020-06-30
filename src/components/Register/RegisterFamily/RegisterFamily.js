@@ -16,8 +16,7 @@ class RegisterFamily extends Component {
 			fPassword: "",
 			fImage: null,
 			fConfirmPassword: "",
-			statusConfirmPass: "",
-			confirmPassValidate: null,
+			isSubmited: false,
 			currentUrlImg: indexConstants.FAMILY_IMG_DEFAULT
 		}
 	}
@@ -28,7 +27,10 @@ class RegisterFamily extends Component {
 	}
 
 	handleChangeImg = (e) => {
-		this.setState({ currentUrlImg: URL.createObjectURL(e.target.files[0]), fImage: e.target.files[0] });
+		this.setState({
+			currentUrlImg: URL.createObjectURL(e.target.files[0]),
+			fImage: e.target.files[0]
+		});
 	}
 
 	handleClickBack = () => {
@@ -36,94 +38,76 @@ class RegisterFamily extends Component {
 	}
 
 	handleSubmit = () => {
-
 		const { fPassword, fConfirmPassword, fImage, fName } = this.state;
-		if (fPassword === fConfirmPassword) {
+		if (fPassword !== "" && fPassword === fConfirmPassword) {
 			if (!fImage) {
 				const fImgUrl = indexConstants.FAMILY_IMG_DEFAULT;
-				history.push("/create-account", {fName, fPassword, fImgUrl});
+				history.push("/create-account", { fName, fPassword, fImgUrl });
 			} else {
 				const uploadTask = storage.ref(`images/${fImage.name}`).put(fImage);
 				uploadTask.on('state_changed',
-				(snapshot) => {
+					(snapshot) => {
 
-				},
-				(error)=> {
-					console.log(error);
-				},
-				async () => {
-					const fImgUrl = await storage.ref('images').child(fImage.name).getDownloadURL();
-					history.push("/create-account", {fName, fPassword, fImgUrl});
-				});
+					},
+					(error) => {
+						console.log(error);
+					},
+					async () => {
+						const fImgUrl = await storage.ref('images').child(fImage.name).getDownloadURL();
+						history.push("/create-account", { fName, fPassword, fImgUrl });
+					});
 			}
 		} else {
-			this.setState({ statusConfirmPass: "error", confirmPassValidate: "Mật khẩu xác nhận không đúng!" });
+			this.setState({ isSubmited: true });
 		}
 	}
 
 	render() {
-
-		const { fName, fPassword, fConfirmPassword, currentUrlImg, statusConfirmPass, confirmPassValidate } = this.state;
-
+		const { fName, fPassword, fConfirmPassword, currentUrlImg, isSubmited } = this.state;
 		return (
-
-			<div className="body-container">
-
+			<div className="body-register-family">
 				<div className="container-create-family">
-
-					<div className="title-form-create-family">Đăng Kí Gia Đình</div>
-
-					<Form onFinish={this.handleSubmit} size="large" className="form-create-family" >
-						
-						<Form.Item style={{textAlign: "center"}}>
+					<div className="title-create-family-form">Đăng Kí Gia Đình</div>
+					<Form onFinish={this.handleSubmit} size="large" className="create-family-form" >
+						<div className="form-item-register-family">
 							<div className="container-family-img">
 								<img src={currentUrlImg} className="family-img" />
-								<input onChange={this.handleChangeImg} type="file" className="input-family-img"/> 
+								<input onChange={this.handleChangeImg} type="file" className="input-family-img" />
 							</div>
-						</Form.Item>
-
-						<Form.Item name="name" rules={[{ required: true, message: 'Vui lòng nhập tên!' }]} >
-							<Input 
+						</div>
+						<div className="form-item-register-family">
+							<Input
 								name="fName" value={fName} onChange={this.handleChangeInput}
-								placeholder="Tên gia đình"  prefix={<UserOutlined className="site-form-item-icon" />} 
+								placeholder="Tên gia đình" prefix={<UserOutlined className="site-form-item-icon" />}
 							/>
-						</Form.Item>
-
-						<Form.Item name="password" rules={[ { required: true, message: 'Vui lòng nhập mật khẩu!' }]}>
+							{isSubmited && fName === "" && <div className="error-message-register-family-form">Vui lòng nhập tên</div>}
+						</div>
+						<div className="form-item-register-family">
 							<Input
 								type="password" placeholder="Mật khẩu"
 								prefix={<LockOutlined className="site-form-item-icon" />}
 								name="fPassword" value={fPassword} onChange={this.handleChangeInput}
 							/>
-						</Form.Item>
-
-						<Form.Item 
-							validateStatus={statusConfirmPass}
-							help={confirmPassValidate}
-							name="confirm" rules={[{ required: true , message: "Vui lòng nhập mật khẩu xác nhận!" }]} 
-						>
+							{isSubmited && fPassword === "" && <div className="error-message-register-family-form">Vui lòng nhập mật khẩu</div>}
+						</div>
+						<div className="form-item-register-family">
 							<Input
 								type="password" placeholder="Mật khẩu xác nhận"
 								prefix={<LockOutlined className="site-form-item-icon" />}
 								name="fConfirmPassword" value={fConfirmPassword} onChange={this.handleChangeInput}
 							/>
-						</Form.Item>
-
-						<Form.Item >
-							<Row>
-								<Col span={11}> <Button onClick={this.handleClickBack} className="button-back" > Quay lại </Button> </Col>
-								<Col span={11} offset={2}> <Button className="button-next" type="primary" htmlType="submit"> Tiếp theo </Button> </Col>
-							</Row>
-						</Form.Item> 
-
+							{isSubmited && (fConfirmPassword === "" || fConfirmPassword !== fPassword) &&
+								<div className="error-message-register-family-form">Mật khẩu xác nhận chưa đúng</div>
+							}
+						</div>
+						<div className="form-item-register-family button-register-family-container">
+							<Button onClick={this.handleClickBack} className="button-item-register-family-form" > Quay lại </Button>
+							<Button type="primary" htmlType="submit" className="button-item-register-family-form"> Tiếp theo </Button>
+						</div>
 					</Form>
-
 				</div>
-
 			</div>
-
 		);
-		
 	}
 }
 

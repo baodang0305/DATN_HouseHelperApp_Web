@@ -1,10 +1,55 @@
-.container-profile-img {
+.body-register-account {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.register-account-container {
+    margin: auto;
+    width: 400px;
+    border: groove thin;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.form-register-account {
+    width: 100%;
+    padding: 20px 30px;
+}
+
+.title-register-account {
+    text-align: center;
+    font-size: 25px;
+    margin: 10px 0px;
+}
+
+.form-item-register-account {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.form-item-role-register-account {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-img-account-container {
     position: relative;
     display: flex;
     justify-content: center;
 }
 
-.input-profile-img {
+.account-img-profile {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: relative;
+    border: groove thin;
+}
+
+.input-profile-img-account {
     position: absolute;
     top: 0;
     width: 80px;
@@ -15,26 +60,13 @@
     filter: alpha(opacity=0);
 }
 
-.register-account-container {
-    height: 100vh;
+.button-register-account-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.register-account-form {
-    width: 400px;
-    margin: auto;
-    border: groove thin;
-	border-radius: 5px;
-	background-color: #f7f7f7;
-	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); 
+.button-item-register-account-form {
+    width: 48%;
+    margin-top: 20px;
 }
-
-.title-create-account {
-    text-align: center;
-    font-size: 25px;
-    margin-top: 10px;
-}
-
-
-
