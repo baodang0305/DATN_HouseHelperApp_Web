@@ -7,30 +7,75 @@ import { RedoOutlined, ExclamationCircleOutlined, LoadingOutlined, ProfileOutlin
 
 import { familyActions } from "../../actions/family.actions";
 import { groceryActions } from "../../actions/grocery.actions";
+import { groceryTypeActions } from "../../actions/grocery.type.actions";
 import socketIOClient from "socket.io-client";
-import apiUrlTypes from '../../helpers/apiURL'
+import apiUrlTypes from '../../helpers/apiURL';
 import HeaderMain from "../Common/HeaderMain/HeaderMain";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
+import GroceryList from "./GroceryList/GroceryList";
+import FilterMain from "../Common/FilterMain/FilterMain";
 const { Panel } = Collapse;
 const { Search } = Input;
 const { Header, Content, Footer } = Layout;
 const { confirm } = Modal;
+const { TabPane } = Tabs;
 let socket;
 
 class Grocery extends React.Component {
     state = {
-        isActing: false,
-        isActive: false,
-        idClickedGrocery: null,
-        idCheckBoughtItemOfGrocery: null,
+        allGroceriesState: null,
+        quickFilter: 'all',
+        tabMode: 'todo'
     }
 
-    componentWillMount() {
-        const { getListMembers, listMembers, getAllGroceries, allGroceries } = this.props;
+    getData() {
+        const { getListMembers, listMembers, getAllGroceries, allGroceries, getAllGroceryTypes } = this.props;
         getListMembers();
         getAllGroceries();
+        getAllGroceryTypes();
+
     }
 
+    componentDidMount() {
+        this.getData();
+        socket = socketIOClient(apiUrlTypes.heroku);
+        socket.on("connect", () => {
+            const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
+            socket.emit("authenticate", { "token": inforLogin.token });
+        });
+        socket.on("authenticate", (res) => {
+            console.log(res.message);
+        });
+
+        socket.on("ShoppingList", data => {
+            // data={type:"addShoppingList"}
+            switch (data.type) {
+                case 'addShoppingList': {
+                    this.getData();
+                    break;
+                }
+                case 'editShoppingList': {
+                    this.getData();
+                    break;
+                }
+                case 'deleteShoppingList': {
+                    this.getData();
+                    break;
+                }
+                case 'checkBoughtShoppingList': {
+                    this.getData();
+                    break;
+                }
+                default:
+                    break;
+            }
+        });
+
+
+    }
+    componentWillUnmount() {
+        socket && socket.connected && socket.close();
+    }
     shouldComponentRender() {
         const { loadingMember, loadingGrocery } = this.props;
         if (loadingMember || loadingGrocery)
@@ -38,53 +83,61 @@ class Grocery extends React.Component {
         return true
     }
 
-    handleDeleteGrocery = (slID) => {
-        const { deleteGrocery } = this.props;
-        deleteGrocery(slID);
-    }
-
-    showDeleteConfirm = (type, slID) => {
-        const { deleteGrocery } = this.props;
-        confirm({
-            title: 'Are you sure delete this task?',
-            icon: <ExclamationCircleOutlined />,
-            content: 'Some descriptions',
-            okText: 'Có',
-            okType: 'danger',
-            cancelText: 'Không',
-            onOk() {
-                if (type === 'delete') {
-                    deleteGrocery(slID);
-                }
-            },
-            onCancel: () => {
-                this.setState({ isActing: false });
-            },
-        });
-    }
-
-    handleClickExpandGrocery = (idClickedGrocery) => {
-        const { isActive } = this.state;
-        this.setState({ isActive: !isActive, idClickedGrocery })
-    }
-
-    handleCheckBoughtItem = (slID, islID) => {
-        const { checkBoughtItem } = this.props;
-        checkBoughtItem(slID, islID);
-        this.setState({ idCheckBoughtItemOfGrocery: islID });
-    }
-
     checkIsListComplete = (listShopping) => {
         var isCompletedList = false;
-        if (listShopping.every(itemInList => itemInList.isChecked === true)) {
-            isCompletedList = true;
+        if (listShopping.length > 0) {
+            if (listShopping.every(itemInList => itemInList.isChecked === true)) {
+                isCompletedList = true;
+            }
         }
         return isCompletedList;
     }
 
+    handleSelectFilter = (filter) => {
+        const { allGroceries } = this.props;
+
+        if (filter !== 'all') {
+            if (allGroceries) {
+                var tempGroceryFilter = allGroceries.filter(itemGrocery => {
+                    var result = false;
+                    if (itemGrocery.stID && itemGrocery.stID._id === filter) {
+                        result = true;
+                    }
+                    else if (itemGrocery.assign) {
+                        if (itemGrocery.assign._id === filter) {
+                            result = true;
+                        }
+                    }
+                    return result;
+                })
+                this.setState({ allGroceriesState: tempGroceryFilter });
+            }
+        } else {
+            this.setState({ allGroceriesState: allGroceries });
+        }
+
+    }
+
+    handleClickQuickFilter = (quickFilterMode) => {
+        const { quickFilter } = this.state;
+        const { user, allGroceries } = this.props;
+        if (quickFilterMode === 'all') {
+            this.setState({ quickFilter: quickFilterMode, allGroceriesState: allGroceries });
+        } else if (quickFilterMode === 'recentUser') {
+            this.setState({ quickFilter: quickFilterMode, allGroceriesState: allGroceries.filter(item => item.assign && item.assign._id === user._id) })
+        }
+
+    }
+    handleOnChangeTabMode = (activeKey) => {
+        this.setState({ tabMode: activeKey });
+    }
+
     render() {
-        const { listMembers, allGroceries, loadingCheckBought } = this.props;
-        const { isActing, isActive, idClickedGrocery, idCheckBoughtItemOfGrocery } = this.state;
+        const { listMembers, allGroceryTypes, allGroceries, user } = this.props;
+        const { allGroceriesState, quickFilter, tabMode } = this.state;
+        console.log(allGroceriesState);
+        let dataGroceries = allGroceriesState ? allGroceriesState : allGroceries;
+        console.log(dataGroceries);
 
         return (
             <Layout style={{
@@ -102,230 +155,44 @@ class Grocery extends React.Component {
                             {this.shouldComponentRender()
                                 ? <div>
                                     <div className="grocery__filter">
+                                        <FilterMain tab={tabMode === 'completed' ? 'shoppingList' : null} allMembers={listMembers} allCates={allGroceryTypes} handleSelectFilter={this.handleSelectFilter} />
                                     </div>
-                                    <div className="grocery__main-data">
+                                    {/* <div className="grocery__main-data">
                                         <Divider orientation="center" className="grocery__divider">Cần mua</Divider>
-                                        <List dataSource={allGroceries.filter(itemGrocery => !this.checkIsListComplete(itemGrocery.listItems))}
-                                            renderItem={itemGrocery => (
-                                                <div className="grocery__data-grocery">
-                                                    <div className="grocery__header-container" >
-                                                        <div className="grocery__des-list" onClick={() => this.handleClickExpandGrocery(itemGrocery._id)}>
-                                                            <CaretRightOutlined style={{ marginRight: 10 }} rotate={isActive && itemGrocery._id === idClickedGrocery ? 90 : 0} />
-                                                            <div className="grocery__title-list">{itemGrocery.name}</div>
-                                                            <span>&nbsp;-&nbsp;</span>
-                                                            {this.checkIsListComplete(itemGrocery.listItems)
-                                                                ? <div className="grocery__number-item grocery__is-completed">{itemGrocery.listItems.length}</div>
-                                                                : <div className="grocery__number-item ">{itemGrocery.listItems.length}</div>}
-
-                                                        </div>
-
-                                                        <div className="grocery__relative-info">
-                                                            <div className="grocery__assign-member">
-                                                                {itemGrocery.assign
-                                                                    ? <Tooltip placement="bottom" title={itemGrocery.assign.mName}>
-                                                                        <Avatar src={itemGrocery.assign.mAvatar.image}></Avatar>
-                                                                    </Tooltip>
-                                                                    : <div className="grocery__action">
-                                                                        <SolutionOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Nhận ngay</div>
-                                                                    </div>}
-                                                            </div>
-
-                                                            <div className="grocery__option-actions grocery__actions-list">
-
-                                                                {/* <div className="grocery__action">
-                                                                        <PaperClipOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Ghim</div>
-                                                                    </div>
-                                                                    <div className="grocery__action" style={{ color: '#d4b106' }}>
-                                                                        <FieldTimeOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Dời hạn</div>
-                                                                    </div> */}
-                                                                {this.checkIsListComplete(itemGrocery.listItems)
-                                                                    ? <div className="grocery__action" style={{ color: '#d4b106' }}>
-                                                                        <RedoOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Tạo lại</div>
-                                                                    </div>
-                                                                    : <>
-                                                                        <div className="grocery__action" style={{ color: '#13c2c2' }}>
-                                                                            <EditOutlined className="grocery__icon-action" />
-                                                                            <div className="grocery__title-action" >Sửa</div>
-                                                                        </div>
-                                                                        <div className="grocery__action" style={{ color: '#EC6764' }} onClick={() => {
-                                                                            this.setState({ isActing: true });
-                                                                            this.showDeleteConfirm('delete', itemGrocery._id)
-                                                                        }}>
-                                                                            <DeleteOutlined className="grocery__icon-action" />
-                                                                            <div className="grocery__title-action">Xóa</div>
-                                                                        </div>
-                                                                    </>}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {isActive && itemGrocery._id === idClickedGrocery ?
-                                                        <div className="grocery__list-item-container">
-                                                            <List
-                                                                dataSource={itemGrocery.listItems}
-                                                                renderItem={item =>
-                                                                    <List.Item className="grocery__item-container">
-                                                                        <div className="grocery__quick-check-container">
-                                                                            {loadingCheckBought && item._id === idCheckBoughtItemOfGrocery ?
-                                                                                <LoadingOutlined style={{ fontSize: 28, color: '#2985ff' }} />
-                                                                                : <div className="grocery__quick-check">
-                                                                                    <input checked={item.isChecked ? true : false}
-                                                                                        onChange={(e) => this.handleCheckBoughtItem(itemGrocery._id, item._id)}
-                                                                                        type="checkbox" key={item.name} id={`${item.name}`} className="check-box-task" />
-                                                                                    <label htmlFor={`${item.name}`}></label>
-                                                                                </div>}
-
-                                                                        </div>
-                                                                        <div className="grocery__info-item">
-                                                                            <div className="grocery__des-info-item">
-                                                                                <div className="grocery__name-item">{item.name}</div>
-                                                                                <div className="grocery__note-item">{item.details}</div>
-                                                                            </div>
-                                                                            <div className="grocery__image-item" style={{ height: '100%' }}>
-                                                                                <img src={item.photo} style={{ height: '100%', objectFit: 'contain' }}></img>
-                                                                            </div>
-                                                                            {item.isChecked ? null :
-                                                                                <div className="grocery__action-item">
-                                                                                    <div className="grocery__action" style={{ color: '#13c2c2' }}>
-                                                                                        <EditOutlined className="grocery__icon-action" />
-                                                                                        <div className="grocery__title-action" >Sửa</div>
-                                                                                    </div>
-                                                                                    <div className="grocery__action" style={{ color: '#EC6764' }}>
-                                                                                        <DeleteOutlined className="grocery__icon-action" />
-                                                                                        <div className="grocery__title-action">Xóa</div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-
-                                                                        </div>
-
-                                                                    </List.Item>
-                                                                } />
-                                                        </div>
-                                                        : null
-                                                    }
-                                                </div>
-                                            )}
-                                        />
-
-
+                                        <GroceryList allGroceries={allGroceries.filter(itemGrocery => !this.checkIsListComplete(itemGrocery.listItems))} />
                                     </div>
                                     <div className="grocery__main-data">
                                         <Divider orientation="center" className="grocery__divider">Đã hoàn thành</Divider>
-                                        <List dataSource={allGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))}
-                                            renderItem={itemGrocery => (
-                                                <div className="grocery__data-grocery">
-                                                    <div className="grocery__header-container" >
-                                                        <div className="grocery__des-list" onClick={() => this.handleClickExpandGrocery(itemGrocery._id)}>
-                                                            <CaretRightOutlined style={{ marginRight: 10 }} rotate={isActive && itemGrocery._id === idClickedGrocery ? 90 : 0} />
-                                                            <div className="grocery__title-list">{itemGrocery.name}</div>
-                                                            <span>&nbsp;-&nbsp;</span>
-                                                            {this.checkIsListComplete(itemGrocery.listItems)
-                                                                ? <div className="grocery__number-item grocery__is-completed">{itemGrocery.listItems.length}</div>
-                                                                : <div className="grocery__number-item ">{itemGrocery.listItems.length}</div>}
+                                        <GroceryList allGroceries={allGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))} />
+                                    </div> */}
 
-                                                        </div>
-
-                                                        <div className="grocery__relative-info">
-                                                            <div className="grocery__assign-member">
-                                                                {itemGrocery.assign
-                                                                    ? <Tooltip placement="bottom" title={itemGrocery.assign.mName}>
-                                                                        <Avatar src={itemGrocery.assign.mAvatar.image}></Avatar>
-                                                                    </Tooltip>
-                                                                    : <div className="grocery__action">
-                                                                        <SolutionOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Nhận ngay</div>
-                                                                    </div>}
-                                                            </div>
-
-                                                            <div className="grocery__option-actions grocery__actions-list">
-
-                                                                {/* <div className="grocery__action">
-                                                                        <PaperClipOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Ghim</div>
-                                                                    </div>
-                                                                    <div className="grocery__action" style={{ color: '#d4b106' }}>
-                                                                        <FieldTimeOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Dời hạn</div>
-                                                                    </div> */}
-                                                                {this.checkIsListComplete(itemGrocery.listItems)
-                                                                    ? <div className="grocery__action" style={{ color: '#d4b106' }}>
-                                                                        <RedoOutlined className="grocery__icon-action" />
-                                                                        <div className="grocery__title-action">Tạo lại</div>
-                                                                    </div>
-                                                                    : <>
-                                                                        <div className="grocery__action" style={{ color: '#13c2c2' }}>
-                                                                            <EditOutlined className="grocery__icon-action" />
-                                                                            <div className="grocery__title-action" >Sửa</div>
-                                                                        </div>
-                                                                        <div className="grocery__action" style={{ color: '#EC6764' }} onClick={() => {
-                                                                            this.setState({ isActing: true });
-                                                                            this.showDeleteConfirm('delete', itemGrocery._id)
-                                                                        }}>
-                                                                            <DeleteOutlined className="grocery__icon-action" />
-                                                                            <div className="grocery__title-action">Xóa</div>
-                                                                        </div>
-                                                                    </>}
-                                                            </div>
-                                                        </div>
+                                    <div className="grocery__main-data" style={{ marginTop: '-10px' }}>
+                                        <Tabs defaultActiveKey="1" className="grocery__tab-data" onChange={this.handleOnChangeTabMode}
+                                            tabBarExtraContent={
+                                                <div className="quick-filter">
+                                                    <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
+                                                        onClick={() => { this.handleClickQuickFilter('recentUser') }} >
+                                                        Tôi phụ trách
+                                                    </div>
+                                                    <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
+                                                        onClick={() => { this.handleClickQuickFilter('all') }}>
+                                                        Tất cả thành viên
                                                     </div>
 
-                                                    {isActive && itemGrocery._id === idClickedGrocery ?
-                                                        <div className="grocery__list-item-container">
-                                                            <List
-                                                                dataSource={itemGrocery.listItems}
-                                                                renderItem={item =>
-                                                                    <List.Item className="grocery__item-container">
-                                                                        <div className="grocery__quick-check-container">
-                                                                            {loadingCheckBought && item._id === idCheckBoughtItemOfGrocery ?
-                                                                                <LoadingOutlined style={{ fontSize: 28, color: '#2985ff' }} />
-                                                                                : <div className="grocery__quick-check">
-                                                                                    <input checked={item.isChecked ? true : false}
-                                                                                        onChange={(e) => this.handleCheckBoughtItem(itemGrocery._id, item._id)}
-                                                                                        type="checkbox" key={item.name} id={`${item.name}`} className="check-box-task" />
-                                                                                    <label htmlFor={`${item.name}`}></label>
-                                                                                </div>}
-
-                                                                        </div>
-                                                                        <div className="grocery__info-item">
-                                                                            <div className="grocery__des-info-item">
-                                                                                <div className="grocery__name-item">{item.name}</div>
-                                                                                <div className="grocery__note-item">{item.details}</div>
-                                                                            </div>
-                                                                            <div className="grocery__image-item" style={{ height: '100%' }}>
-                                                                                <img src={item.photo} style={{ height: '100%', objectFit: 'contain' }}></img>
-                                                                            </div>
-                                                                            {item.isChecked ? null :
-                                                                                <div className="grocery__action-item">
-                                                                                    <div className="grocery__action" style={{ color: '#13c2c2' }}>
-                                                                                        <EditOutlined className="grocery__icon-action" />
-                                                                                        <div className="grocery__title-action" >Sửa</div>
-                                                                                    </div>
-                                                                                    <div className="grocery__action" style={{ color: '#EC6764' }}>
-                                                                                        <DeleteOutlined className="grocery__icon-action" />
-                                                                                        <div className="grocery__title-action">Xóa</div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-
-                                                                        </div>
-
-                                                                    </List.Item>
-                                                                } />
-                                                        </div>
-                                                        : null
-                                                    }
                                                 </div>
-                                            )}
-                                        />
 
+                                            }>
 
+                                            <TabPane tab="Danh sách cần mua" key="todo">
+                                                {allGroceries ? <GroceryList allGroceries={dataGroceries.filter(itemGrocery => !this.checkIsListComplete(itemGrocery.listItems))} /> : null}
+                                            </TabPane>
+
+                                            <TabPane tab="Danh sách đã hoàn tất" key="completed">
+                                                {allGroceries ? <GroceryList allGroceries={dataGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))} /> : null}
+                                            </TabPane>
+
+                                        </Tabs>
                                     </div>
-
                                 </div>
                                 : <div className="spin-get-list-members loading-data-grocery"><Spin tip="Đang tải..." /> </div>}
                         </div>
@@ -343,12 +210,13 @@ const mapStateToProps = (state) => ({
     loadingMember: state.family.loading,
     allGroceries: state.grocery.allGroceries,
     loadingGrocery: state.grocery.loadingGrocery,
-    loadingCheckBought: state.grocery.loadingCheckBought
+    allGroceryTypes: state.groceryType.allGroceryTypes
 })
 const actionCreators = {
     getListMembers: familyActions.getListMembers,
     getAllGroceries: groceryActions.getAllGroceries,
     deleteGrocery: groceryActions.deleteGrocery,
-    checkBoughtItem: groceryActions.checkBoughtItem
+    getAllGroceryTypes: groceryTypeActions.getAllGroceryTypes,
+    assignGrocery: groceryActions.assignGrocery
 }
 export default connect(mapStateToProps, actionCreators)(Grocery);

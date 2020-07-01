@@ -56,7 +56,14 @@ class Setting extends React.Component {
                         </Link>
                         <Link to="/task-category" >
                             <div className="panel-container">
-                                <span className="panel-content"> <i className="fa fa-book custom-icon" /> Loại công việc </span>
+                                <span className="panel-content"> <i class="fa fa-tasks custom-icon"></i> Loại công việc </span>
+                                <CaretRightOutlined className="caretright-icon" />
+
+                            </div>
+                        </Link>
+                        <Link to="/grocery-type" >
+                            <div className="panel-container">
+                                <span className="panel-content"> <i className="fa fa-shopping-cart custom-icon" /> Loại danh sách mua sắm </span>
                                 <CaretRightOutlined className="caretright-icon" />
 
                             </div>

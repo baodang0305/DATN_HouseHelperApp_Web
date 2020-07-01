@@ -1,6 +1,6 @@
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
-import { Router, Switch, Route } from 'react-router-dom';
+import { Router, Switch } from 'react-router-dom';
 
 import Alert from './Alert';
 import Home from './Home/Home';
@@ -28,6 +28,8 @@ import TaskCategory from './TaskCategory/TaskCategory';
 import DataFormTaskCate from './TaskCategory/DataFormTaskCate/DataFormTaskCate';
 import Grocery from './Grocery/Grocery';
 import DataFormGrocery from './Grocery/DataFormGrocery/DataFormGrocery';
+import GroceryType from './GroceryType/GroceryType';
+import DataFormGroceryType from './GroceryType/DataGroceryType/DataGroceryType';
 
 const Root = () => {
 
@@ -58,6 +60,29 @@ const Root = () => {
                     </PrivateRoute.IsLogin>
                     <PrivateRoute.IsLogin path="/task-category" component={TaskCategory} />
 
+                    <PrivateRoute.IsLogin exact path="/groceries/add-grocery" >
+                        <DataFormGrocery type="add" />
+                    </PrivateRoute.IsLogin>
+
+                    <PrivateRoute.IsLogin exact path="/grocery" component={Grocery} />
+
+                    <PrivateRoute.IsLogin exact path="/groceries/edit-grocery" >
+                        <DataFormGrocery type="edit" />
+                    </PrivateRoute.IsLogin>
+                    <PrivateRoute.IsLogin exact path="/grocery" component={Grocery} />
+
+                    <PrivateRoute.IsLogin exact path="/grocery-type/add-type">
+                        <DataFormGroceryType type="add" />
+                    </PrivateRoute.IsLogin>
+
+                    <PrivateRoute.IsLogin exact path="/grocery-type/edit-type">
+                        <DataFormGroceryType type="edit" />
+                    </PrivateRoute.IsLogin>
+
+                    <PrivateRoute.IsLogin exact path="/grocery-type">
+                        <GroceryType></GroceryType>
+                    </PrivateRoute.IsLogin>
+
                     <PrivateRoute.IsLogin exact path="/family" component={Family} />
                     <PrivateRoute.IsLogin exact path="/family/chat" component={Chat} />
                     <PrivateRoute.IsLogin exact path="/family/member" component={Member} />
@@ -81,11 +106,6 @@ const Root = () => {
                     <PrivateRoute.IsLogin exact path="/rewards/edit-reward" >
                         <AddReward type="edit" />
                     </PrivateRoute.IsLogin>
-
-                    <PrivateRoute.IsLogin exact path="/groceries/add-grocery" >
-                        <DataFormGrocery type="add" />
-                    </PrivateRoute.IsLogin>
-                    <PrivateRoute.IsLogin exact path="/grocery" component={Grocery} />
 
                     <PrivateRoute.IsNotLogin exact path="/" component={Home} />
                 </Switch>

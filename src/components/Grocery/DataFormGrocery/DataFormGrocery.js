@@ -1,6 +1,9 @@
 import './DataFormGrocery.css';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import 'moment/locale/vi';
+
 import {
     LeftOutlined, ShoppingCartOutlined, PlusOutlined,
     AppstoreAddOutlined, EditOutlined, TeamOutlined,
@@ -14,7 +17,7 @@ import firebase from "firebase";
 import { storage } from "../../../helpers/firebaseConfig";
 import history from "../../../helpers/history";
 
-import RepeatModal from "../../Common/RepeatModal/RepeatModal";
+import BasicRepeatModal from "../../Common/RepeatModal/RepeatModalBasic";
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
 import { familyActions } from "../../../actions/family.actions";
 import { groceryActions } from "../../../actions/grocery.actions";
@@ -26,6 +29,7 @@ class DataFormGrocery extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            idEditItem: null,
             nameOfList: null,
             assignedMembersOfList: null,
             checkedGroceryType: null,
@@ -37,17 +41,34 @@ class DataFormGrocery extends Component {
             imgOfItem: null,
             enableRepeatModal: false,
             image: null,
-
+            validateForm: null,
             currentUrlImg: "",
+            textRepeat: null
         }
         this.inputFile = React.createRef();
     }
 
 
-    componentWillMount() {
+    componentDidMount() {
+        this.checkValidateForm();
         const { getListMembers, getAllGroceryTypes } = this.props;
         getListMembers();
         getAllGroceryTypes();
+        const { type } = this.props;
+        if (type === 'edit') {
+            const { editItem } = history.location.state;
+            console.log('edit Item ', editItem);
+            this.setState({
+                idEditItem: editItem._id,
+                nameOfList: editItem.name,
+                assignedMembersOfList: editItem.assign ? editItem.assign._id : null,
+                checkedGroceryType: editItem.stID ? editItem.stID._id : null,
+                repeatOfList: null,
+                listItemOfList: editItem.listItems,
+            })
+
+
+        }
     }
 
     handleClickBack = () => {
@@ -58,7 +79,6 @@ class DataFormGrocery extends Component {
         const { name, value } = e.target;
         this.setState({ [name]: value });
     }
-
 
     //Handle when click choose a member
     // handleClickChooseMember = (idMember) => {
@@ -84,7 +104,11 @@ class DataFormGrocery extends Component {
     //Handle when click check a shopping type
     handleClickChooseType = (idType) => {
         const { checkedGroceryType } = this.state;
+        if (idType === 'add-grocery-type') {
+            history.push('/grocery-type/add-type');
+        }
         this.setState({ checkedGroceryType: idType });
+
     }
 
     //handle when add a item into shopping item list 
@@ -151,13 +175,6 @@ class DataFormGrocery extends Component {
         this.setState({ enableRepeatModal: false });
     }
 
-    handleSubmit = () => {
-        const { addNewGrocery } = this.props;
-        const { nameOfList, assignedMembersOfList, repeatOfList, checkedGroceryType, listItemOfList, } = this.state;
-        addNewGrocery(nameOfList, assignedMembersOfList, checkedGroceryType, repeatOfList, listItemOfList);
-
-    }
-
     handleChangeImg = (e) => {
         this.setState({ currentUrlImg: URL.createObjectURL(e.target.files[0]), image: e.target.files[0] });
     }
@@ -166,17 +183,81 @@ class DataFormGrocery extends Component {
         this.inputFile.current.value = "";
         this.setState({ currentUrlImg: "", image: null });
     }
+
+    checkValidateForm = () => {
+        const { allGroceries } = this.props;
+        const { idEditItem, nameOfList, assignedMembersOfList, repeatOfList, checkedGroceryType, listItemOfList, } = this.state;
+        var isValidated = true;
+        var errMessage = { errMessageName: null, errMessageListItem: null };
+        if (!nameOfList) {
+            errMessage.errMessageName = "Tên danh sách mua sắm không để trống";
+            isValidated = false;
+        }
+        else if (listItemOfList.length === 0) {
+            errMessage.errMessageListItem = "Danh sách vật phẩm mua không để trống";
+            isValidated = false;
+        }
+        else if (allGroceries.some(item => item.name === nameOfList)) {
+            isValidated = false;
+        }
+        var validateForm = { isValidated, errMessage };
+        return validateForm;
+    }
+
+
+    //Callback when call from repeat modal to set Repeat Data
+    receiveDataRepeat = (dataRepeat) => {
+        var textRepeat = null;
+        if (dataRepeat) {
+            switch (dataRepeat.type) {
+                case 'no': {
+                    textRepeat = 'Không lặp';
+                    break;
+                }
+                case 'day': {
+                    textRepeat = 'Lặp cách ' + dataRepeat.every + ' ngày' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                    break;
+                }
+                case 'week': {
+                    textRepeat = 'Lặp cách ' + dataRepeat.every + ' tuần' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                    break;
+                }
+                case 'month': {
+                    textRepeat = 'Lặp cách ' + dataRepeat.every + ' tháng' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                    break;
+                }
+                case 'year': {
+                    textRepeat = 'Lặp cách ' + dataRepeat.every + ' năm' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        this.setState({ repeatOfList: dataRepeat, enableRepeatModal: false, textRepeat: textRepeat });
+
+    }
+
+    handleSubmit = () => {
+        const { addNewGrocery, type, editGrocery } = this.props;
+        const { idEditItem, nameOfList, assignedMembersOfList, repeatOfList, checkedGroceryType, listItemOfList, } = this.state;
+        type === 'add'
+            ? addNewGrocery(nameOfList, assignedMembersOfList, checkedGroceryType, repeatOfList, listItemOfList)
+            : editGrocery(idEditItem, nameOfList, checkedGroceryType, assignedMembersOfList, repeatOfList, listItemOfList);
+    }
     render() {
         const { type, listMembers, allGroceryTypes } = this.props;
         const { enableRepeatModal, nameOfList, assignedMembersOfList, repeatOfList, checkedGroceryType, listItemOfList,
-            nameOfItem, noteOfItem, currentUrlImg, image
+            nameOfItem, noteOfItem, currentUrlImg, image,
+            validateForm, textRepeat
         } = this.state;
+
         console.log(nameOfList, assignedMembersOfList, checkedGroceryType, repeatOfList, listItemOfList, currentUrlImg, image);
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="5" />
                 <Layout className="site-layout">
-                    <Header className="header-container" style={{ padding: 0 }}>
+                    <Header className="header-container" style={{ padding: '0' }}>
                         <div className="grocery-form__header">
                             <div
                                 className="header__btn-link"
@@ -192,9 +273,9 @@ class DataFormGrocery extends Component {
                             layout="vertical" name="grocery-form" className="grocery-form__form-container">
                             <Form.Item className="grocery-form__form-item">
                                 <Input className="grocery-form__input-name"
-                                    defaultValue={type === "edit" ? chosenCateToEdit.name : null}
+                                    value={nameOfList ? nameOfList : null}
                                     name="nameOfList"
-                                    onChange={this.handleChangeInput} size="large" placeholder="Tên danh sách"
+                                    onChange={this.handleChangeInput} size="large" placeholder="Tên danh sách mua sắm"
                                 />
                             </Form.Item>
 
@@ -246,7 +327,7 @@ class DataFormGrocery extends Component {
 
                                     )
                                         : null}
-                                    <div className="grocery-form__member-item" onClick={(e) => { this.handleClickChooseType(item._id) }}>
+                                    <div className="grocery-form__member-item" onClick={(e) => { this.handleClickChooseType('add-grocery-type') }}>
                                         <div className="grocery-form__icon-add-container">
                                             <PlusOutlined className="grocery-form__icon-add" />
                                         </div>
@@ -268,7 +349,10 @@ class DataFormGrocery extends Component {
                                         <div className="grocery-form__text-label">Tùy chọn lặp</div>
                                     </Col>
                                     <Col xl={17} lg={16} sm={15} xs={18} className="grocery-form__input">
-                                        <Button className="grocery-form__btn-repeat" onClick={() => { this.clickToShowRepeatModal() }}>Không lặp</Button>
+                                        <Button className="grocery-form__btn-repeat"
+                                            onClick={() => { this.clickToShowRepeatModal() }}>
+                                            {repeatOfList ? textRepeat : 'Không lặp'}
+                                        </Button>
                                     </Col>
                                 </Row>
                             </Form.Item>
@@ -306,15 +390,15 @@ class DataFormGrocery extends Component {
                                                             <div className="grocery-form__input-image">
                                                                 {currentUrlImg !== "" && <img src={currentUrlImg} className="grocery-form__image-item" />}
                                                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                                                    <div className="upload-img-add-calendar-container" style={{ marginTop: currentUrlImg ? 5 : 0 }}>
+                                                                    <div className=" upload-img-add-calendar-container" style={{ marginTop: currentUrlImg ? 5 : 0 }}>
                                                                         <div className="upload-img-ui-add-canlendar" >
                                                                             <UploadOutlined style={{ fontSize: 16 }} />
                                                                              &emsp;
-                                                                            <span style={{ fontSize: 16 }}> {!currentUrlImg ? "Chọn ảnh" : "Thay đổi ảnh"} </span>
+                                                                            <span className={{ width: 'max-content' }} style={{ fontSize: 16 }}> {!currentUrlImg ? "Chọn ảnh" : "Thay đổi ảnh"} </span>
                                                                         </div>
                                                                         <input ref={this.inputFile} className="input-file-add-calendar" type="file" onChange={this.handleChangeImg} />
                                                                     </div>
-                                                                    {currentUrlImg && <div className="delete-img-button" onClick={this.handleClickDeleteImg}>Xóa ảnh</div>}
+                                                                    {currentUrlImg && <div className=" delete-img-button" onClick={this.handleClickDeleteImg}>Xóa ảnh</div>}
                                                                 </div>
                                                             </div>
                                                         </Form.Item>
@@ -335,6 +419,10 @@ class DataFormGrocery extends Component {
                                                 </div>
                                             }>
                                             <List
+                                                pagination={{
+                                                    pageSize: 5,
+                                                    size: 'small'
+                                                }}
                                                 dataSource={listItemOfList}
                                                 renderItem={(item, index) => (
                                                     <List.Item key={item.stt} className="grocery-form__item">
@@ -369,14 +457,15 @@ class DataFormGrocery extends Component {
                                 <Form.Item>
                                     <div className="grocery-form__btn">
                                         <Button type="default" style={{ marginRight: '10px' }} onClick={this.handleClickBack}>Hủy</Button>
-                                        <Button htmlType="submit" type="primary">Thêm danh sách</Button>
+                                        <Button htmlType="submit" type="primary" disabled={!this.checkValidateForm().isValidated}>Thêm danh sách</Button>
                                     </div>
                                 </Form.Item>
                             </Form.Item>
 
 
                         </Form>
-                        <RepeatModal handleClickCancelModalForParent={this.clickCancelRepeatModal} enableRepeatModal={enableRepeatModal}></RepeatModal>
+
+                        <BasicRepeatModal handleClickCancelModalForParent={this.clickCancelRepeatModal} enableRepeatModal={enableRepeatModal} receiveDataRepeat={this.receiveDataRepeat}></BasicRepeatModal>
                     </Content>
                 </Layout>
             </Layout>
@@ -399,6 +488,7 @@ const actionCreators = {
     getAllGroceries: groceryActions.getAllGroceries,
     getAllGroceryTypes: groceryTypeActions.getAllGroceryTypes,
     addNewGrocery: groceryActions.addGrocery,
+    editGrocery: groceryActions.editGrocery
 }
 
 export default connect(mapStateToProps, actionCreators)(DataFormGrocery);

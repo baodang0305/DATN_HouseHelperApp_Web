@@ -45,11 +45,9 @@ class ChatContainer extends React.Component {
             userIsEnteringGroup: null,
             userIsEnteringSingle: null,
             enpoint: indexConstants.ENPOINT_SOCKET,
-
             lastLocation: null,
             modalVisible: false,
             confirmedNavigation: false
-
         }
 
         this.localVideo = React.createRef();
@@ -83,7 +81,6 @@ class ChatContainer extends React.Component {
                 "Authorization": "Basic " + Buffer.from("BaoDang:17f07744-8566-11ea-8d7b-0242ac130006").toString("base64")
             }
         })
-
         const data = await response.json();
         return data.v;
     }
@@ -126,28 +123,18 @@ class ChatContainer extends React.Component {
         });
 
         socket.on("server-send-list-users-active", (usersActive) => {
-            if (usersActive.length !== 0) {
-                this.setState({
-                    usersActive,
-                    receiverActive: usersActive[0],
-                    filteredUsersActive: usersActive
-                });
-
-            }
+            usersActive.length !== 0 &&
+                this.setState({ usersActive, receiverActive: usersActive[0], filteredUsersActive: usersActive });
         });
 
         socket.on("server-send-list-users-recent", (usersRecent) => {
-            if (usersRecent.length !== 0) {
+            usersRecent.length !== 0 &&
                 this.setState({ usersRecent, receiverRecent: usersRecent[0], filteredUsersRecent: usersRecent });
-            }
         });
 
         socket.on("server-send-user-leave", async ({ mSocketID }) => {
-
             const { usersActive, usersRecent, userOffer, userIsOffer } = this.state;
-
             if (mSocketID) {
-
                 if (userIsOffer && userIsOffer.mSocketID === mSocketID) {
                     this.outgoingCallingBell.pause();
                     this.setState({ userIsOffer: null });
@@ -155,7 +142,6 @@ class ChatContainer extends React.Component {
                     this.ringtone.pause();
                     this.setState({ userOffer: null });
                 }
-
                 // Xóa user active đã rời khỏi
                 let newUsersActive = [...usersActive];
                 const indexActive = newUsersActive.findIndex(element => element.mSocketID === mSocketID);
@@ -167,11 +153,9 @@ class ChatContainer extends React.Component {
                         this.setState({ usersActive: newUsersActive, receiverActive: newUsersActive[0], filteredUsersActive: newUsersActive });
                     }
                 }
-
                 //cập nhật mSocketID của user trong usersRecent
                 let newUsersRecent = [...usersRecent];
                 let indexRecent = newUsersRecent.findIndex(element => element.mSocketID === mSocketID);
-
                 if (indexRecent !== -1) {
                     newUsersRecent[indexRecent].mSocketID = "";
                     this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
@@ -180,26 +164,14 @@ class ChatContainer extends React.Component {
         });
 
         socket.on("server-response-message-chat-single", ({ sender, messageContainer }) => {
-
             const { user } = this.props;
             const { usersActive, usersRecent, receiverActive, receiverRecent, activeTab } = this.state;
-
             const indexActive = usersActive.findIndex(element => sender.mID === element.mID);
             const indexRecent = usersRecent.findIndex(element => sender.mID === element.mID);
-
             let isSeen = false;
-
-            let receiver;
-            if (activeTab === "active") {
-                if (receiverActive.mID === sender.mID) {
-                    receiver = { ...receiverActive };
-                }
-            } else {
-                if (receiverRecent.mID === sender.mID) {
-                    receiver = { ...receiverRecent };
-                }
-            }
-
+            let receiver =
+                (activeTab === "active" && receiverActive.mID === sender.mID && { ...receiverActive }) ||
+                (activeTab === "recent" && receiverRecent.mID === sender.mID && { ...receiverRecent })
             if (receiver) {
                 isSeen = true;
                 delete receiver.messages;
@@ -207,52 +179,34 @@ class ChatContainer extends React.Component {
                 delete sender._id;
                 socket.emit("message-has-seen", { sender, receiver, messageContainer });
             }
-
             let updateStateMessage = { ...messageContainer };
             updateStateMessage.seen = isSeen;
-
             if (indexActive !== -1) {
                 let newUsersActive = [...usersActive];
                 newUsersActive[indexActive].messages = [...newUsersActive[indexActive].messages, updateStateMessage]
                 this.setState({ usersActive: newUsersActive, filteredUsersActive: newUsersActive });
             }
-
             if (indexRecent !== -1) {
                 let newUsersRecent = [...usersRecent];
                 newUsersRecent[indexRecent].messages = [...newUsersRecent[indexRecent].messages, updateStateMessage]
                 this.setState({ usersRecent: newUsersRecent, filteredUsersRecent: newUsersRecent });
             }
-
         });
 
         socket.on("server-response-user-is-entering-to-partner", (sender) => {
             const { activeTab, receiverActive, receiverRecent } = this.state;
-            if (activeTab === "recent") {
-                if (receiverRecent) {
-                    if (sender.mID === receiverRecent.mID) {
-                        this.setState({ userIsEnteringSingle: sender });
-                    }
-                }
-            } else if (activeTab === "active") {
-                if (receiverActive) {
-                    if (sender.mID === receiverActive.mID) {
-                        this.setState({ userIsEnteringSingle: sender });
-                    }
-                }
-            }
+            (
+                (activeTab === "recent" && receiverRecent && sender.mID === receiverRecent.mID) ||
+                (activeTab === "active" && receiverActive && sender.mID === receiverActive.mID)
+            ) && this.setState({ userIsEnteringSingle: sender });
         });
 
         socket.on("server-response-user-is-stoped-entering-to-partner", (sender) => {
             const { activeTab, receiverActive, receiverRecent } = this.state;
-            if (activeTab === "recent") {
-                if (sender.mID === receiverRecent.mID) {
-                    this.setState({ userIsEnteringSingle: null });
-                }
-            } else if (activeTab === "active") {
-                if (sender.mID === receiverActive.mID) {
-                    this.setState({ userIsEnteringSingle: null });
-                }
-            }
+            (
+                (activeTab === "recent" && receiverRecent && sender.mID === receiverRecent.mID) ||
+                (activeTab === "active" && receiverActive && sender.mID === receiverActive.mID)
+            ) && this.setState({ userIsEnteringSingle: null })
         });
 
         socket.on("server-response-message-has-seen", ({ sender, messageContainer }) => {
@@ -267,7 +221,6 @@ class ChatContainer extends React.Component {
                     this.setState({ usersActive: newUsersActive, filteredUsersActive: newUsersActive });
                 }
             }
-
             if (usersRecent.length !== 0) {
                 const indexRecent = usersRecent.findIndex(element => element.mID === sender.mID);
                 if (indexRecent !== -1) {
@@ -359,7 +312,6 @@ class ChatContainer extends React.Component {
     }
 
     handleClickMenuActive = (e) => {
-
         const { user } = this.props;
         const { usersActive, usersRecent } = this.state;
         const indexActive = usersActive.findIndex(item => item.mSocketID === e.key);
@@ -401,11 +353,11 @@ class ChatContainer extends React.Component {
         if (messageTemp !== "") {
             if (e.key === "Enter") {
                 const messageContainer = {
-                    "seen": false,
-                    "id": user._id,
-                    "name": user.mName,
-                    "message": messageTemp,
-                    "avatar": { "image": user.mAvatar.image, "color": user.mAvatar.color }
+                    seen: false,
+                    id: user._id,
+                    name: user.mName,
+                    message: messageTemp,
+                    avatar: { image: user.mAvatar.image, color: user.mAvatar.color }
                 }
                 if (activeTab === "family-group") {
                     let member = { ...user, "mID": user._id };
@@ -483,23 +435,16 @@ class ChatContainer extends React.Component {
         const { name, value } = e.target;
         const { usersRecent, usersActive, activeTab } = this.state;
         if (activeTab === "recent") {
-            const filteredUsersRecent = usersRecent.filter(element => {
-                return element.mName.toLowerCase().includes(value.toLowerCase());
-            });
-            if (filteredUsersRecent.length === 0) {
-                this.setState({ receiverRecent: null, filteredUsersRecent: [] });
-            } else {
-                this.setState({ filteredUsersRecent, receiverRecent: filteredUsersRecent[0] });
-            }
+            const filteredUsersRecent = usersRecent.filter(element => element.mName.toLowerCase().includes(value.toLowerCase()));
+            filteredUsersRecent.length === 0
+                ? this.setState({ receiverRecent: null, filteredUsersRecent: [] })
+                : this.setState({ filteredUsersRecent, receiverRecent: filteredUsersRecent[0] })
+
         } else {
-            const filteredUsersActive = usersActive.filter(element => {
-                return element.mName.toLowerCase().includes(value.toLowerCase());
-            });
-            if (filteredUsersActive.length === 0) {
-                this.setState({ receiverActive: null, filteredUsersActive: null });
-            } else {
-                this.setState({ filteredUsersActive, receiverActive: filteredUsersActive[0] });
-            }
+            const filteredUsersActive = usersActive.filter(element => element.mName.toLowerCase().includes(value.toLowerCase()));
+            filteredUsersActive.length === 0
+                ? this.setState({ receiverActive: null, filteredUsersActive: [] })
+                : this.setState({ filteredUsersActive, receiverActive: filteredUsersActive[0] })
         }
         this.setState({ [name]: value });
     }
@@ -508,13 +453,10 @@ class ChatContainer extends React.Component {
         let receiver;
         const { user } = this.props;
         const { activeTab, receiverActive, receiverRecent, familyGroup } = this.state;
-        if (activeTab === "active") {
-            receiver = { ...receiverActive };
-        } else if (activeTab === "recent") {
-            receiver = { ...receiverRecent };
-        } else {
-            receiver = { ...familyGroup }
-        }
+        receiver =
+            (activeTab === "active" && { ...receiverActive }) ||
+            (activeTab === "recent" && { ...receiverRecent }) ||
+            (activeTab === "family-group" && { ...familyGroup })
         delete receiver.messages;
         let sender = { ...user, "mID": user._id }
         delete sender._id;
@@ -525,13 +467,10 @@ class ChatContainer extends React.Component {
         let receiver;
         const { user } = this.props;
         const { activeTab, receiverRecent, receiverActive, familyGroup } = this.state;
-        if (activeTab === "active") {
-            receiver = { ...receiverActive };
-        } else if (activeTab === "recent") {
-            receiver = { ...receiverRecent };
-        } else {
-            receiver = { ...familyGroup };
-        }
+        receiver =
+            (activeTab === "active" && { ...receiverActive }) ||
+            (activeTab === "recent" && { ...receiverRecent }) ||
+            (activeTab === "family-group" && { ...familyGroup })
         delete receiver.messages;
         let sender = { ...user, "mID": user._id };
         delete sender._id;
@@ -655,7 +594,6 @@ class ChatContainer extends React.Component {
                 }
             }
         };
-
         peerConn.onconnectionstatechange = async (event) => {
             if (peerConn.connectionState === "disconnected") {
                 const { localStream } = this.state;
@@ -735,7 +673,9 @@ class ChatContainer extends React.Component {
                 this.setState({ userOffer: null, userIsOffer: null, isAccepted: false, localStream: null, peerConn: null });
             }
         }
+
         socket.emit("leave-chat");
+
         this.closeModal(() => {
             const { lastLocation } = this.state;
             if (lastLocation) {
@@ -755,10 +695,11 @@ class ChatContainer extends React.Component {
     }
 
     render() {
+
         const {
             message, activeTab, activeKeyTabMobileChat, userOffer, isAccepted, userIsOffer,
-            familyGroup, modalVisible, receiverActive, receiverRecent, userIsEnteringGroup,
-            filteredUsersActive, filteredUsersRecent, userIsEnteringSingle, searchInput,
+            searchInput, familyGroup, modalVisible, receiverActive, receiverRecent,
+            userIsEnteringGroup, filteredUsersActive, filteredUsersRecent, userIsEnteringSingle,
         } = this.state;
         const { user } = this.props;
         const toolBar = () => (
@@ -799,91 +740,58 @@ class ChatContainer extends React.Component {
             </div>
         );
 
-        const showToolBar = () => (
-            (activeTab === "active" && receiverActive)
-            ||
-            (activeTab === "recent" && receiverRecent)
-            ||
-            (activeTab === "family" && receiverRecent)
-        ) && toolBar();
+        const showToolBar = () => {
+            return (
+                (activeTab === "active" && receiverActive) ||
+                (activeTab === "recent" && receiverRecent) ||
+                (activeTab === "family-group" && familyGroup)
+            ) && toolBar()
+        }
 
         const headerBodyMessage = () => {
-            if (activeTab === "active") {
-                if (receiverActive) {
-                    return (
-                        <>
-                            <Avatar
-                                className="img-header-message"
-                                src={receiverActive.mAvatar.image}
-                                style={{ backgroundColor: receiverActive.mAvatar.color }}
-                            /> &emsp;
-                            <span>
-                                <div style={{ fontWeight: "bolder" }}>{receiverActive.mName}</div>
-                                <div className="active-container">
-                                    <div className="circle-active" /> &nbsp; Active
-                                </div>
-                            </span>
-                        </>
-                    );
-                }
+            return (
+                (activeTab === "active" && receiverActive) ||
+                (activeTab === "recent" && receiverRecent)
+            )
+                ? <>
+                    <Avatar
+                        className="img-header-message"
+                        src={activeTab === "active" ? receiverActive.mAvatar.image : receiverRecent.mAvatar.image}
+                        style={{ backgroundColor: activeTab === "active" ? receiverActive.mAvatar.color : receiverRecent.mAvatar.color }}
+                    /> &emsp;
+                    <span>
+                        <div style={{ fontWeight: "bolder" }}>{activeTab === "active" ? receiverActive.mName : receiverRecent.mName}</div>
+                        {(activeTab === "active" || receiverRecent.mSocketID) &&
+                            <div className="active-container">
+                                <div className="circle-active" /> &nbsp; Active
+                            </div>
+                        }
+                    </span>
+                </>
+                : (activeTab === "family-group" && familyGroup)
+                    ? <>
+                        <Avatar className="img-header-message" src={familyGroup.fImage} /> &emsp;
+                        <div style={{ fontWeight: "bold" }}>{familyGroup.fName}</div>
+                    </>
+                    : null
 
-            } else if (activeTab === "recent") {
-                if (receiverRecent) {
-                    return (
-                        <>
-                            <Avatar
-                                className="img-header-message"
-                                src={receiverRecent.mAvatar.image}
-                                style={{ backgroundColor: receiverRecent.mAvatar.color }}
-                            /> &emsp;
-                            <span>
-                                <div style={{ fontWeight: "bolder" }}>{receiverRecent.mName}</div>
-                                {receiverRecent.mSocketID &&
-                                    <div className="active-container">
-                                        <div className="circle-active" /> &nbsp; Active
-                                    </div>
-                                }
-                            </span>
-                        </>
-                    );
-                }
-            } else {
-                if (familyGroup) {
-                    return (
-                        <>
-                            <Avatar className="img-header-message" src={familyGroup.fImage} /> &emsp;
-                            <div style={{ fontWeight: "bold" }}>{familyGroup.fName}</div>
-                        </>
-                    );
-                }
-            }
         }
-        const showMessages = () => {
-            if (activeTab === "family-group") {
-                if (familyGroup) {
-                    if (userIsEnteringGroup && userIsEnteringGroup.mID !== user._id) {
-                        return <Messages messages={familyGroup.messages} userIsEntering={userIsEnteringGroup} mID={user._id} />
-                    }
-                    return <Messages messages={familyGroup.messages} mID={user._id} />
-                }
-            } else if (activeTab === "active") {
-                if (receiverActive) {
-                    if (userIsEnteringSingle && userIsEnteringSingle.mID !== receiverActive.mID) {
-                        return <Messages messages={receiverActive.messages} mID={user._id} />
-                    } else {
-                        return <Messages messages={receiverActive.messages} userIsEntering={userIsEnteringSingle} mID={user._id} />
-                    }
-                }
-            } else {
-                if (receiverRecent) {
-                    if (userIsEnteringSingle && userIsEnteringSingle.mID !== receiverRecent.mID) {
-                        return <Messages messages={receiverRecent.messages} mID={user._id} />
-                    } else {
-                        return <Messages messages={receiverRecent.messages} userIsEntering={userIsEnteringSingle} mID={user._id} />
-                    }
 
-                }
-            }
+        const showMessages = () => {
+            return (
+                (activeTab === "active" && receiverActive) ||
+                (activeTab === "recent" && receiverRecent)
+            )
+                ? <Messages
+                    messages={activeTab === "recent" ? receiverRecent.messages : receiverActive.messages}
+                    userIsEntering={userIsEnteringSingle ? userIsEnteringSingle : null} mID={user._id}
+                />
+                : (activeTab === "family-group" && familyGroup)
+                    ? <Messages
+                        messages={familyGroup.messages}
+                        userIsEntering={(userIsEnteringGroup && userIsEnteringGroup.mID !== user._id) ? userIsEnteringGroup : null} mID={user._id}
+                    />
+                    : null
         }
 
         return (
@@ -1010,7 +918,6 @@ class ChatContainer extends React.Component {
                                                 </Menu>
                                             }
                                         </TabPane>
-
                                         <TabPane tab="Gia đình" key="family-group">
                                             {familyGroup &&
                                                 <Menu style={{ borderRight: "none" }} selectedKeys={["group"]}>
@@ -1036,16 +943,11 @@ class ChatContainer extends React.Component {
                                 {showToolBar()}
                             </Col>
                             <Col xl={8} lg={0} sm={0} style={{ padding: 10 }} >
-
                                 <div className="video-call-title"> Video Call </div>
-
                                 <video ref={this.remoteVideo} id="remote-video" autoPlay controls />
                                 <video ref={this.localVideo} id="local-video" autoPlay controls />
-
                                 {userOffer && <div className="caller-name"> {`${userOffer.mName} contacting...`} </div>}
-
                                 {userIsOffer && <div className="callee-name"> {`${userIsOffer.mName} contacting...`} </div>}
-
                                 <Row justify="center" >
                                     {userOffer && !isAccepted &&
                                         <Button onClick={this.handleAccept} className="accept-btn green-btn color-btn">
@@ -1206,8 +1108,8 @@ class ChatContainer extends React.Component {
                             </TabPane>
                         </Tabs>
                     </Content>
-                </Layout >
-            </Layout >
+                </Layout>
+            </Layout>
         );
     }
 }

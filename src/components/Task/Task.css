@@ -146,22 +146,21 @@
 }
 
 .filter-popover-item {
-	font-size: 15px;
+	font-size: 14px;
 	cursor: pointer;
 }
 
 .chosen-filter-popover-item {
-	font-size: 15px;
-
-	font-weight: 500;
+	font-size: 14px;
+	font-weight: 400;
 	cursor: pointer;
 	color: #2985ff;
 }
 
 .filter-popover-item:hover {
 	text-decoration: underline;
-	font-size: 15px;
-	font-weight: 500;
+	font-size: 14px;
+	font-weight: 400;
 }
 
 .hide-popover {
@@ -232,8 +231,8 @@
 
 	.chosen-task-filter,
 	.task-filter {
-		width: 25px;
-		height: 25px;
+		width: 30px;
+		height: 30px;
 	}
 
 	.task__content {
