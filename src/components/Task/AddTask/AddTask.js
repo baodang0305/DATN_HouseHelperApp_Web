@@ -1,40 +1,97 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 import './AddTask.css';
-import firebase from "firebase";
+import firebase from 'firebase';
 
 import {
-    Form, Input, Button, Checkbox, DatePicker, Radio, Switch,
-    TimePicker, Row, Col, Select, Avatar, Divider, Layout, Tooltip, Alert
+    Form,
+    Input,
+    Button,
+    Checkbox,
+    DatePicker,
+    Radio,
+    Switch,
+    TimePicker,
+    Row,
+    Col,
+    Select,
+    Avatar,
+    Divider,
+    Layout,
+    Tooltip,
+    Alert,
 } from 'antd';
 import { connect } from 'react-redux';
-import DashboardMenu from "../../DashboardMenu/DashboardMenu";
+import DashboardMenu from '../../DashboardMenu/DashboardMenu';
 import {
     PlusOutlined,
     TeamOutlined,
-    LeftOutlined, ScheduleOutlined, RedoOutlined, AlertOutlined, CloseCircleOutlined,
-    CheckOutlined, AppstoreOutlined, ClockCircleOutlined, StarOutlined, SnippetsOutlined, FrownOutlined
+    LeftOutlined,
+    ScheduleOutlined,
+    RedoOutlined,
+    AlertOutlined,
+    CloseCircleOutlined,
+    CheckOutlined,
+    AppstoreOutlined,
+    ClockCircleOutlined,
+    StarOutlined,
+    SnippetsOutlined,
+    FrownOutlined, RetweetOutlined, UploadOutlined
 } from '@ant-design/icons';
 
 import moment from 'moment';
-import 'moment/locale/vi';
-import history from "../../../helpers/history";
+import history from '../../../helpers/history';
 
 import { taskActions } from '../../../actions/task.actions';
 import { taskCateActions } from '../../../actions/task.cate.actions';
 import { familyActions } from '../../../actions/family.actions';
-import { indexConstants } from "../../../constants/index.constants";
-import { storage } from "../../../helpers/firebaseConfig";
+import { indexConstants } from '../../../constants/index.constants';
+import { storage } from '../../../helpers/firebaseConfig';
 
+import BasicRepeatModal from "../../Common/RepeatModal/RepeatModalBasic";
 
 const { Option } = Select;
 const { Header, Content } = Layout;
-const { TextArea } = Input
+const { TextArea } = Input;
 
 let index = 0;
-const checkDataInput = (data) => {
-    return data === '' || data.trim() === '' ? false : true
+const checkDataInput = data => {
+    return data === '' || data.trim() === '' ? false : true;
+};
 
+function disabledDate(current) {
+    // Can not select days before today and today
+    return current && current < moment().startOf('day');
+}
+
+function translateDataRepeat(dataRepeat) {
+    var textRepeat = null;
+    if (dataRepeat) {
+        switch (dataRepeat.type) {
+
+            case 'daily': {
+                textRepeat = 'Lặp: Ngày' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                break;
+            }
+            case 'weekly': {
+                textRepeat = 'Lặp: Tuần' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                break;
+            }
+            case 'monthly': {
+                textRepeat = 'Lặp: Tháng' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                break;
+            }
+            case 'yearly': {
+                textRepeat = 'Lặp: Năm' + ' - ' + 'Bắt đầu: ' + moment(dataRepeat.start).format("YYYY-MM-DD HH:mm");
+                break;
+            }
+            default: {
+                textRepeat = 'Không lặp';
+                break;
+            }
+        }
+    }
+    return textRepeat;
 }
 class FormCreateTask extends Component {
     constructor(props) {
@@ -57,6 +114,7 @@ class FormCreateTask extends Component {
             notesTask: '',
             penaltyTask: 0,
             repeatTask: null,
+            textRepeat: null,
             typeRepeatTask: null,
             startRepeatTask: null,
             keyTaskCate: [idCommonTaskCate],
@@ -64,253 +122,383 @@ class FormCreateTask extends Component {
             dataAddHowLong: '',
             dataAddPoint: '',
             dataAddRemindTime: '',
-            onChangedData: false
+            onChangedData: false,
+            enableRepeatModal: false,
+            imageRecentToUpload: null
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
     }
 
-    handleChangeImg = (e) => {
+    handleChangeImg = e => {
         this.setState({
             currentUrlImg: URL.createObjectURL(e.target.files[0]),
-            photoTask: e.target.files[0]
+            photoTask: URL.createObjectURL(e.target.files[0]),
+            imageRecentToUpload: e.target.files[0],
+        });
+    };
+
+    componentDidMount() {
+        const { type } = this.props;
+        const {
+            getAllTaskCates,
+            getListMembers,
+            listMembers,
+            allTaskCates
+        } = this.props;
+        getAllTaskCates();
+        getListMembers();
+        //clone data recent task after choosing edit action.
+
+        if (type === 'edit') {
+            const { taskNeedEdit } = history.location.state;
+            this.setState({
+                textRepeat: translateDataRepeat(taskNeedEdit.repeat),
+                keyMember:
+                    taskNeedEdit.assign !== null
+                        ? taskNeedEdit.assign.mAssigns.map(item => item.mID._id)
+                        : [],
+                keyTaskCate: [taskNeedEdit.tcID._id],
+                currentUrlImg: taskNeedEdit.photo,
+                nameTask: taskNeedEdit.name,
+                dueDateTask: taskNeedEdit.dueDate,
+                penaltyTask: taskNeedEdit.penalty,
+                repeatTask: taskNeedEdit.repeat,
+                startRepeatTask: taskNeedEdit.repeat ? taskNeedEdit.repeat.start : null,
+                typeRepeatTask: taskNeedEdit.repeat ? taskNeedEdit.repeat.type : null,
+                timeTask: taskNeedEdit.time,
+                pointsTask: taskNeedEdit.points,
+                tcIDTask: taskNeedEdit.tcID._id,
+                notesTask: taskNeedEdit.notes,
+                remindTimeTask: taskNeedEdit.reminder,
+                assignMemberTask:
+                    taskNeedEdit.assign !== null
+                        ? {
+                            mAssigns: taskNeedEdit.assign.mAssigns.map(
+                                item => item.mID._id
+                            ),
+                            isAll: taskNeedEdit.assign.isAll
+                        }
+                        : null
+            })
+
+        }
+    }
+
+    handleInputChange(event) {
+        this.setState({
+            [event.target.name]: event.target.value,
+            onChangedData: true
         });
     }
 
-    componentWillMount() {
-        const { getAllTaskCates, getListMembers, listMembers, allTaskCates } = this.props;
-        getAllTaskCates();
-        getListMembers();
-    }
-
-    componentDidMount() {
-
-        const { recentTask, type } = this.props;
-        //clone data recent task after choosing edit action.
-        type === 'edit' ?
-            recentTask ? this.setState({
-                keyMember: recentTask.assign !== null ? recentTask.assign.mAssigns.map(item => item.mID._id) : [],
-                keyTaskCate: [recentTask.tcID._id],
-                currentUrlImg: recentTask.photo,
-                nameTask: recentTask.name,
-                dueDateTask: recentTask.dueDate,
-                penaltyTask: recentTask.penalty,
-                repeatTask: recentTask.repeat,
-                startRepeatTask: recentTask.repeat.start || null,
-                typeRepeatTask: repeatTask.repeat.type || null,
-                timeTask: recentTask.time,
-                pointsTask: recentTask.points,
-                tcIDTask: recentTask.tcID._id,
-                notesTask: recentTask.notes,
-                remindTimeTask: recentTask.reminder,
-                assignMemberTask: recentTask.assign !== null
-                    ? { mAssigns: recentTask.assign.mAssigns.map(item => item.mID._id), isAll: recentTask.assign.isAll }
-                    : null
-            }) : null
-            : null
-
-    }
-
-
-    handleInputChange(event) {
-        this.setState({ [event.target.name]: event.target.value, onChangedData: true });
-    }
-
-
     handleClickBack = () => {
-        history.push("/tasks");
-    }
+        history.push('/tasks');
+    };
 
     onAddPointChange = event => {
         this.setState({
-            dataAddPoint: event.target.value,
+            dataAddPoint: event.target.value
         });
     };
     onAddHowLongChange = event => {
         this.setState({
-            dataAddHowLong: event.target.value,
+            dataAddHowLong: event.target.value
         });
     };
     onAddRemindTimeChange = event => {
         this.setState({
-            dataAddRemindTime: event.target.value,
+            dataAddRemindTime: event.target.value
         });
     };
 
     handleOnChangeSelectTypeRepeat = value => {
         const { startRepeatTask } = this.state;
         this.setState({ typeRepeatTask: value }, () =>
-            this.setState({ repeatTask: { start: startRepeatTask || null, type: value || null } })
-        )
-
-    }
+            this.setState({
+                repeatTask: { start: startRepeatTask || null, type: value || null }
+            })
+        );
+    };
 
     handleOnChangePenalty = value => {
-        this.setState({ penaltyTask: Number(value) || 0 })
-    }
+        this.setState({ penaltyTask: Number(value) || 0 });
+    };
 
     handleOnChangeSelectHowLong = value => {
-        this.setState({ timeTask: Number(value) })
+        this.setState({ timeTask: Number(value) });
     };
 
     handleOnChangeTimeRemind = value => {
-        this.setState({ remindTimeTask: Number(value) })
-    }
+        this.setState({ remindTimeTask: Number(value) });
+    };
     handleOnChangeSelectPoint = value => {
-        this.setState({ pointsTask: Number(value) })
-    }
+        this.setState({ pointsTask: Number(value) });
+    };
 
-    onChangeSwitchTypeAssign = (checked) => {
+    onChangeSwitchTypeAssign = checked => {
         const { assignMemberTask } = this.state;
-        this.setState({ assignMemberTask: { mAssigns: assignMemberTask.mAssigns, isAll: checked }, })
-    }
+        this.setState({
+            assignMemberTask: { mAssigns: assignMemberTask.mAssigns, isAll: checked }
+        });
+    };
     addItemHowLong = () => {
-        console.log('addItem');
+
 
         const { itemsHowLong, dataAddHowLong } = this.state;
 
         let i = itemsHowLong.indexOf(Number(dataAddHowLong));
 
-        i === -1 ?
-            this.setState({
+        i === -1
+            ? this.setState({
                 itemsHowLong: [...itemsHowLong, dataAddHowLong],
-                dataAddHowLong: '',
-            }) : null;
-
-
+                dataAddHowLong: ''
+            })
+            : null;
     };
 
     addItemRemindTime = () => {
-        console.log('addItem');
+
         const { itemsRemindTime, dataAddRemindTime } = this.state;
         let i = itemsRemindTime.indexOf(Number(dataAddRemindTime));
 
-        i === -1 ?
-            this.setState({
+        i === -1
+            ? this.setState({
                 itemsRemindTime: [...itemsRemindTime, dataAddRemindTime],
-                dataAddRemindTime: '',
-            }) : null;
-
-
+                dataAddRemindTime: ''
+            })
+            : null;
     };
 
     addItemPoints = () => {
-        console.log('addItem');
+
         const { itemsPoints, dataAddPoint } = this.state;
         const i = itemsPoints.indexOf(Number(dataAddPoint));
 
-        i === -1 ?
-            this.setState({
+        i === -1
+            ? this.setState({
                 itemsPoints: [...itemsPoints, dataAddPoint || `New item ${index++}`],
-                dataAddPoint: '',
-            }) : null
+                dataAddPoint: ''
+            })
+            : null;
     };
 
-    handledChangeAvatar = (indexItem) => {
+    handledChangeAvatar = indexItem => {
         const { keyMember } = this.state;
         const i = keyMember.indexOf(indexItem);
         if (i !== -1) {
             keyMember.splice(i, 1);
             this.setState({
-                keyMember: keyMember, assignMemberTask: { mAssigns: keyMember, isAll: false }
+                keyMember: keyMember,
+                assignMemberTask: { mAssigns: keyMember, isAll: false }
             });
-
-
         } else {
-            this.setState({ keyMember: [...keyMember, indexItem], assignMemberTask: { mAssigns: [...keyMember, indexItem], isAll: false } });
-
+            this.setState({
+                keyMember: [...keyMember, indexItem],
+                assignMemberTask: { mAssigns: [...keyMember, indexItem], isAll: false }
+            });
         }
-    }
-    handledChangeCate = (indexItem) => {
+    };
+    handledChangeCate = indexItem => {
         const { keyTaskCate } = this.state;
         const i = keyTaskCate.indexOf(indexItem);
         if (i === -1) {
             this.setState({ keyTaskCate: [indexItem], tcIDTask: indexItem });
         }
-
-    }
+    };
 
     handleOnChangeDatePicker = (value, dateString) => {
-        this.setState({ dueDateTask: new Date(dateString) })
-
-    }
-
+        this.setState({ dueDateTask: new Date(dateString) });
+    };
 
     handleOnChangeStartRepeatDate = (value, timeString) => {
         const { typeRepeatTask } = this.state;
-        this.setState({ startRepeatTask: new Date(timeString) || null }
-            , () => this.setState({ repeatTask: { start: new Date(timeString), type: typeRepeatTask } }))
+        this.setState({ startRepeatTask: new Date(timeString) || null }, () =>
+            this.setState({
+                repeatTask: { start: new Date(timeString), type: typeRepeatTask }
+            })
+        );
+    };
+
+    clickToShowRepeatModal = () => {
+        this.setState({ enableRepeatModal: true });
     }
 
+    clickCancelRepeatModal = () => {
+        this.setState({ enableRepeatModal: false });
+    }
+
+    receiveDataRepeat = (dataRepeat) => {
+        var textRepeat = null;
+        textRepeat = translateDataRepeat(dataRepeat);
+        this.setState({ repeatTask: { type: dataRepeat.type, start: dataRepeat.start }, enableRepeatModal: false, textRepeat: textRepeat });
+
+    }
     handleSubmit = () => {
+        const { taskNeedEdit } = history.location.state;
         const {
-            nameTask, assignMemberTask, dueDateTask, photoTask,
-            timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask, remindTimeTask
-        } = this.state;
-
-        const { addTask, editTask, type, recentTask } = this.props;
-
-        if (photoTask) {
-            const uploadTask = storage.ref().child(`images/${photoTask.name}`).put(photoTask);
-            uploadTask.on('state_changed', function (snapshot) {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
-                switch (snapshot.state) {
-                    case firebase.storage.TaskState.PAUSED:
-                        console.log('Upload is paused');
-                        break;
-                    case firebase.storage.TaskState.RUNNING:
-                        console.log('Upload is running');
-                        break;
-                }
-            }, function (error) {
-                console.log(error);
-            }, function () {
-                uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-                    const photoTaskTemp = downloadURL;
-                    console.log('photo', photoTaskTemp, downloadURL)
-                    type === 'add'
-                        ? addTask(nameTask, assignMemberTask, dueDateTask, photoTaskTemp, timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask, remindTimeTask)
-                        : editTask(recentTask._id, nameTask, timeTask, pointsTask, assignMemberTask, photoTaskTemp, tcIDTask, notesTask, dueDateTask, penaltyTask, repeatTask, remindTimeTask);
-                });
-            });
-        }
-        else {
-            type === 'add'
-                ? addTask(nameTask, assignMemberTask, dueDateTask, photoTask, timeTask, pointsTask, tcIDTask, notesTask, penaltyTask, repeatTask, remindTimeTask)
-                : editTask(recentTask._id, nameTask, timeTask, pointsTask, assignMemberTask, recentTask.photo, tcIDTask, notesTask, dueDateTask, penaltyTask, repeatTask, remindTimeTask);
-        }
-    }
-
-    allowTaskName = (taskName) => {
-        const { onChangedData } = this.state;
-
-        const { allTasks } = this.props;
-        const checkExist = allTasks.filter(item => item.state === 'todo' || item.state === 'upcoming').map(item => item.name.trim().toLowerCase()).indexOf(taskName.trim().toLowerCase());
-        if (onChangedData && (checkExist !== -1 || taskName === '' || taskName.trim() === '')) {
-            return false
-        }
-        return true
-    }
-    render() {
-        const { itemsRemindTime, itemsHowLong, itemsPoints, dataAddPoint, dataAddHowLong, dataAddRemindTime,
-            keyMember, currentUrlImg,
-            nameTask, assignMemberTask, penaltyTask, repeatTask, remindTimeTask,
-            dueDateTask, photoTask, timeTask, pointsTask, tcIDTask, notesTask, keyTaskCate
-        } = this.state;
-
-        const { type, recentTask, listMembers, allTaskCates, loading } = this.props;
-        console.log(nameTask,
+            nameTask,
             assignMemberTask,
             dueDateTask,
             photoTask,
             timeTask,
             pointsTask,
             tcIDTask,
-            notesTask, penaltyTask, repeatTask, remindTimeTask)
+            notesTask,
+            penaltyTask,
+            repeatTask,
+            remindTimeTask, enableRepeatModal,
+            imageRecentToUpload
+        } = this.state;
 
+        const { addTask, editTask, type } = this.props;
 
-        let classNameForAssignMember = ["icon-avatar-member"];
+        if (imageRecentToUpload) {
+            const uploadTask = storage
+                .ref()
+                .child(`images/${imageRecentToUpload.name}`)
+                .put(imageRecentToUpload);
+            uploadTask.on(
+                'state_changed',
+                function (snapshot) {
+                    const progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                    switch (snapshot.state) {
+                        case firebase.storage.TaskState.PAUSED:
+                            console.log('Upload is paused');
+                            break;
+                        case firebase.storage.TaskState.RUNNING:
+                            console.log('Upload is running');
+                            break;
+                    }
+                },
+                function (error) {
+                    console.log(error);
+                },
+                function () {
+                    uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
+                        const photoTaskTemp = downloadURL;
+                        console.log('photo', photoTaskTemp, downloadURL);
+                        type === 'add'
+                            ? addTask(
+                                nameTask,
+                                assignMemberTask,
+                                dueDateTask,
+                                photoTaskTemp,
+                                timeTask,
+                                pointsTask,
+                                tcIDTask,
+                                notesTask,
+                                penaltyTask,
+                                repeatTask,
+                                remindTimeTask
+                            )
+                            : editTask(
+                                taskNeedEdit._id,
+                                nameTask,
+                                timeTask,
+                                pointsTask,
+                                assignMemberTask,
+                                photoTaskTemp,
+                                tcIDTask,
+                                notesTask,
+                                dueDateTask,
+                                penaltyTask,
+                                repeatTask,
+                                remindTimeTask
+                            );
+                    });
+                }
+            );
+        } else {
+            type === 'add'
+                ? addTask(
+                    nameTask,
+                    assignMemberTask,
+                    dueDateTask,
+                    photoTask,
+                    timeTask,
+                    pointsTask,
+                    tcIDTask,
+                    notesTask,
+                    penaltyTask,
+                    repeatTask,
+                    remindTimeTask
+                )
+                : editTask(
+                    taskNeedEdit._id,
+                    nameTask,
+                    timeTask,
+                    pointsTask,
+                    assignMemberTask,
+                    taskNeedEdit.photo,
+                    tcIDTask,
+                    notesTask,
+                    dueDateTask,
+                    penaltyTask,
+                    repeatTask,
+                    remindTimeTask
+                );
+        }
+    };
+
+    allowTaskName = taskName => {
+        const { onChangedData } = this.state;
+
+        const { allTasks } = this.props;
+        const checkExist = allTasks
+            .filter(item => item.state === 'todo' || item.state === 'upcoming')
+            .map(item => item.name.trim().toLowerCase())
+            .indexOf(taskName.trim().toLowerCase());
+        if (
+            onChangedData &&
+            (checkExist !== -1 || taskName === '' || taskName.trim() === '')
+        ) {
+            return false;
+        }
+        return true;
+    };
+    render() {
+        const {
+            itemsRemindTime,
+            itemsHowLong,
+            itemsPoints,
+            dataAddPoint,
+            dataAddHowLong,
+            dataAddRemindTime,
+            keyMember,
+            currentUrlImg,
+            nameTask,
+            assignMemberTask,
+            penaltyTask,
+            repeatTask,
+            remindTimeTask,
+            dueDateTask,
+            photoTask,
+            timeTask,
+            pointsTask,
+            tcIDTask,
+            notesTask,
+            keyTaskCate, enableRepeatModal, textRepeat
+        } = this.state;
+
+        const { type, listMembers, allTaskCates, loading } = this.props;
+        console.log(
+            nameTask,
+            assignMemberTask,
+            dueDateTask,
+            photoTask,
+            timeTask,
+            pointsTask,
+            tcIDTask,
+            notesTask,
+            penaltyTask,
+            repeatTask,
+            remindTimeTask
+        );
+
+        let classNameForAssignMember = ['icon-avatar-member'];
         if (!this.state.hiddenCheckAssign) {
             classNameForAssignMember.push('avatar-checked-assign-member');
         }
@@ -318,13 +506,21 @@ class FormCreateTask extends Component {
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="3" />
                 <Layout className="site-layout add-task__layout">
-                    <Header className="site-layout-background header-container" style={{ padding: 0 }}>
+                    <Header
+                        className="site-layout-background header-container"
+                        style={{ padding: 0 }}
+                    >
                         <div className="add-task__header">
                             <div
                                 className="header__btn-link"
                                 onClick={this.handleClickBack}
-                                size="large">
-                                <LeftOutlined onClick={() => { this.handleClickBack }} />
+                                size="large"
+                            >
+                                <LeftOutlined
+                                    onClick={() => {
+                                        this.handleClickBack;
+                                    }}
+                                />
                             </div>
                             <div className="add-task__header-title">
                                 {type === 'add' ? 'Tạo công việc' : 'Sửa công việc'}
@@ -332,47 +528,97 @@ class FormCreateTask extends Component {
                         </div>
                     </Header>
                     <Content className="add-task__content">
-                        <div className="container-add-task" style={{ minHeight: 360, backgroundColor: 'transparent' }}>
+                        <div
+                            className="container-add-task"
+                            style={{ minHeight: 360, backgroundColor: 'transparent' }}
+                        >
                             <Form
                                 onFinish={this.handleSubmit}
                                 className="container-form-add-task"
                                 layout="vertical"
                                 name="basic"
-                                initialValues={{ remember: true }}>
-
+                                initialValues={{ remember: true }}
+                            >
                                 {/* Set up name of task - title of task */}
-                                <Form.Item className="form-item-add" name="name-task">
-                                    <Input className="input-item-add-task" defaultValue={type === 'edit' ? recentTask.name : null}
-                                        name="nameTask" onChange={this.handleInputChange} size="large" placeholder="Tên công việc"
+                                <Form.Item className="form-item-add">
+                                    <Input
+                                        className="input-item-add-task"
+                                        value={nameTask ? nameTask : null}
+                                        name="nameTask"
+                                        onChange={this.handleInputChange}
+                                        size="large"
+                                        placeholder="Tên công việc"
                                     />
                                 </Form.Item>
-                                {this.allowTaskName(nameTask) === false ? <Alert message="Tên công việc không đúng hoặc đã tồn tại" type="error" showIcon closable /> : null}
+                                {this.allowTaskName(nameTask) === false ? (
+                                    <Alert
+                                        message="Tên công việc không đúng hoặc đã tồn tại"
+                                        type="error"
+                                        showIcon
+                                        closable
+                                    />
+                                ) : null}
                                 {/* Set up time and point*/}
-                                <Form.Item style={{ padding: 0, margin: '0px 0' }}
-                                    rules={[{ required: true, message: 'Please input your username!' }]}>
-                                    <Row gutter={[10, 0]} style={{ backgroundColor: 'transparent' }}>
-                                        <Col span={12} >
+
+
+                                <Form.Item
+                                    style={{ padding: 0, margin: '0px 0' }}
+                                    rules={[
+                                        { required: true, message: 'Please input your username!' }
+                                    ]}
+                                >
+                                    <Row
+                                        gutter={[10, 0]}
+                                        style={{ backgroundColor: 'transparent' }}
+                                    >
+                                        <Col span={12}>
                                             <div className="custom-select-add-task">
                                                 <div className="present-select-add-task">
                                                     <ClockCircleOutlined className="add-task__button-select-icon" />
-                                                    <div className="show-data-select">{timeTask !== 0 ? timeTask + ' phút' : "Thời gian cần tốn?"}</div>
+                                                    <div className="show-data-select">
+                                                        {timeTask !== 0
+                                                            ? timeTask + ' phút'
+                                                            : 'Thời gian cần tốn?'}
+                                                    </div>
                                                 </div>
-                                                <Select className="select-item-add-task"
+                                                <Select
+                                                    className="select-item-add-task"
                                                     onChange={this.handleOnChangeSelectHowLong}
                                                     size="large"
                                                     dropdownRender={menu => (
                                                         <div>
                                                             {menu}
                                                             <Divider style={{ margin: '4px 0' }} />
-                                                            <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
-                                                                <Input style={{ flex: 'auto' }} value={dataAddHowLong} type="number" size="middle"
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    flexWrap: 'nowrap',
+                                                                    padding: 8
+                                                                }}
+                                                            >
+                                                                <Input
+                                                                    style={{ flex: 'auto' }}
+                                                                    value={dataAddHowLong}
+                                                                    type="number"
+                                                                    size="middle"
                                                                     placeholder="Number for minutes"
-                                                                    onChange={this.onAddHowLongChange} />
-                                                                <a className={checkDataInput(dataAddHowLong) ? null : 'disable-btn-add-task'}
-                                                                    style={{ flex: 'none', display: 'block', cursor: 'pointer', marginLeft: 5, padding: '3px' }}
+                                                                    onChange={this.onAddHowLongChange}
+                                                                />
+                                                                <a
+                                                                    className={
+                                                                        checkDataInput(dataAddHowLong)
+                                                                            ? null
+                                                                            : 'disable-btn-add-task'
+                                                                    }
+                                                                    style={{
+                                                                        flex: 'none',
+                                                                        display: 'block',
+                                                                        cursor: 'pointer',
+                                                                        marginLeft: 5,
+                                                                        padding: '3px'
+                                                                    }}
                                                                     onClick={this.addItemHowLong}>
-                                                                    <PlusOutlined />&nbsp;Thêm
-                                                                </a>
+                                                                    <PlusOutlined />&nbsp;Thêm</a>
                                                             </div>
                                                         </div>
                                                     )}
@@ -387,7 +633,11 @@ class FormCreateTask extends Component {
                                             <div className="custom-select-add-task">
                                                 <div className="present-select-add-task">
                                                     <StarOutlined className="add-task__button-select-icon" />
-                                                    <div className="show-data-select">{pointsTask !== 0 ? pointsTask + ' điểm' : "Điểm thưởng"}</div>
+                                                    <div className="show-data-select">
+                                                        {pointsTask !== 0
+                                                            ? pointsTask + ' điểm'
+                                                            : 'Điểm thưởng'}
+                                                    </div>
                                                 </div>
                                                 <Select
                                                     className="select-item-add-task"
@@ -399,15 +649,34 @@ class FormCreateTask extends Component {
                                                         <div>
                                                             {menu}
                                                             <Divider style={{ margin: '4px 0' }} />
-                                                            <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
-                                                                <Input style={{ flex: 'auto' }}
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    flexWrap: 'nowrap',
+                                                                    padding: 8
+                                                                }}>
+                                                                <Input
+                                                                    style={{ flex: 'auto' }}
                                                                     size="middle"
-                                                                    value={dataAddPoint} type="number"
-                                                                    onChange={this.onAddPointChange} placeholder="Number for points" />
-                                                                <a className={checkDataInput(dataAddPoint) ? null : 'disable-btn-add-task'}
-                                                                    style={{ flex: 'none', padding: '3px', display: 'block', cursor: 'pointer' }}
+                                                                    value={dataAddPoint}
+                                                                    type="number"
+                                                                    onChange={this.onAddPointChange}
+                                                                    placeholder="Number for points" />
+                                                                <a
+                                                                    className={
+                                                                        checkDataInput(dataAddPoint)
+                                                                            ? null
+                                                                            : 'disable-btn-add-task'
+                                                                    }
+                                                                    style={{
+                                                                        flex: 'none',
+                                                                        padding: '3px',
+                                                                        display: 'block',
+                                                                        cursor: 'pointer'
+                                                                    }}
                                                                     onClick={this.addItemPoints}>
-                                                                    <PlusOutlined /> Thêm</a>
+                                                                    <PlusOutlined /> Thêm
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     )}
@@ -417,188 +686,247 @@ class FormCreateTask extends Component {
                                                     ))}
                                                 </Select>
                                             </div>
-
                                         </Col>
                                     </Row>
                                 </Form.Item>
                                 {/* Set up category for task */}
-                                <Form.Item className="form-item-add"
+                                <Form.Item
+                                    className="form-item-add"
                                     label={
-                                        keyTaskCate.length > 0
-                                            ? <div className="add-task__label-form-item" style={{ color: '#2295FF' }}><AppstoreOutlined style={{ fontSize: 17 }} />&nbsp;Loại công việc</div>
-                                            : <div className="add-task__label-form-item" style={{}}><AppstoreOutlined style={{ fontSize: 17 }} />&nbsp;Loại công việc</div>} >
+                                        <div
+                                            className="add-task__label-form-item"
+                                            style={{ color: keyTaskCate.length ? '#2295FF' : null }}>
+                                            <AppstoreOutlined style={{ fontSize: 17 }} />
+                                                    &nbsp;Loại công việc
+                                            </div>}>
                                     <div className="list-task-cate">
-                                        {allTaskCates ? allTaskCates.map(item =>
-                                            (<div key={item._id || null} className="task-cate-item">
-                                                <div className="avatar-task-cate" onClick={(e) => {
-                                                    this.handledChangeCate(item._id)
-                                                }
-                                                }>
-                                                    <Avatar src={item.image} className={keyTaskCate.indexOf(item._id) !== -1 ? "icon-avatar-task-cate-checked" : "icon-avatar-task-cate"}></Avatar>
-                                                    <CheckOutlined
-                                                        className="icon-check-assign-task-cate"
-                                                        hidden={keyTaskCate.indexOf(item._id) !== -1 ? false : true} />
+                                        {allTaskCates
+                                            ? allTaskCates.map(item => (
+                                                <div
+                                                    key={item._id || null}
+                                                    className="task-cate-item"
+                                                >
+                                                    <div
+                                                        className="avatar-task-cate"
+                                                        onClick={e => {
+                                                            this.handledChangeCate(item._id);
+                                                        }}
+                                                    >
+                                                        <Avatar
+                                                            src={item.image}
+                                                            className={
+                                                                keyTaskCate.indexOf(item._id) !== -1
+                                                                    ? 'icon-avatar-task-cate-checked'
+                                                                    : 'icon-avatar-task-cate'
+                                                            }
+                                                        ></Avatar>
+                                                        <CheckOutlined
+                                                            className="icon-check-assign-task-cate"
+                                                            hidden={
+                                                                keyTaskCate.indexOf(item._id) !== -1
+                                                                    ? false
+                                                                    : true
+                                                            }
+                                                        />
+                                                    </div>
+                                                    <div className="add-task__label-cate">
+                                                        {item.name}
+                                                    </div>
                                                 </div>
-                                                <div className="add-task__label-cate">{item.name}</div>
-                                            </div>)) : null}
+                                            ))
+                                            : null}
                                     </div>
                                 </Form.Item>
 
                                 {/* Set up assigned member for task */}
 
-                                <Form.Item className="form-item-add" name="assign-member" label={
-                                    keyMember.length > 0
-                                        ? <div className="add-task__label-form-item" style={{ color: '#2295FF' }}>
-                                            <TeamOutlined style={{ fontSize: 17 }} />&nbsp;Thành viên phụ trách
-
-                                           {keyMember.length > 1
-                                                ? <Tooltip placement="top" title="một người tùy chọn hay cùng nhau thực hiện" >
-                                                    <Switch style={{ marginLeft: 15, position: 'absolute', right: 0 }} onChange={this.onChangeSwitchTypeAssign}
-                                                        checkedChildren="cùng làm" unCheckedChildren="tùy chọn" />
-                                                </Tooltip>
-                                                : null}
-                                        </div>
-                                        : <div className="add-task__label-form-item" style={{ width: '100%' }}>
-                                            <TeamOutlined style={{ fontSize: 17 }} />&nbsp;Thành viên phụ trách
-                                        </div>} >
-
-                                    <div className="list-avatar-member">
-                                        {listMembers ? listMembers.map(item =>
-                                            <div key={item._id} className="container-avatar-member">
-                                                <div className="avatar-member"
-                                                    onClick={(e) => {
-                                                        this.handledChangeAvatar(item._id)
-                                                    }
-                                                    }>
-                                                    <Avatar className={keyMember.indexOf(item._id) === -1 ? "icon-avatar-member" : "icon-avatar-member-checked"}
-                                                        src={item.mAvatar.image} />
-                                                    <CheckOutlined
-                                                        className="icon-check-assign-member"
-                                                        hidden={keyMember.indexOf(item._id) !== -1 ? false : true} />
+                                <Form.Item
+                                    className="form-item-add"
+                                    name="assign-member"
+                                    label={
+                                        <div
+                                            className="add-task__label-form-item"
+                                            style={{ color: keyMember.length ? '#2295FF' : null, width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                                            <div>
+                                                <TeamOutlined style={{ fontSize: 17 }} />
+                                                &nbsp;Thành viên phụ trách
                                                 </div>
-                                                <div className='name-avatar-member'>{item.mName}</div>
-                                            </div>) : null}
+                                            {keyMember.length > 1 ? (
+                                                <div>
+                                                    Cùng thực hiện
+                                                    <Switch style={{ marginLeft: 10 }}
+                                                        onChange={this.onChangeSwitchTypeAssign}
+                                                        checkedChildren="có"
+                                                        unCheckedChildren="không"
+                                                    />
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    }>
+                                    <div className="list-avatar-member">
+                                        {listMembers
+                                            ? listMembers.map(item => (
+                                                <div key={item._id}
+                                                    className="container-avatar-member">
+                                                    <div
+                                                        className="avatar-member"
+                                                        onClick={e => {
+                                                            this.handledChangeAvatar(item._id);
+                                                        }}
+                                                    >
+                                                        <Avatar
+                                                            className={
+                                                                keyMember.indexOf(item._id) === -1
+                                                                    ? 'icon-avatar-member'
+                                                                    : 'icon-avatar-member-checked'
+                                                            }
+                                                            src={item.mAvatar.image}
+                                                        />
+                                                        <CheckOutlined
+                                                            className="icon-check-assign-member"
+                                                            hidden={
+                                                                keyMember.indexOf(item._id) !== -1
+                                                                    ? false
+                                                                    : true}
+                                                        />
+                                                    </div>
+                                                    <div className="name-avatar-member">
+                                                        {item.mName}
+                                                    </div>
+                                                </div>
+                                            ))
+                                            : null}
                                     </div>
-
-
                                 </Form.Item>
 
                                 {/* Set up time of task */}
+
                                 <Form.Item className="form-item-add">
                                     <Row gutter={[30]}>
-                                        <Col xs={24} sm={24} md={12} lg={12} xl={12} >
+                                        <Col xs={24} sm={24} md={24} lg={24} xl={12}>
                                             <div className="custom-select-date-add-task">
                                                 <Row style={{ width: '100%' }}>
-                                                    <Col span={10}>
+                                                    <Col xs={8} sm={8} md={8} lg={5} xl={10}>
                                                         <div className="present-select-date-add-task">
-                                                            {repeatTask !== null
-                                                                ? <div className="add-task__label-form-item" style={{ color: '#2985ff' }}>
-                                                                    <RedoOutlined style={{ fontSize: 17 }} />&nbsp;Lặp lại
-                                                            </div>
-                                                                : <div className="add-task__label-form-item" style={{}}><RedoOutlined style={{ fontSize: 17 }} />&nbsp;Lặp lại</div>
-                                                            }
+                                                            <div
+                                                                className="add-task__label-form-item"
+                                                                style={{ color: repeatTask ? '#2985ff' : null }}>
+                                                                <RetweetOutlined style={{ fontSize: 17 }} />
+                                                                 &nbsp;Lặp lại
+                                                                </div>
                                                         </div>
                                                     </Col>
-                                                    <Col span={14} className="add-task__col-select-inside">
-                                                        <Select size="large" name="repeatTask"
-                                                            defaultValue={type === 'edit' ? recentTask.repeat : undefined}
-                                                            onChange={this.handleOnChangeSelectTypeRepeat}
-                                                            placeholder="Chọn kiểu lặp lại"
-                                                            style={{ width: '100%' }} allowClear>
-                                                            <Option key="norepeat" value={null}>Không lặp</Option>
-                                                            <Option key="daily" value="daily">Hằng ngày</Option>
-                                                            <Option key="weekly" value="weekly">Hằng tuần</Option>
-                                                        </Select>
+                                                    <Col
+                                                        xs={16} sm={16} md={16} lg={19} xl={14}
+                                                        className="add-task__col-select-inside"
+                                                    >
+                                                        <Button className="grocery-form__btn-repeat"
+                                                            onClick={() => { this.clickToShowRepeatModal() }}>
+                                                            {textRepeat ? textRepeat : 'Không lặp'}
+                                                        </Button>
                                                     </Col>
                                                 </Row>
                                             </div>
                                         </Col>
-                                        {repeatTask ? <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                                    </Row>
+                                </Form.Item>
+                                <Form.Item className="form-item-add">
+                                    <Row gutter={[30]}>
+                                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                                             <div className="custom-select-date-add-task">
                                                 <Row style={{ width: '100%' }}>
-                                                    <Col span={10}>
+                                                    <Col xs={8} sm={8} md={8} lg={10} xl={10}>
                                                         <div className="present-select-date-add-task">
-                                                            {dueDateTask !== null
-                                                                ? <div className="add-task__label-form-item" style={{ color: '#2985ff' }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Thời gian bắt đầu</div>
-                                                                : <div className="add-task__label-form-item" style={{}}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Thời gian bắt đầu</div>
-                                                            }
+                                                            <div
+                                                                className="add-task__label-form-item"
+                                                                style={{ color: dueDateTask ? '#2985ff' : null }}                                                                >
+                                                                <ScheduleOutlined style={{ fontSize: 17 }} />
+                                                                        &nbsp;Hạn công việc
+                                                                </div>
                                                         </div>
                                                     </Col>
-                                                    <Col span={14}>
+                                                    <Col xs={16} sm={16} md={16} lg={14} xl={14}>
                                                         <DatePicker
-                                                            defaultValue={type === 'edit'
-                                                                ? recentTask.repeat.start === null ? null : moment(`${recentTask.repeat.start}`, "YYYY-MM-DD HH:mm")
-                                                                : null
-                                                            }
-                                                            onChange={this.handleOnChangeStartRepeatDate}
-                                                            allowClear={true}
-                                                            size="large"
-                                                            name="dueDateTask" style={{ width: '100%' }}
-                                                            placeholder="Hạn cuối của công việc" showTime format="YYYY-MM-DD HH:mm:ss" />
-                                                    </Col>
-                                                </Row>
-                                            </div>
-                                        </Col> : null}
-
-                                        <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                                            <div className="custom-select-date-add-task">
-                                                <Row style={{ width: '100%' }}>
-                                                    <Col span={10}>
-                                                        <div className="present-select-date-add-task">
-                                                            {dueDateTask !== null
-                                                                ? <div className="add-task__label-form-item" style={{ color: '#2985ff' }}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Hạn cuối</div>
-                                                                : <div className="add-task__label-form-item" style={{}}><ScheduleOutlined style={{ fontSize: 17 }} />&nbsp;Hạn công việc</div>
-                                                            }
-                                                        </div>
-                                                    </Col>
-                                                    <Col span={14}>
-                                                        <DatePicker
-                                                            defaultValue={type === 'edit'
-                                                                ? recentTask.dueDate === null ? null : moment(`${recentTask.dueDate}`, "YYYY-MM-DD HH:mm")
-                                                                : null
-                                                            }
+                                                            dropdownClassName="task-form__date-picker"
+                                                            disabledDate={disabledDate}
                                                             onChange={this.handleOnChangeDatePicker}
                                                             allowClear={true}
+                                                            value={dueDateTask ? moment(dueDateTask, 'YYYY-MM-DD HH:mm') : null}
                                                             size="large"
-                                                            name="dueDateTask" style={{ width: '100%' }}
-                                                            placeholder="Hạn cuối của công việc" showTime format="YYYY-MM-DD HH:mm:ss" />
+                                                            name="dueDateTask"
+                                                            style={{ width: '100%' }}
+                                                            placeholder="Hạn cuối của công việc"
+                                                            showTime
+                                                            format="YYYY-MM-DD HH:mm"
+                                                        />
                                                     </Col>
                                                 </Row>
                                             </div>
-                                        </Col>{dueDateTask !== null
-                                            ?
-                                            <Col xs={24} sm={24} md={12} lg={12} xl={12} >
-
+                                        </Col>
+                                        {dueDateTask !== null ? (
+                                            <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                                                 <div className="custom-select-date-add-task">
                                                     <Row style={{ width: '100%' }}>
-                                                        <Col span={10}>
+                                                        <Col xs={8} sm={8} md={8} lg={10} xl={10}>
                                                             <div className="present-select-date-add-task">
-                                                                {remindTimeTask !== null
-                                                                    ? <div className="add-task__label-form-item" style={{ color: '#2985ff' }}><AlertOutlined style={{ fontSize: 17 }} />&nbsp;Nhắc nhở trước hạn</div>
-                                                                    : <div className="add-task__label-form-item" style={{}}><AlertOutlined style={{ fontSize: 17 }} />&nbsp;Nhắc nhở trước hạn</div>}
+                                                                <div
+                                                                    className="add-task__label-form-item"
+                                                                    style={{ color: remindTimeTask ? '#2985ff' : null }}>
+                                                                    <AlertOutlined style={{ fontSize: 17 }} />
+                                                                    &nbsp;Nhắc nhở
+                                                                    </div>
                                                             </div>
                                                         </Col>
-                                                        <Col span={14} >
+                                                        <Col xs={16} sm={16} md={16} lg={14} xl={14}>
                                                             <Select
                                                                 onChange={this.handleOnChangeTimeRemind}
                                                                 size="large"
                                                                 placeholder="Chọn thời gian nhắc trước"
-                                                                defaultValue={remindTimeTask !== null ? remindTimeTask + ' phút' : undefined}
+                                                                defaultValue={
+                                                                    remindTimeTask !== null
+                                                                        ? remindTimeTask + ' phút'
+                                                                        : undefined
+                                                                }
                                                                 dropdownRender={menu => (
                                                                     <div>
                                                                         {menu}
                                                                         <Divider style={{ margin: '4px 0' }} />
-                                                                        <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
-
-                                                                            <Input style={{ flex: 'auto' }}
-                                                                                defaultValue={dataAddRemindTime ? dataAddRemindTime : null} type="number"
+                                                                        <div
+                                                                            style={{
+                                                                                display: 'flex',
+                                                                                flexWrap: 'nowrap',
+                                                                                padding: 8
+                                                                            }}>
+                                                                            <Input
+                                                                                style={{ flex: 'auto' }}
+                                                                                defaultValue={
+                                                                                    dataAddRemindTime
+                                                                                        ? dataAddRemindTime
+                                                                                        : null
+                                                                                }
+                                                                                type="number"
                                                                                 placeholder="Nhập thời gian nhắc nhở"
                                                                                 size="middle"
-                                                                                onChange={this.onAddRemindTimeChange} />
-                                                                            <a className={checkDataInput(dataAddRemindTime) ? null : 'disable-btn-add-task'}
-                                                                                style={{ flex: 'none', padding: '3px', display: 'block', cursor: 'pointer' }}
-                                                                                onClick={this.addItemRemindTime}>
-                                                                                <PlusOutlined style={{ marginLeft: 10 }} />Thêm</a>
+                                                                                onChange={this.onAddRemindTimeChange}
+                                                                            />
+                                                                            <a
+                                                                                className={
+                                                                                    checkDataInput(dataAddRemindTime)
+                                                                                        ? null
+                                                                                        : 'disable-btn-add-task'
+                                                                                }
+                                                                                style={{
+                                                                                    flex: 'none',
+                                                                                    padding: '3px',
+                                                                                    display: 'block',
+                                                                                    cursor: 'pointer'
+                                                                                }}
+                                                                                onClick={this.addItemRemindTime} >
+                                                                                <PlusOutlined
+                                                                                    style={{ marginLeft: 10 }}
+                                                                                />
+                                                                                 Thêm
+                                                                                    </a>
                                                                         </div>
                                                                     </div>
                                                                 )}
@@ -610,103 +938,145 @@ class FormCreateTask extends Component {
                                                         </Col>
                                                     </Row>
                                                 </div>
-                                            </Col> : null}
+                                            </Col>
+                                        ) : null}
 
-                                        <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                                        <Col xs={24} sm={24} md={24} lg={12} xl={12}>
                                             <div className="custom-select-date-add-task">
                                                 <Row style={{ width: '100%' }}>
-                                                    <Col span={10}>
+                                                    <Col xs={8} sm={8} md={8} lg={10} xl={10}>
                                                         <div className="present-select-date-add-task">
-                                                            {penaltyTask
-                                                                ? <div className="add-task__label-form-item" style={{ color: '#2985ff' }}>
-                                                                    <FrownOutlined style={{ fontSize: 17 }} />&nbsp;Điểm phạt</div>
-                                                                : <div className="add-task__label-form-item"><FrownOutlined style={{ fontSize: 17 }} />&nbsp;Điểm phạt</div>
-                                                            }
+                                                            <div
+                                                                className="add-task__label-form-item"
+                                                                style={{ color: penaltyTask ? '#2985ff' : null }}>
+                                                                <FrownOutlined style={{ fontSize: 17 }} />
+                                                                &nbsp;Điểm phạt
+                                                                </div>
                                                         </div>
                                                     </Col>
-                                                    <Col span={14}>
-                                                        <Select size="large" name="penaltyTask"
-                                                            defaultValue={type === 'edit' ? recentTask.penalty + ' %' : undefined}
-                                                            placeholder="Chọn số điểm trừ" onChange={this.handleOnChangePenalty}
-                                                            style={{ width: '100%' }} allowClear>
-                                                            <Option key="0" value="0">Không trừ điểm</Option>
-                                                            <Option key="10" value="10">Trừ 10%</Option>
-                                                            <Option key="20" value="20">Trừ 20%</Option>
+                                                    <Col xs={16} sm={16} md={16} lg={14} xl={14}>
+                                                        <Select
+                                                            size="large"
+                                                            name="penaltyTask"
+                                                            defaultValue={
+                                                                type === 'edit'
+                                                                    ? penaltyTask + ' %'
+                                                                    : undefined
+                                                            }
+                                                            placeholder="Chọn số điểm trừ"
+                                                            onChange={this.handleOnChangePenalty}
+                                                            style={{ width: '100%' }}
+                                                            allowClear
+                                                        >
+                                                            <Option key="0" value="0">
+                                                                Không trừ điểm
+                                                                </Option>
+                                                            <Option key="10" value="10">
+                                                                Trừ 10%
+                                                             </Option>
+                                                            <Option key="20" value="20">
+                                                                Trừ 20%
+                                                             </Option>
                                                         </Select>
                                                     </Col>
                                                 </Row>
                                             </div>
                                         </Col>
                                     </Row>
-
                                 </Form.Item>
 
                                 {/* Upload image for task */}
                                 <Form.Item className="form-item-add">
                                     <div className="add-task-list-img">
-                                        <div className="show-upload-img">
-                                            {currentUrlImg !== indexConstants.UPLOAD_IMG
-                                                ? <img src={currentUrlImg} className="after-upload-img" />
-                                                : <div className="add-task-img">
-                                                    <img src={currentUrlImg} className="upload-img" />
-                                                    <span className="tt-upload-img">Hình ảnh</span>
-                                                </div>
-                                            }
+                                        {photoTask ?
+                                            <div className="show-upload-img">
+                                                <img src={photoTask} className="after-upload-img" />
+                                            </div> : null}
+                                        <div className="task-form__change-image-container">
+                                            <div className="task-form__change-image">
+                                                <input
+                                                    onChange={this.handleChangeImg}
+                                                    type="file"
+                                                    className="input-add-task-img"
+                                                />{!photoTask
+                                                    ? <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <UploadOutlined style={{ fontSize: 20 }} />&ensp;
+                                                        <div>Thêm hình ảnh</div>
+                                                    </div>
+                                                    : 'Thay đổi ảnh'}
+                                            </div>
+                                            {photoTask ?
+                                                <div className="task-form__change-image">
+                                                    Xóa ảnh
+                                            </div> : null}
                                         </div>
-                                        <input onChange={this.handleChangeImg} type="file" className="input-add-task-img" />
+
+
                                     </div>
                                 </Form.Item>
 
                                 {/* Note or detail task */}
-                                <Form.Item className="form-item-add"
+                                <Form.Item
+                                    className="form-item-add"
                                     label={
-                                        notesTask !== '' || null
-                                            ? <div className="add-task__label-form-item" style={{ color: '#2295FF' }}><SnippetsOutlined style={{ fontSize: 17 }} />&nbsp;Ghi chú:</div>
-                                            : <div className="add-task__label-form-item"><SnippetsOutlined style={{ fontSize: 17 }} />&nbsp;Ghi chú</div>} >
-                                    <TextArea name="notesTask"
-                                        defaultValue={type === 'edit'
-                                            ? recentTask.notes === null ? '' : recentTask.notes
-                                            : null
-                                        }
+                                        <div
+                                            className="add-task__label-form-item"
+                                            style={{ color: notesTask !== '' || null ? '#2295FF' : null }}>
+                                            <SnippetsOutlined style={{ fontSize: 17 }} />
+                                                 &nbsp;Ghi chú:
+                                            </div>
+                                    }>
+                                    <TextArea
+                                        name="notesTask"
+                                        value={notesTask ? notesTask : null}
                                         onChange={this.handleInputChange}
-                                        placeholder="Chi tiết công việc" cols={2} />
+                                        placeholder="Chi tiết công việc"
+                                        cols={2}
+                                    />
                                 </Form.Item>
 
                                 <Form.Item className="form-item-add">
                                     <div className="button-add-task-form">
-                                        <Button type="default" size="large" style={{ marginRight: 10 }}>Hủy</Button>
-                                        <Button htmlType="submit" type="primary" size="large" disabled={!this.allowTaskName(nameTask)} loading={loading}>
+                                        <Button
+                                            type="default"
+                                            size="large"
+                                            style={{ marginRight: 10 }}>
+                                            Hủy</Button>
+                                        <Button
+                                            htmlType="submit"
+                                            type="primary"
+                                            size="large"
+                                            disabled={!this.allowTaskName(nameTask)}
+                                            loading={loading}
+                                        >
                                             {type === 'add' ? 'Thêm' : 'Cập nhật'}
                                         </Button>
                                     </div>
                                 </Form.Item>
+                                <BasicRepeatModal tab="task" handleClickCancelModalForParent={this.clickCancelRepeatModal} enableRepeatModal={enableRepeatModal} receiveDataRepeat={this.receiveDataRepeat}></BasicRepeatModal>
                             </Form>
-
                         </div>
-
                     </Content>
-
                 </Layout>
             </Layout>
-
-        )
+        );
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
     user: state.authentication.user,
     messageAlert: state.alert.type,
-    recentTask: state.task.recentTask,
+    taskNeedEdit: state.task.taskNeedEdit,
     allTasks: state.task.allTasks,
     listMembers: state.family.listMembers,
     allTaskCates: state.taskCate.allTaskCates,
     idCommonTaskCate: state.taskCate.idCommonTaskCate,
-    loading: state.task.loading,
-})
+    loading: state.task.loading
+});
 const actionCreators = {
     addTask: taskActions.addTask,
     editTask: taskActions.editTask,
     getAllTaskCates: taskCateActions.getAllTaskCates,
-    getListMembers: familyActions.getListMembers,
-}
-export default connect(mapStateToProps, actionCreators)(FormCreateTask)
+    getListMembers: familyActions.getListMembers
+};
+export default connect(mapStateToProps, actionCreators)(FormCreateTask);

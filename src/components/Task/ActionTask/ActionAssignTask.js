@@ -6,7 +6,7 @@ import { CheckOutlined, CheckCircleOutlined, SolutionOutlined } from '@ant-desig
 import { connect } from 'react-redux';
 import { taskActions } from '../../../actions/task.actions';
 import moment from 'moment';
-import 'moment/locale/vi';
+
 
 class AssignTaskForm extends Component {
     state = {

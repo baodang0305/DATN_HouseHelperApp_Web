@@ -88,27 +88,19 @@
 	border: 1px solid rgb(21, 255, 0);
 }
 
-.icon-task-point {
-	font-size: 18px;
-	color: darkgoldenrod;
-}
-
-.point,
 .task-point {
 	display: flex;
-	width: max-content;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-}
-
-.task-point {
-	margin-left: 20px;
+	margin-left: 10px;
 }
 
 .point {
-	font-size: 17px;
+	font-size: 16px;
+	color: #faad14;
 }
+
 
 .actions {
 	display: flex;
@@ -168,6 +160,10 @@
 
 .check-box-task {
 	border-radius: 100%;
+}
+
+.task__action-title {
+	font-size: 12px;
 }
 
 /* css for checkbox */
@@ -394,7 +390,7 @@
 	}
 
 	.task__action-item {
-		margin: 0 4px;
+		margin: 0 5px;
 	}
 
 	.task__action-title {

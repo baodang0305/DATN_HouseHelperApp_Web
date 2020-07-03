@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: black;
+  color: #333;
   height: 60px;
   margin: 0px 10px;
 }
@@ -193,7 +193,8 @@
 }
 
 .grocery__name-item {
-  font-weight: 500;
+  font-weight: 450;
+  color: #333;
 }
 
 .loading-data-grocery {
@@ -251,20 +252,19 @@
 
 .quick-filter__item {
   margin: 0px 10px;
-  padding: 2px 3px;
+  padding: 3px 3px;
   cursor: pointer;
   border-radius: 3px;
   border: 1px solid #EDEDED;
-
+  font-size: 14px;
 }
 
 .quick-filter__chosen-item {
   border-radius: 3px;
   border: 1px solid #2985EE;
   color: #2985EE;
+  font-weight: 500;
 }
-
-
 
 /*  */
 
@@ -275,7 +275,7 @@
   }
 
   .grocery__title-list {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .grocery__relative-info {
@@ -291,11 +291,11 @@
     font-size: 12px;
     text-align: center;
     line-height: 22px;
-    margin-right: 25px;
+    margin-right: 5px;
   }
 
   .grocery__note-item {
-    font-size: 12px;
+    font-size: 12.5px;
   }
 
   .grocery__icon-action {
@@ -319,6 +319,20 @@
   .grocery__tab-data>.ant-tabs-nav {
     padding: 0 10px;
   }
+
+  .quick-filter__item {
+    margin: 0px 5px;
+    padding: 1px 2px;
+    font-size: 13px;
+  }
+
+  .quick-filter__item:last-child {
+    margin: 0px 0px;
+  }
+
+  /* .quick-filter {
+    display: none;
+  } */
 }
 
 @media all and (min-width: 600px) and (max-width: 1023px) {

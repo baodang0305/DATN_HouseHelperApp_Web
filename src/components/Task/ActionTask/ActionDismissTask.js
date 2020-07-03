@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { taskActions } from '../../../actions/task.actions'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import 'moment/locale/vi';
+
 
 
 class DismissTaskForm extends Component {
@@ -42,7 +42,7 @@ class DismissTaskForm extends Component {
 
                     <div>
                         <div className="action-task-label">Thời điểm bỏ qua:</div>
-                        <div className="action-task-detail-data" style={{ color: '#38589E', fontSize: 14, fontWeight: 500 }}>{moment().calendar()}</div>
+                        <div className="action-task-detail-data" style={{ color: '#38589E', fontSize: 14, fontWeight: 500 }}>{moment().format('DD-MM-YYYY, HH:mm a')}</div>
                     </div>
                     <div style={{ width: '100%' }}>
 

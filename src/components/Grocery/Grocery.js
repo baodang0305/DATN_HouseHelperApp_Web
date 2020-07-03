@@ -172,23 +172,29 @@ class Grocery extends React.Component {
                                                 <div className="quick-filter">
                                                     <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
                                                         onClick={() => { this.handleClickQuickFilter('recentUser') }} >
-                                                        Tôi phụ trách
+                                                        Được giao
                                                     </div>
                                                     <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
                                                         onClick={() => { this.handleClickQuickFilter('all') }}>
-                                                        Tất cả thành viên
+                                                        Tất cả
                                                     </div>
 
                                                 </div>
 
                                             }>
 
-                                            <TabPane tab="Danh sách cần mua" key="todo">
-                                                {allGroceries ? <GroceryList allGroceries={dataGroceries.filter(itemGrocery => !this.checkIsListComplete(itemGrocery.listItems))} /> : null}
+                                            <TabPane tab="CẦN MUA" key="todo">
+                                                {allGroceries
+                                                    ? <GroceryList
+                                                        allGroceries={dataGroceries.filter(itemGrocery => !this.checkIsListComplete(itemGrocery.listItems))} />
+                                                    : null}
                                             </TabPane>
 
-                                            <TabPane tab="Danh sách đã hoàn tất" key="completed">
-                                                {allGroceries ? <GroceryList allGroceries={dataGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))} /> : null}
+                                            <TabPane tab="ĐÃ XONG" key="completed">
+                                                {allGroceries
+                                                    ? <GroceryList
+                                                        allGroceries={dataGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))} />
+                                                    : null}
                                             </TabPane>
 
                                         </Tabs>

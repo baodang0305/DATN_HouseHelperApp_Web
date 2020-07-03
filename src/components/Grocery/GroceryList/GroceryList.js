@@ -277,7 +277,7 @@ class GroceryList extends React.Component {
                                                                     </div> */}
 
                                         {this.checkIsListComplete(itemGrocery.listItems)
-                                            ? <div className="grocery__data-bill">
+                                            ? <div className="grocery__data-bill" style={{ marginRight: 10 }}>
                                                 {itemGrocery.total ? 'Tổng: ' + numeral(itemGrocery.total).format('0,0[.]00') + ' VND' : null}
                                             </div> : null}
 

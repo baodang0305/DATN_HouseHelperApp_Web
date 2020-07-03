@@ -6,7 +6,7 @@ import { alertActions } from "../actions/alert.actions";
 
 import history from "../helpers/history";
 import moment from 'moment';
-import 'moment/locale/vi';
+
 import { calendarActions } from "../actions/calendar.actions";
 
 class Alert extends React.Component {
@@ -33,7 +33,7 @@ class Alert extends React.Component {
                     <div>{alert.message}</div>
                     {alert.type === 'nudgeTaskNotification' ? null : <div>{taskNotification.name}</div>}
                     {taskNotification.notes ? <div>{taskNotification.notes}</div> : null}
-                    <div>{moment(taskNotification.dueDate).calendar()}</div>
+                    <div>{moment(taskNotification.dueDate).format('DD-MM-YYYY, HH:mm a')}</div>
                 </div>
                 : alert.message, {
             autoClose: alert.type === "remindTaskNotification" || alert.type === "nudgeTaskNotification" || alert.type === "remindEventNotification" ? false : 2000,

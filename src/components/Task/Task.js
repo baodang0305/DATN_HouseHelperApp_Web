@@ -20,6 +20,7 @@ import HeaderMain from "../Common/HeaderMain/HeaderMain";
 const { Panel } = Collapse;
 const { Search } = Input;
 const { Header, Content, Footer } = Layout;
+const { TabPane } = Tabs;
 let socket;
 
 class Task extends React.Component {
@@ -37,7 +38,8 @@ class Task extends React.Component {
         message: "Message",
         date: "NULL",
         n: "NULL",
-        connect: "NULL"
+        connect: "NULL",
+        quickFilter: 'all',
     }
 
     componentDidMount() {
@@ -87,7 +89,7 @@ class Task extends React.Component {
         });
     }
 
-    componentWillMount() {
+    componentDidMount() {
         const { getAllTasks, getAllTaskCates, getListMembers } = this.props;
         getAllTasks();
         getAllTaskCates();
@@ -100,7 +102,7 @@ class Task extends React.Component {
     }
 
     componentWillUnmount() {
-        socket.close();
+        socket && socket.connected && socket.close();
     }
 
     hidePopover = () => {
@@ -173,14 +175,27 @@ class Task extends React.Component {
             return false
         return true
     }
+
+    handleClickQuickFilter = (quickFilterMode) => {
+        const { quickFilter } = this.state;
+        const { user, allTasks } = this.props;
+        if (quickFilterMode === 'all') {
+            this.setState({ quickFilter: quickFilterMode });
+        } else if (quickFilterMode === 'recentUser') {
+            this.setState({ quickFilter: quickFilterMode })
+        }
+
+    }
     render() {
-        const { dataListTask, isChanged, idChosenTaskCate, idChosenMember, filterBy, connect } = this.state;
+        const { dataListTask, isChanged, idChosenTaskCate, idChosenMember, filterBy, connect, quickFilter } = this.state;
         console.log(connect)
 
         const { user } = this.props;
         const { allTasks, listMembers, allTaskCates } = this.props;
 
-        let tempDataTask = allTasks;
+        let tempDataTask = quickFilter === 'all'
+            ? allTasks
+            : allTasks.filter(item => item.assign && item.assign.mAssigns.some(member => member.mID._id === user._id));
         if (isChanged === true) {
             tempDataTask = dataListTask;
         }
@@ -222,7 +237,7 @@ class Task extends React.Component {
                                     {/* Change type filter */}
                                     <Popover
                                         className="filter-popover-task"
-                                        placement="bottom"
+                                        placement="bottomRight"
 
                                         content={
                                             <div className="filter-popover">
@@ -244,7 +259,7 @@ class Task extends React.Component {
                                 </div>
 
 
-                                <Collapse
+                                {/* <Collapse
                                     style={{ borderTop: '1px solid #EAF0F3', backgroundColor: 'white' }}
                                     bordered={false}
                                     defaultActiveKey={['1']}
@@ -277,8 +292,31 @@ class Task extends React.Component {
                                     </div>} key="3" className="site-collapse-custom-panel">
                                         <TaskList key="p3" dataTasks={dataCompletedTasks} />
                                     </Panel>
+                                </Collapse> */}
 
-                                </Collapse>
+                                <Tabs defaultActiveKey="todo" style={{ marginTop: '-10px' }} className="task__tabs-data" tabBarExtraContent={
+                                    <div className="quick-filter">
+                                        <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
+                                            onClick={() => { this.handleClickQuickFilter('recentUser') }} >
+                                            Được giao
+                                            </div>
+                                        <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
+                                            onClick={() => { this.handleClickQuickFilter('all') }}>
+                                            Tất cả
+                                            </div>
+                                    </div>
+
+                                }>
+                                    <TabPane tab="CẦN LÀM" key="todo">
+                                        <TaskList key="p1" dataTasks={dataTodoTasks} />
+                                    </TabPane>
+                                    <TabPane tab="ĐÃ XONG" key="completed">
+                                        <TaskList key="p3" dataTasks={dataCompletedTasks} />
+                                    </TabPane>
+                                    <TabPane tab="SẮP TỚI" key="upcoming">
+                                        <TaskList key="p2" dataTasks={dataUpcomingTasks} />
+                                    </TabPane>
+                                </Tabs>
                             </div>
                             <Modal title="Add task" style={{ maxWidth: 600, top: '10px' }}
                                 visible={this.state.visibleFormCreateTask}

@@ -6,7 +6,7 @@ import { CheckOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { taskActions } from '../../../actions/task.actions';
 import moment from 'moment';
-import 'moment/locale/vi';
+
 
 class RedoTaskForm extends Component {
     state = {

@@ -1,3 +1,7 @@
+.ant-tabs-tab {
+	color: #333;
+}
+
 .header-tasks {
 	display: flex;
 	flex-direction: row;
@@ -16,8 +20,9 @@
 }
 
 .header-title {
-	font-size: 23px;
+	font-size: 21px;
 	text-align: center;
+	color: #333;
 }
 
 .header-part-left {
@@ -92,6 +97,8 @@
 
 .task__content {
 	margin: 10px 15px;
+	height: 100%;
+	background-color: white;
 }
 
 .task__content-container {
@@ -199,6 +206,11 @@
 	align-items: center;
 }
 
+.task__tabs-data>.ant-tabs-nav {
+	padding: 0px 0px 0px 0px;
+	margin-bottom: 5px;
+}
+
 /* PC */
 @media only screen and (min-width: 1025px) {}
 
@@ -237,6 +249,7 @@
 
 	.task__content {
 		margin: 5px 0;
+
 	}
 
 	.task__content-container {
@@ -250,6 +263,7 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		font-size: 18px;
+		color: #333;
 	}
 
 	.ant-collapse-content>.ant-collapse-content-box {
@@ -258,5 +272,15 @@
 
 	.ant-collapse>.ant-collapse-item>.ant-collapse-header {
 		padding-right: 0px;
+	}
+
+	.quick-filter {
+		display: none;
+	}
+
+	.ant-tabs-tab {
+		font-size: 13px;
+		margin-right: 15px;
+
 	}
 }

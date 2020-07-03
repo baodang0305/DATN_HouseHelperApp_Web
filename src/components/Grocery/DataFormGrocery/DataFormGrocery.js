@@ -2,7 +2,7 @@ import './DataFormGrocery.css';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import 'moment/locale/vi';
+
 
 import {
     LeftOutlined, ShoppingCartOutlined, PlusOutlined,

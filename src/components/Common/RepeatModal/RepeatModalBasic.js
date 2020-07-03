@@ -76,17 +76,17 @@ class BasicRepeatModal extends Component {
     }
 
     render() {
-
+        const { enableRepeatModal, tab } = this.props;
         const arrayType = [
-            { type: 'no', showType: 'Không lặp' },
-            { type: 'day', showType: 'Ngày' },
-            { type: 'week', showType: 'Tuần' },
-            { type: 'month', showType: 'Tháng' },
-            { type: 'year', showType: 'Năm' },
+            { type: tab === 'task' ? null : 'no', showType: 'Không lặp' },
+            { type: tab === 'task' ? 'daily' : 'day', showType: 'Ngày' },
+            { type: tab === 'task' ? 'weekly' : 'week', showType: 'Tuần' },
+            { type: tab === 'task' ? 'monthly' : 'month', showType: 'Tháng' },
+            { type: tab === 'task' ? 'yearly' : 'year', showType: 'Năm' },
         ]
 
         const { typeRepeat, visibleRepeatModal, isReminderedRepeat, everyRepeat, dateStartRepeat, timeStartRepeat } = this.state;
-        const { enableRepeatModal, } = this.props;
+
 
 
         return (
@@ -112,10 +112,8 @@ class BasicRepeatModal extends Component {
                             <div className={`repeat-modal__type ${typeItem.type === typeRepeat ? 'repeat-modal__chosen-type' : null}`} key={typeItem.type} onClick={() => this.handleClickChooseType(typeItem.type)}>
                                 {typeItem.showType}
                             </div>)}
-
-
                     </div>
-                    {typeRepeat === 'no'
+                    {typeRepeat === 'no' || typeRepeat === null
                         ? <div className="repeat-modal__no-repeat">Không có cài đặt tùy chọn lặp</div>
                         :
                         <div className="repeat-modal__data-form">
@@ -135,7 +133,7 @@ class BasicRepeatModal extends Component {
                                 </div>
                             </div>
 
-                            <div className="repeat-modal__form-item">
+                            {tab === 'task' ? null : <div className="repeat-modal__form-item">
                                 <div className="repeat-modal__form-item--label">Khoảng cách lặp</div>
 
                                 <div className="repeat-modal__form-item--group">
@@ -145,16 +143,18 @@ class BasicRepeatModal extends Component {
                                         placeholder="Khoảng cách lặp (Mặc định: 1)" min={0} />
                                 </div>
 
-                            </div>
+                            </div>}
+
                             <div className="repeat-modal__form-item">
                                 <div className="repeat-modal__form-item--label">Nhắc nhở</div>
                                 <div className="repeat-modal__form-item--group">
                                     <div className={`repeat-modal__form-item--input repeat-modal__reminder 
-                                     ${isReminderedRepeat ? 'repeat-modal__reminder-chosen' : null}`}
+                                     ${isReminderedRepeat || tab === 'task' ? 'repeat-modal__reminder-chosen' : null}`}
                                         onClick={() => { this.handleClickChooseReminder(true) }}>Có nhắc nhở</div>
-                                    < div className={`repeat-modal__form-item--input repeat-modal__reminder 
+                                    {tab === 'task' ? null : < div className={`repeat-modal__form-item--input repeat-modal__reminder 
                                      ${!isReminderedRepeat ? 'repeat-modal__reminder-chosen' : null}`}
-                                        onClick={() => { this.handleClickChooseReminder(false) }}>Không nhắc nhở</div>
+                                        onClick={() => { this.handleClickChooseReminder(false) }}>Không nhắc nhở</div>}
+
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,8 @@
 import React from 'react'
 import { List, Avatar, Button, Skeleton, Col, Row, Modal, Tooltip, Checkbox, Spin } from 'antd';
 import history from '../../../helpers/history';
-
 import { connect } from 'react-redux';
 import axios from 'axios';
-
 import './TaskList.css'
 
 import {
@@ -14,12 +12,12 @@ import {
     CheckOutlined,
     StopOutlined,
     AlertOutlined,
-    StarOutlined,
+    StarOutlined, StarTwoTone, StarFilled,
     SnippetsOutlined,
     ArrowUpOutlined, SolutionOutlined, LoadingOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
-import 'moment/locale/vi';
+
 import CompleteTaskForm from '../ActionTask/ActionCompleteTask';
 import NudgeTaskForm from '../ActionTask/ActionNudgeTask';
 import DismissTaskForm from '../ActionTask/ActionDismissTask';
@@ -114,12 +112,14 @@ class TaskList extends React.Component {
                 {this.shouldComponentRender()
                     ? <List className="task__list-task-container"
                         itemLayout="horizontal"
+
                         pagination={{
-                            pageSize: 5
+                            size: 'small',
+                            pageSize: 6
                         }}
                         dataSource={dataTasks}
                         renderItem={item => (
-                            <List.Item className="task__list-item" onClick={() => {
+                            <List.Item className="task__list-item" style={{ cursor: 'pointer' }} onClick={() => {
                                 if (hiddenActionsList === false) {
                                     this.setState({ hiddenActionsList: !hiddenActionsList, index: item._id, dataTemp: { idTask: item._id, nameTask: item.name, memberUser: item.assign } })
                                     this.props.getRecentTask(item);
@@ -159,24 +159,24 @@ class TaskList extends React.Component {
                                                         onClick={() => (this.setState({ visibleCompleteTask: true }))}>
 
                                                         <CheckOutlined style={{ color: '#09ed37' }} className="icon-action-task" />
-                                                        <div className="task__action-title">Hoàn thành</div>
+                                                        <div style={{ color: '#09ed37' }} className="task__action-title">Hoàn thành</div>
                                                     </div>
                                                     {checkAccession(item, user) === true ? <div className="task__action-item"
                                                         onClick={() => (this.setState({ visibleDismissTask: true }))}>
                                                         <StopOutlined style={{ color: '#F8DA74' }} className="icon-action-task" />
-                                                        <div className="task__action-title">Bỏ qua</div>
+                                                        <div style={{ color: '#F8DA74' }} className="task__action-title">Bỏ qua</div>
                                                     </div> : false}
 
                                                     {item.assign ? <div className="task__action-item"
                                                         onClick={() => (this.setState({ visibleRemindTask: true }))}>
                                                         <AlertOutlined style={{ color: 'orange' }} className="icon-action-task" />
-                                                        <div className="task__action-title">Nhắc nhở</div>
+                                                        <div style={{ color: 'orange' }} className="task__action-title">Nhắc nhở</div>
                                                     </div> : null}
 
                                                     {user.mIsAdmin === true ? <div className="task__action-item"
-                                                        onClick={() => history.push("/tasks/edit-task")}>
+                                                        onClick={() => history.push("/tasks/edit-task", { taskNeedEdit: item })}>
                                                         <EditOutlined style={{ color: '#756f6d' }} className="icon-action-task" />
-                                                        <div className="task__action-title">Sửa</div>
+                                                        <div style={{ color: '#756f6d' }} className="task__action-title">Sửa</div>
                                                     </div> : null
                                                     }
                                                     {user.mIsAdmin === true ? <div className="task__action-item"
@@ -184,12 +184,9 @@ class TaskList extends React.Component {
                                                             this.setState({ visibleDeleteTask: true, })
                                                         }}>
                                                         <DeleteOutlined style={{ color: '#EC6764' }} className="icon-action-task" />
-                                                        <div className="task__action-title">Xóa bỏ</div>
+                                                        <div style={{ color: '#EC6764' }} className="task__action-title">Xóa bỏ</div>
                                                     </div> : null}
                                                 </div>
-
-
-
                                             </div>
                                         ] : [
                                                 <div hidden={item._id === index ? hiddenActionsList : true} className="actions">
@@ -205,8 +202,8 @@ class TaskList extends React.Component {
 
                                 <Skeleton avatar title={false} loading={!this.shouldComponentRender()} active style={{ width: '100%' }}>
 
-                                    <div className="detail-task" style={{ width: '100%', display: item._id === index ? (hiddenActionsList === true ? null : 'none') : null }} >
-                                        <div style={{ marginLeft: '-15px', position: 'relative' }}>
+                                    <div className="detail-task" style={{ cursor: 'pointer', width: '100%', display: item._id === index ? (hiddenActionsList === true ? null : 'none') : null }} >
+                                        <div style={{ marginLeft: '5px', position: 'relative' }}>
                                             {loadingTask && item._id === index
                                                 ? <LoadingOutlined style={{ fontSize: 28, color: '#2985ff' }} />
                                                 : <div className="round">
@@ -232,7 +229,7 @@ class TaskList extends React.Component {
                                                         </div>}
 
                                                     <div className="time-task">
-                                                        {item.dueDate === null ? `${'Không gia hạn thời gian'}` : moment(`${item.dueDate}`).calendar()}
+                                                        {item.dueDate === null ? `${'Không gia hạn thời gian'}` : moment(`${item.dueDate}`).format('DD-MM-YYYY, HH:mm a')}
                                                     </div>
                                                 </div>
                                             </Col>
@@ -265,14 +262,14 @@ class TaskList extends React.Component {
                                                                 onClick={(e) => {
                                                                     this.setState({ visibleAssignTask: true, hiddenActionsList: !this.state.hiddenActionsList })
                                                                 }}>
-                                                                <SolutionOutlined className="icon-action-task" />
+                                                                <StarTwoTone className="icon-action-task" />
                                                                 <div className="task__action-title">Đăng ký</div>
                                                             </div>}
                                                     </div>
 
                                                     <div className="task-point">
-                                                        <StarOutlined className="icon-task-point" />
-                                                        <span className="point">&nbsp;{item.points} điểm</span>
+                                                        <div className="point">&nbsp;{item.points} điểm</div>
+
                                                     </div>
                                                 </div>
                                             </Col>
