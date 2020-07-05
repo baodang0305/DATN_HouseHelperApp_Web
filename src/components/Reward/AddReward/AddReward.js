@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
 import {
-    LeftOutlined, PlusOutlined, StarOutlined, TeamOutlined, CheckOutlined,
+    LeftOutlined, PlusOutlined, StarOutlined, TeamOutlined, CheckOutlined, AppstoreAddOutlined
 } from "@ant-design/icons";
-import { Layout, Button, Input, Form, Select, Divider, Avatar, Spin, Alert } from "antd";
+import { Layout, Button, Input, Form, Select, Divider, Avatar, Spin, Alert, Row, Col } from "antd";
 
 import "./AddReward.css";
 import DashboardMenu from "../../DashboardMenu/DashboardMenu";
@@ -33,10 +33,14 @@ class AddReward extends React.Component {
                 name: reward.name,
                 assign: assign,
                 points: reward.points,
+
                 pointItem: '',
+                quantity: reward.quantity || 0,
+                quantityItem: 0,
                 currentUrlImg: reward.photo,
                 isErrorForm: false,
-                pointItems: [5, 10, 15, 20]
+                pointItems: [5, 10, 15, 20],
+                quantityItems: [1, 2, 3, 4, 5]
             }
         } else {
             this.state = {
@@ -44,9 +48,12 @@ class AddReward extends React.Component {
                 assign: [],
                 points: 0,
                 pointItem: '',
+                quantity: 0,
+                quantityItem: 0,
                 currentUrlImg: "",
                 isErrorForm: false,
-                pointItems: [5, 10, 15, 20]
+                pointItems: [5, 10, 15, 20],
+                quantityItems: [1, 2, 3, 4, 5]
             }
         }
         this.inputFile = React.createRef();
@@ -90,7 +97,7 @@ class AddReward extends React.Component {
     handleSubmit = () => {
 
         const { type, editReward, addReward, errorAlert } = this.props;
-        const { name, points, assign } = this.state;
+        const { name, points, assign, quantity } = this.state;
 
         if (!name || name.replace(/\s/g, '').length === 0 || points < 1 || points > 100) {
             this.setState({ isErrorForm: true });
@@ -131,6 +138,10 @@ class AddReward extends React.Component {
         this.setState({ pointItem: e.target.value });
     }
 
+    handleQuantityItemChange = (e) => {
+        this.setState({ quantityItem: e.target.value });
+    }
+
     addPointItem = () => {
         let { pointItem, pointItems } = this.state;
         const { errorAlert } = this.props;
@@ -142,6 +153,20 @@ class AddReward extends React.Component {
         }
         else {
             errorAlert("Điểm không hợp lệ")
+        }
+    }
+
+    addQuantityItem = () => {
+        let { quantityItem, quantityItems } = this.state;
+        const { errorAlert } = this.props;
+        if (quantityItem && quantityItem != 0) {
+            const indexItem = quantityItems.findIndex(item => item == quantityItem);
+            indexItem !== -1
+                ? errorAlert("Số lượng đã tồn tại")
+                : (quantityItems = [...quantityItems, Number(quantityItem)], this.setState({ quantityItems }))
+        }
+        else {
+            errorAlert("Số lượng không hợp lệ")
         }
     }
 
@@ -159,7 +184,7 @@ class AddReward extends React.Component {
             deletingReward, deletedReward,
         } = this.props;
         const {
-            name, pointItems, assign, points, pointItem, isErrorForm
+            name, pointItems, assign, points, pointItem, isErrorForm, quantity, quantityItem, quantityItems
         } = this.state;
 
         const isSelectedMember = (mID) => assign && assign.findIndex(item => item === mID)
@@ -215,32 +240,60 @@ class AddReward extends React.Component {
                                     className="name-input-add-reward" placeholder="Tên phần thưởng" type="text"
                                 />
                             </Form.Item>
-                            <Form.Item className="form-item-add-reward form-item-point-reward" >
-                                <div className="point-input-fake-add-reward">
-                                    <StarOutlined /> &nbsp; {points == 0 ? "Điểm thưởng" : `${points} Điểm`}
-                                </div>
-                                <Select
-                                    placeholder="Điểm thưởng"
-                                    className="point-input-add-reward"
-                                    onChange={(value) => this.setState({ points: value })}
-                                    dropdownRender={menu => (
-                                        <div>
-                                            {menu}
-                                            <Divider />
-                                            <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
-                                                <Input style={{ flex: 'auto' }} type="number" value={pointItem} onChange={this.handlePointItemChange} />
-                                                <a
-                                                    style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
-                                                    onClick={this.addPointItem}
-                                                >
-                                                    <PlusOutlined /> Thêm
-                                                </a>
-                                            </div>
+                            <Form.Item className="form-item-point-reward" >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                                    <div style={{ position: 'relative', flexBasis: '49.5%', boxSizing: 'border-box' }}>
+                                        <div className="point-input-fake-add-reward">
+                                            <StarOutlined /> &nbsp; {points == 0 ? "Điểm thưởng" : `${points} Điểm`}
                                         </div>
-                                    )}
-                                >
-                                    {pointItems.map(item => <Option key={item}>{item} điểm</Option>)}
-                                </Select>
+                                        <Select
+                                            placeholder="Điểm thưởng"
+                                            className="point-input-add-reward"
+                                            onChange={(value) => this.setState({ points: value })}
+                                            dropdownRender={menu => (
+                                                <div>
+                                                    {menu}
+                                                    <Divider />
+                                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
+                                                        <Input style={{ flex: 'auto' }} type="number" value={pointItem} onChange={this.handlePointItemChange} />
+                                                        <a
+                                                            style={{ flex: 'none', padding: '8px', display: 'block', cursor: 'pointer' }}
+                                                            onClick={this.addPointItem}
+                                                        >
+                                                            <PlusOutlined /> Thêm
+                                                </a>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        >
+                                            {pointItems.map(item => <Option key={item}>{item} điểm</Option>)}
+                                        </Select>
+                                    </div>
+                                    <div style={{ flexBasis: '49.5%', position: 'relative', boxSizing: 'border-box' }}>
+                                        <div className="point-input-fake-add-reward">
+                                            <AppstoreAddOutlined /> &nbsp; {quantity === 0 ? "Số lượng" : ` Số lượng: ${quantity}`}
+                                        </div>
+                                        <Select
+                                            className="point-input-add-reward"
+                                            onChange={(value) => this.setState({ quantity: value })}
+                                            dropdownRender={menu => (
+                                                <div>
+                                                    {menu}
+                                                    <Divider />
+                                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
+                                                        <Input style={{ flex: 'auto' }} type="number" value={quantityItem} onChange={this.handleQuantityItemChange} />
+                                                        <a
+                                                            style={{ flex: 'none', padding: '1px 4px', display: 'block', cursor: 'pointer' }}
+                                                            onClick={this.addQuantityItem}>
+                                                            <PlusOutlined /> Thêm</a>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        >
+                                            {quantityItems.map(item => <Option key={item}>Số lượng: {item}</Option>)}
+                                        </Select>
+                                    </div>
+                                </div>
                             </Form.Item>
                             <Form.Item className="form-item-add-reward">
                                 <TeamOutlined
@@ -251,10 +304,10 @@ class AddReward extends React.Component {
                                     className="title-input-add-reward"
                                     style={{ color: assign.length > 0 ? "#096dd9" : "black" }}
                                 > Thành Viên: </span>
-                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                <div style={{ display: 'flex' }}>
                                     <div className="list-users-asign-add-reward-container" >
                                         {(gettingListMembers && !gotListMembers)
-                                            ? <Spin tip="Loading..." />
+                                            ? <Spin style={{ margin: 'auto' }} tip="Loading..." />
                                             : renderListMembers()
                                         }
                                     </div>

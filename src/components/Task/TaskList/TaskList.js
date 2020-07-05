@@ -258,7 +258,7 @@ class TaskList extends React.Component {
                                                                 </Tooltip>
                                                                 {item.assign.isAll === true ? <div hidden={recentIndex === (item.assign.mAssigns.length - 1) ? true : false} className="line-connect-all-member"></div> : null}
                                                             </div>)
-                                                            : (item.state === completed ? null : < div className="task__action-item" hidden={item._id === index ? !hiddenActionsList : false}
+                                                            : (item.state === 'completed' ? null : < div className="task__action-item" hidden={item._id === index ? !hiddenActionsList : false}
                                                                 onClick={(e) => {
                                                                     this.setState({ visibleAssignTask: true, hiddenActionsList: !this.state.hiddenActionsList })
                                                                 }}>

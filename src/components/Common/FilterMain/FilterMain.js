@@ -79,21 +79,19 @@ class FilterMain extends Component {
         const { slider, recentNumberTrans } = this.state;
 
         this.setState({ slider: slider - 100, recentNumberTrans: recentNumberTrans + 1 });
-        console.log(this.Slider)
+
     }
     handleFilterSliderRight = () => {
         const { slider, recentNumberTrans } = this.state;
 
         this.setState({ slider: slider + 100, recentNumberTrans: recentNumberTrans - 1 });
-        console.log(this.Slider)
-
     }
 
 
     componentDidMount() {
         const limit = this.Slider.current.offsetLeft + 200;
         const widthSlide = this.containerSlide.current.domElement.clientWidth;
-        var numberTrans = Math.floor((limit - widthSlide) / 100) + 1;
+        var numberTrans = Math.floor((limit - widthSlide) / 66) + 1;
         this.setState(
             {
                 widthSlide: widthSlide,
@@ -102,13 +100,13 @@ class FilterMain extends Component {
                 recentNumberTrans: numberTrans
             }
         );
-        console.log(limit, widthSlide)
+
     }
 
     render() {
         const { allMembers, allCates, tab } = this.props;
         const { idChosenCate, idChosenMember, filterBy, orderDateBy, orderMoneyBy, slider, isOverflowed, numberTrans, recentNumberTrans } = this.state;
-        console.log(numberTrans)
+
         return (
 
             <div style={{ position: 'relative' }}>

@@ -2,8 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import socketIoClient from "socket.io-client";
-import { PlusOutlined, HomeOutlined, BellOutlined } from "@ant-design/icons";
-import { Layout, Calendar, Button, Avatar, Input, Divider } from "antd";
+import { PlusOutlined, HomeOutlined, BellOutlined, SearchOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Layout, Calendar, Button, Avatar, Input, Divider, Tooltip, Popover } from "antd";
 
 import "./Calendar.css";
 import history from "../../helpers/history";
@@ -25,9 +25,13 @@ class CalendarPage extends React.Component {
         super(props);
         this.state = {
             date: { d: null, m: null, y: null },
-            isSelectedMember: 'all'
+            isSelectedMember: 'all',
+            enableInputSearch: false,
+            visiblePopover: false
         }
         this.reminderBellAudio = new Audio(indexConstants.REMINDER_BELL_AUDIO);
+
+
     }
 
     componentDidMount() {
@@ -111,10 +115,26 @@ class CalendarPage extends React.Component {
         if (m !== date.m) { date.m = m; getListEvents({ "month": m, "year": date.y }); this.setState({ date }); }
         if (d !== date.d) { date.d = d; this.setState({ date }); }
     }
+    onSearch = (value) => {
 
+        if (value) {
+            var dataFilter = tabData.filter(item => nonAccentVietnamese(item.name).indexOf(nonAccentVietnamese(value)) !== -1);
+            this.setState({ dataFilter });
+        }
+    }
+
+    hidePopover = () => {
+        this.setState({
+            visiblePopover: false,
+        });
+    };
+
+    handleVisibleChangePopover = visiblePopover => {
+        this.setState({ visiblePopover });
+    };
     render() {
 
-        const { isSelectedMember } = this.state;
+        const { isSelectedMember, enableInputSearch, visiblePopover } = this.state;
         const { listMembers, remindingEventNotification, remindedEventNotification } = this.props;
 
         !remindingEventNotification && remindedEventNotification && this.reminderBellAudio.pause();
@@ -124,8 +144,8 @@ class CalendarPage extends React.Component {
                 <div className="user-calendar-container" key={index}>
                     <div onClick={() => this.handleChooseMember(item._id)}>
                         <Avatar
-                            size={50} src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }}
-                            className={isSelectedMember === item._id ? "border-avatar-calendar" : ""}
+                            src={item.mAvatar.image} style={{ backgroundColor: item.mAvatar.color }}
+                            className={`calendar__avatar-member ${isSelectedMember === item._id ? "border-avatar-calendar" : ""}`}
                         />
                     </div>
                     <div className="name-user-calendar" style={{ color: isSelectedMember === item._id ? "#2985ff" : null }}>{item.mName}</div>
@@ -142,14 +162,52 @@ class CalendarPage extends React.Component {
                             <Link to='/family' className="header__btn-link header__home-btn">
                                 <HomeOutlined className="icon-header-calendar" />
                             </Link>
-
                             <Search
-                                className="calendar__header-search"
-                                placeholder="Nhập nội dung tìm kiếm"
-                                onSearch={value => console.log(value)}
-                                style={{ marginLeft: 10 }}
-                                size="large"
+                                size="small"
+                                className="header-search__tablet-pc"
+                                prefix={
+                                    <Tooltip placement="bottom" title="Đóng tìm kiếm">
+                                        <ArrowLeftOutlined onClick={() => this.setState({ enableInputSearch: !enableInputSearch })} />
+                                    </Tooltip>}
+                                allowClear
+                                placeholder="Nhập từ khóa"
+                                onSearch={this.onSearch}
+                                style={{
+                                    height: 32,
+                                    marginLeft: 10,
+                                    maxWidth: 200,
+                                    overflowX: 'hidden',
+                                    display: enableInputSearch ? 'flex' : 'none'
+                                }}
                             />
+
+                            <div className="header__btn-link header-search__tablet-pc" style={{ display: enableInputSearch ? 'none' : null }}
+                                onClick={() => { this.setState({ enableInputSearch: !enableInputSearch }) }}>
+                                <SearchOutlined className="task__header-icon" />
+                            </div>
+
+                            <Popover className="header-search__mobile header__btn-link"
+                                content={
+                                    <Search
+                                        allowClear
+                                        prefix={
+                                            <ArrowLeftOutlined onClick={this.hidePopover} />}
+                                        placeholder="Nhập từ khóa"
+                                        onSearch={this.onSearch}
+                                        style={{
+                                            maxWidth: 200,
+                                            overflowX: 'hidden',
+                                        }}
+                                    />}
+                                trigger="click"
+                                visible={this.state.visiblePopover}
+                                onVisibleChange={this.handleVisibleChangePopover}
+                            >
+                                <div className="header__btn-link header-search__tablet-pc" style={{ display: enableInputSearch ? 'none' : null }}
+                                >
+                                    <SearchOutlined className="task__header-icon" />
+                                </div>
+                            </Popover>
                         </div>
                         <div className="center-header-calendar-container"> Quản Lý Lịch </div>
                         <div className="right-header-calendar-container" >
@@ -169,9 +227,8 @@ class CalendarPage extends React.Component {
                                 <div className="user-calendar-container" >
                                     <div onClick={() => this.handleChooseMember("all")}>
                                         < Avatar
-                                            size={50}
                                             icon={<HomeOutlined style={{ fontSize: "22px", color: isSelectedMember === "all" ? "#2985ff" : "gray" }} />}
-                                            className={isSelectedMember === "all" ? "border-avatar-calendar" : ""}
+                                            className={`calendar__avatar-member ${isSelectedMember === "all" ? "border-avatar-calendar" : ""}`}
                                         />
                                     </div>
                                     <div className="name-user-calendar" style={{ color: isSelectedMember === "all" ? "#2985ff" : null }}>Tất cả</div>

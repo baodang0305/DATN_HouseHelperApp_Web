@@ -578,7 +578,7 @@ class FormCreateTask extends Component {
                                                     <div className="show-data-select">
                                                         {timeTask !== 0
                                                             ? timeTask + ' phút'
-                                                            : 'Thời gian cần tốn?'}
+                                                            : 'Thời gian?'}
                                                     </div>
                                                 </div>
                                                 <Select

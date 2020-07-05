@@ -22,14 +22,14 @@
 
 .form-item-add-event {
     padding: 10px 20px;
-    margin: 10px;
+    margin: 6px;
     border-radius: 2px;
     background-color: hsl(0, 0%, 100%);
-    box-shadow: hsl(0, 0%, 84%) 0 0px 2px 0px;
+
 }
 
 .form-item-input-name-add-event {
-    padding: 0px;
+    padding: 10px;
 }
 
 .time-input-add-event-container {
@@ -52,8 +52,9 @@
 
 .name-input-add-event {
     font-size: 20px;
-    height: 60px;
+    height: 40px;
     text-align: center;
+    border: none;
 }
 
 .list-users-asign-add-event-container {
@@ -409,11 +410,8 @@
     }
 }
 
-@media all and (min-width: 600px) and (max-width: 1023px) {
-}
+@media all and (min-width: 600px) and (max-width: 1023px) {}
 
-@media all and (min-width: 1024px) {
-}
+@media all and (min-width: 1024px) {}
 
-@media all and (min-width: 1280px) {
-}
+@media all and (min-width: 1280px) {}

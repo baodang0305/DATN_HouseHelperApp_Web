@@ -14,6 +14,7 @@ import HeaderMain from "../Common/HeaderMain/HeaderMain";
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import GroceryList from "./GroceryList/GroceryList";
 import FilterMain from "../Common/FilterMain/FilterMain";
+import { value } from "numeral";
 const { Panel } = Collapse;
 const { Search } = Input;
 const { Header, Content, Footer } = Layout;
@@ -144,6 +145,21 @@ class Grocery extends React.Component {
         this.setState({ visiblePopover });
     };
 
+    handleSearchData = (data) => {
+        this.setState({ allGroceriesState: data })
+    }
+
+    onChangeSelectTime = (value) => {
+        const { quickFilter, allGroceriesState } = this.state;
+        const { user, allGroceries } = this.props;
+        var tempData = allGroceriesState || allGroceries;
+        var changedData = tempData.reverse();
+        if (value === 'oldest') {
+            this.setState({ quickFilter: { ...quickFilter, time: value }, allGroceriesState: tempData });
+        } else if (value === 'newest') {
+            this.setState({ quickFilter: { ...quickFilter, time: value }, allGroceriesState: changedData })
+        }
+    }
     render() {
         const { listMembers, allGroceryTypes, allGroceries, user } = this.props;
         const { allGroceriesState, quickFilter, tabMode, visiblePopover } = this.state;
@@ -158,7 +174,8 @@ class Grocery extends React.Component {
                 <DashboardMenu menuItem="5" />
                 <Layout className="site-layout">
                     <Header className="header-container">
-                        <HeaderMain tab="grocery" title="Mua sắm">
+                        <HeaderMain handleSearchData={this.handleSearchData}
+                            tab="grocery" title="Mua sắm" tabData={allGroceries}>
                         </HeaderMain>
                     </Header>
                     <Content className="grocery__content">
@@ -167,7 +184,7 @@ class Grocery extends React.Component {
                             {this.shouldComponentRender()
                                 ? <div>
                                     <div className="grocery__filter">
-                                        <FilterMain tab={tabMode === 'completed' ? 'shoppingList' : null} allMembers={listMembers} allCates={allGroceryTypes} handleSelectFilter={this.handleSelectFilter} />
+                                        <FilterMain tab='shoppingList' allMembers={listMembers} allCates={allGroceryTypes} handleSelectFilter={this.handleSelectFilter} />
                                     </div>
                                     {/* <div className="grocery__main-data">
                                         <Divider orientation="center" className="grocery__divider">Cần mua</Divider>
@@ -195,7 +212,7 @@ class Grocery extends React.Component {
                                                             <Option value="all">Tất cả thành viên</Option>
                                                             <Option value="recentUser">Được giao</Option>
                                                         </Select>
-                                                        <Select allowClear defaultValue="newest" placeholder="Thời gian" className="quick-filter__item">
+                                                        <Select onChange={this.onChangeSelectTime} allowClear defaultValue="oldest" placeholder="Thời gian" className="quick-filter__item">
                                                             <Option value="newest">Mới nhất</Option>
                                                             <Option value="oldest">Cũ nhất</Option>
                                                         </Select>

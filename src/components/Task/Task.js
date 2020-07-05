@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import TaskList from './TaskList/TaskList'
 import { Layout, Avatar, Row, Col, Input, Button, Tabs, Collapse, Modal, Select, Popover, Spin } from "antd";
-import { PlusOutlined, HomeOutlined, CaretRightOutlined, BellOutlined } from '@ant-design/icons';
+import { PlusOutlined, HomeOutlined, CaretRightOutlined, BellOutlined, CloseOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import FormCreateTask from "./AddTask/AddTask";
 
 import { Link } from "react-router-dom";
@@ -16,11 +16,12 @@ import { alertActions } from "../../actions/alert.actions";
 import socketIOClient from "socket.io-client";
 import apiUrlTypes from '../../helpers/apiURL'
 import HeaderMain from "../Common/HeaderMain/HeaderMain";
+import FilterMain from "../Common/FilterMain/FilterMain";
 
-const { Panel } = Collapse;
-const { Search } = Input;
+
 const { Header, Content, Footer } = Layout;
 const { TabPane } = Tabs;
+const { Option } = Select;
 let socket;
 
 class Task extends React.Component {
@@ -29,7 +30,6 @@ class Task extends React.Component {
         listTaskCate: [],
         listMembers: [],
         dataListTask: [],
-        allTasks: [],
         idChosenTaskCate: 'all',
         idChosenMember: 'all',
         visiblePopover: false,
@@ -39,12 +39,19 @@ class Task extends React.Component {
         date: "NULL",
         n: "NULL",
         connect: "NULL",
-        quickFilter: 'all',
+        quickFilter: { mem: 'all', time: 'newest' },
+        visiblePopoverQuickFilter: false,
     }
 
     componentDidMount() {
+        const { getAllTasks, getAllTaskCates, getListMembers, allTasks } = this.props;
+
+        getAllTasks();
+        getAllTaskCates();
+        getListMembers();
+
         const { token } = this.props;
-        console.log('', token)
+        this.setState({ dataListTask: allTasks });
         socket = socketIOClient(apiUrlTypes.heroku);
 
         socket.on('connect', function () {
@@ -57,7 +64,6 @@ class Task extends React.Component {
 
         //Change data of members
         socket.on("Member", data => {
-
             if (data) {
                 const { getListMembers } = this.props;
                 getListMembers();
@@ -89,12 +95,31 @@ class Task extends React.Component {
         });
     }
 
-    componentDidMount() {
-        const { getAllTasks, getAllTaskCates, getListMembers } = this.props;
-        getAllTasks();
-        getAllTaskCates();
-        getListMembers();
+    hidePopoverQuickFilter = () => {
+        this.setState({ visiblePopoverQuickFilter: false });
     }
+
+    onChangeSelectMember = (value) => {
+        const { quickFilter } = this.state;
+        const { user, allTasks } = this.props;
+        if (value === 'all') {
+            this.setState({ quickFilter: { ...quickFilter, mem: value }, dataListTask: allTasks, isChanged: true });
+        } else if (value === 'recentUser') {
+            this.setState({
+                quickFilter: { ...quickFilter, mem: value }, isChanged: true,
+                dataListTask: allTasks.filter(item => item.assign && item.assign.mAssigns.some(member => member.mID._id === user._id))
+            })
+        }
+    }
+
+    handleVisiblePopoverChangeQuickFilter = visiblePopoverQuickFilter => {
+        this.setState({ visiblePopoverQuickFilter });
+    };
+
+    onChangeSelectTime = (value) => {
+
+    }
+
 
     componentWillReceiveProps(nextProps) {
         const { getAllTasks } = this.props;
@@ -131,42 +156,8 @@ class Task extends React.Component {
         });
     };
 
-    handleChangeSelectFilterTaskCate(idTaskCate) {
-        const { allTasks, allTaskCates } = this.props;
-
-
-        if (idTaskCate === 'all') {
-            this.setState({ idChosenTaskCate: idTaskCate, dataListTask: allTasks, isChanged: true });
-        }
-        else {
-            let tempListTaskFilter = allTasks.filter(item => item.tcID._id === idTaskCate)
-            this.setState({ idChosenTaskCate: idTaskCate, dataListTask: tempListTaskFilter, isChanged: true });
-        }
-    }
-
-    handleChangeSelectFilterMember(idMember) {
-        const { listMembers, allTasks } = this.props;
-
-        if (idMember === 'all') {
-            this.setState({ idChosenMember: idMember, dataListTask: allTasks, isChanged: true });
-        }
-        else {
-            let tempListTaskFilter = allTasks.filter(item => item.assign !== null).filter(item => item.assign.mAssigns.findIndex(i => i.mID._id === idMember) !== -1 ? true : false);
-            this.setState({ idChosenMember: idMember, dataListTask: tempListTaskFilter, isChanged: true });
-        }
-    }
-
-    handleChangeFilterBy = (filterBy) => {
-        const { listMembers, allTasks, allTaskCates } = this.props;
-
-        const idChosenAll = 'all';
-
-        filterBy !== this.state.filterBy ?
-            filterBy === 'cate'
-                ? this.setState({ filterBy: filterBy, idChosenTaskCate: idChosenAll, dataListTask: allTasks, isChanged: true })
-                : this.setState({ filterBy: filterBy, idChosenMember: idChosenAll, dataListTask: allTasks, isChanged: true })
-            : null
-        this.hidePopover();
+    handleSearchData = (data) => {
+        this.setState({ dataListTask: data, isChanged: true })
     }
 
     shouldComponentRender() {
@@ -176,33 +167,46 @@ class Task extends React.Component {
         return true
     }
 
-    handleClickQuickFilter = (quickFilterMode) => {
-        const { quickFilter } = this.state;
-        const { user, allTasks } = this.props;
-        if (quickFilterMode === 'all') {
-            this.setState({ quickFilter: quickFilterMode });
-        } else if (quickFilterMode === 'recentUser') {
-            this.setState({ quickFilter: quickFilterMode })
+    handleSelectFilter = (filter) => {
+        const { allTasks } = this.props;
+
+        if (filter !== 'all') {
+            if (allTasks) {
+                var tempFilter = allTasks.filter(itemTask => {
+                    var result = false;
+                    if (itemTask.tcID && itemTask.tcID._id === filter) {
+                        result = true;
+                    }
+                    else if (itemTask.assign) {
+                        if (itemTask.assign.mAssigns.some(item => item.mID._id === filter)) {
+                            result = true;
+                        }
+                    }
+                    return result;
+                })
+
+                this.setState({ dataListTask: tempFilter, isChanged: true });
+            }
+        } else {
+            this.setState({ dataListTask: allTasks, isChanged: true });
         }
 
     }
     render() {
-        const { dataListTask, isChanged, idChosenTaskCate, idChosenMember, filterBy, connect, quickFilter } = this.state;
-        console.log(connect)
+        const { dataListTask,
+            isChanged,
+            quickFilter, visiblePopover, visiblePopoverQuickFilter } = this.state;
 
-        const { user } = this.props;
-        const { allTasks, listMembers, allTaskCates } = this.props;
+        const { allTasks, listMembers, allTaskCates, user } = this.props;
 
-        let tempDataTask = quickFilter === 'all'
-            ? allTasks
-            : allTasks.filter(item => item.assign && item.assign.mAssigns.some(member => member.mID._id === user._id));
+        let tempDataTask = allTasks;
         if (isChanged === true) {
             tempDataTask = dataListTask;
         }
 
-        const dataTodoTasks = tempDataTask.filter(item => item.state === 'todo');
-        const dataCompletedTasks = tempDataTask.filter(item => item.state === 'completed');
-        const dataUpcomingTasks = tempDataTask.filter(item => item.state === 'upcoming');
+        const dataTodoTasks = tempDataTask.filter(item => item.state === 'todo') || [];
+        const dataCompletedTasks = tempDataTask.filter(item => item.state === 'completed') || [];
+        const dataUpcomingTasks = tempDataTask.filter(item => item.state === 'upcoming') || [];
 
         return (
             <div>
@@ -210,100 +214,58 @@ class Task extends React.Component {
 
                     <DashboardMenu menuItem="3" />
                     <Layout className="site-layout">
-                        <Header className="header-container">
-                            <HeaderMain tab="task" title="Công việc" />
+                        <Header className="header-container" >
+                            <HeaderMain tab="task" title="Công việc" handleSearchData={this.handleSearchData}
+                                tabData={allTasks} />
                         </Header>
 
                         <Content className="task__content">
-                            <div className="site-layout-background task__content-container">
+                            <div className="task__content-container">
                                 {/* //filter task */}
-                                <div className="filter-list-task">
-                                    <div className="list-task-filter" onClick={(e) => { filterBy === 'member' ? this.handleChangeSelectFilterMember('all') : this.handleChangeSelectFilterTaskCate('all') }}>
-                                        <Avatar src="https://i.pinimg.com/236x/27/31/e2/2731e233cb4d6580373e2fe205f565ae.jpg" className={idChosenMember === 'all' || idChosenTaskCate === 'all' ? "chosen-task-filter" : "task-filter"}></Avatar>
-                                        <div className="filter__name-cate">Tất cả</div>
-                                    </div>
-                                    {filterBy === 'cate'
-                                        ? allTaskCates.map(item =>
-                                            (<div key={item._id} className="list-task-filter" onClick={(e) => this.handleChangeSelectFilterTaskCate(item._id)}>
-                                                <Avatar src={item.image} className={idChosenTaskCate === item._id ? "chosen-task-filter" : "task-filter"}></Avatar>
-                                                <div className="filter__name-cate">{item.name}</div>
-                                            </div>))
-                                        : listMembers.map(item =>
-                                            (<div key={item._id} className="list-task-filter" onClick={(e) => this.handleChangeSelectFilterMember(item._id)}>
-                                                <Avatar src={item.mAvatar.image} className={idChosenMember === item._id ? "chosen-task-filter" : "task-filter"}></Avatar>
-                                                <div className="filter__name-cate">{item.mName}</div>
-                                            </div>))
-                                    }
-                                    {/* Change type filter */}
-                                    <Popover
-                                        className="filter-popover-task"
-                                        placement="bottomRight"
-
-                                        content={
-                                            <div className="filter-popover">
-                                                <div className={filterBy === 'cate' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeFilterBy('cate')}>Loại công việc</div>
-                                                <div className={filterBy === 'member' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeFilterBy('member')}>Thành viên</div>
-                                                {/* <div className="hide-popover" onClick={this.hidePopover}>Đóng</div> */}
-                                            </div>
-                                        }
-                                        title="Lọc theo:"
-                                        trigger="click"
-                                        visible={this.state.visiblePopover}
-                                        onVisibleChange={this.handleVisibleChangePopover}
-                                    >
-                                        <div className="list-task-filter">
-                                            <Avatar src="https://static.thenounproject.com/png/1701541-200.png" className="task-filter"></Avatar>
-                                            <div>Filter</div>
-                                        </div>
-                                    </Popover>
+                                <div className="task__filter">
+                                    <FilterMain tab='task' allMembers={listMembers ? listMembers : []} allCates={allTaskCates ? allTaskCates : []} handleSelectFilter={this.handleSelectFilter} />
                                 </div>
-
-
-                                {/* <Collapse
-                                    style={{ borderTop: '1px solid #EAF0F3', backgroundColor: 'white' }}
-                                    bordered={false}
-                                    defaultActiveKey={['1']}
-                                    expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-                                    className="site-collapse-custom-collapse"
-                                >
-                                    <Panel key="1" className="task__panel"
-                                        header={<div className="header-list-task">
-                                            <div className="title-header-list-task">
-                                                Công việc cần làm
-                                                </div>
-                                            <div className="number-of-task">{dataTodoTasks.length}</div>
-                                        </div>} className="site-collapse-custom-panel">
-                                        <TaskList key="p1" dataTasks={dataTodoTasks} />
-                                    </Panel>
-                                    <Panel
-                                        header={<div className="header-list-task">
-                                            <div className="title-header-list-task">
-                                                Sắp tới
-                                                 </div>
-                                            <div className="number-of-task">{dataUpcomingTasks.length}</div>
-                                        </div>} key="2" className="site-collapse-custom-panel">
-                                        <TaskList key="p2" dataTasks={dataUpcomingTasks} />
-                                    </Panel>
-                                    <Panel header={<div className="header-list-task">
-                                        <div className="title-header-list-task">
-                                            Công việc đã xong
-                                            </div>
-                                        <div className="number-of-task">{dataCompletedTasks.length}</div>
-                                    </div>} key="3" className="site-collapse-custom-panel">
-                                        <TaskList key="p3" dataTasks={dataCompletedTasks} />
-                                    </Panel>
-                                </Collapse> */}
 
                                 <Tabs defaultActiveKey="todo" style={{ marginTop: '-10px' }} className="task__tabs-data" tabBarExtraContent={
                                     <div className="quick-filter">
-                                        <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
-                                            onClick={() => { this.handleClickQuickFilter('recentUser') }} >
-                                            Được giao
+                                        {/* <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
+                                       onClick={() => { this.handleClickQuickFilter('recentUser') }} >
+                                       Được giao
+                                   </div>
+                                   <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
+                                       onClick={() => { this.handleClickQuickFilter('all') }}>
+                                       Tất cả
+                                   </div> */}
+                                        <div className="quick-filter__tablet-pc">
+                                            <Select onChange={this.onChangeSelectMember} defaultValue="all" allowClear className="quick-filter__item" placeholder="Thành viên">
+                                                <Option value="all">Tất cả thành viên</Option>
+                                                <Option value="recentUser">Được giao</Option>
+                                            </Select>
+                                            <Select onChange={this.onChangeSelectTime} allowClear defaultValue="oldest" placeholder="Thời gian" className="quick-filter__item">
+                                                <Option value="newest">Mới nhất</Option>
+                                                <Option value="oldest">Cũ nhất</Option>
+                                            </Select>
+
+                                        </div>
+                                        <Popover trigger="click"
+                                            visible={visiblePopoverQuickFilter} onVisibleChange={this.handleVisiblePopoverChangeQuickFilter}
+                                            className="quick-filter__mobile" placement="bottomRight"
+                                            content={<div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Select size="small" onChange={this.onChangeSelectMember} defaultValue="all" allowClear className="quick-filter__item" placeholder="Thành viên">
+                                                    <Option value="all">Tất cả thành viên</Option>
+                                                    <Option value="recentUser">Được giao</Option>
+                                                </Select>
+                                                <Select size="small" allowClear defaultValue="newest" placeholder="Thời gian" className="quick-filter__item">
+                                                    <Option value="newest">Mới nhất</Option>
+                                                    <Option value="oldest">Cũ nhất</Option>
+                                                </Select>
+
+                                                <Button size="small" type="primary" ghost className="quick-filter__item"
+                                                    onClick={this.hidePopoverQuickFilter} icon={<CloseOutlined />}></Button>
                                             </div>
-                                        <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
-                                            onClick={() => { this.handleClickQuickFilter('all') }}>
-                                            Tất cả
-                                            </div>
+                                            }>
+                                            <Button size="small" type="primary" ghost>Tùy chọn lọc</Button>
+                                        </Popover>
                                     </div>
 
                                 }>

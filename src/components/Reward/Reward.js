@@ -6,7 +6,7 @@ import {
     EditOutlined, EyeOutlined, DeleteOutlined, LoadingOutlined,
 } from "@ant-design/icons";
 import {
-    Layout, Input, Avatar, Collapse, Empty, List, Spin, Tooltip, Button
+    Layout, Input, Avatar, Collapse, Empty, List, Spin, Tooltip, Button, Tabs
 } from "antd";
 import moment from 'moment';
 import "./Reward.css";
@@ -20,6 +20,7 @@ import Loading from "../Common/Loading/Loading";
 let socket;
 const { Search } = Input;
 const { Panel } = Collapse;
+const { TabPane } = Tabs;
 const { Header, Content, Footer } = Layout;
 
 class Reward extends React.Component {
@@ -104,7 +105,7 @@ class Reward extends React.Component {
         } = this.props;
 
         const renderSpin = () => (
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', paddingTop: '20%' }}>
                 <Spin tip="Đang xử lí..." />
             </div>
         )
@@ -118,7 +119,7 @@ class Reward extends React.Component {
                     <Header className="header-container" >
                         <HeaderMain tab="reward" title="Phần Thưởng" />
                     </Header>
-                    <Content>
+                    <Content style={{ height: '100%' }}>
                         <div className="first-row-reward-content-container">
                             <Avatar
                                 src={inforLogin.user ? inforLogin.user.mAvatar.image : ""}
@@ -135,23 +136,14 @@ class Reward extends React.Component {
                             </div>
                         </div>
 
-                        <Collapse accordion bordered={false} className="second-row-reward-content-container" defaultActiveKey={["1"]}
-                            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-                        >
-                            <Panel key="1"
-                                header={
-                                    <div className="header-panel-reward">
-                                        <div>PHẦN THƯỞNG</div>
-                                        {listRewards && <Avatar size="small" className="number-of-reward">{listRewards.length}</Avatar>}
-                                    </div>
-                                }
-                                style={{ padding: 10 }}
-                            >
+
+                        <Tabs defaultActiveKey="reward" className="second-row-reward-content-container" style={{ height: '100%' }}>
+                            <TabPane tab="Phần thưởng" key="reward">
                                 {(gettingListRewards && !gotListRewards)
                                     ? renderSpin()
                                     : (listRewards && listRewards.length > 0)
                                         ? <List
-                                            pagination={{ pageSize: 4 }}
+                                            pagination={{ pageSize: 5, size: 'small' }}
                                             dataSource={listRewards}
                                             renderItem={item => (
                                                 <List.Item className="reward-item-container">
@@ -186,8 +178,8 @@ class Reward extends React.Component {
                                                             {item.assign && item.assign.length > 0 &&
                                                                 item.assign.map((member, index) => (
                                                                     <Tooltip placement="topLeft" title={member.mName} key={index}>
-                                                                        <Avatar
-                                                                            src={member.mAvatar.image} size={40}
+                                                                        <Avatar className="reward__avatar"
+                                                                            src={member.mAvatar.image}
                                                                             style={{ backgroundColor: member.mAvatar.color, marginRight: 5 }}
                                                                         />
                                                                     </Tooltip>
@@ -196,8 +188,8 @@ class Reward extends React.Component {
                                                             {item.followers && item.followers.length > 0 &&
                                                                 item.followers.map((member, index) => (
                                                                     <Tooltip placement="topLeft" title={member.mName} key={index}>
-                                                                        <Avatar
-                                                                            src={member.mAvatar.image} size={40}
+                                                                        <Avatar className="reward__avatar"
+                                                                            src={member.mAvatar.image}
                                                                             style={{ backgroundColor: member.mAvatar.color, marginRight: 5 }}
                                                                         />
                                                                     </Tooltip>
@@ -205,9 +197,7 @@ class Reward extends React.Component {
                                                             }
                                                         </div>
                                                         <div className="flex-row-reward">
-                                                            <StarOutlined className="icon-star-reward" />
-                                                                            &nbsp;
-                                                                            <div >{item.points} điểm</div>
+                                                            <div className="reward__point"> <StarOutlined className="icon-star-reward" /> {item.points} điểm</div>
                                                             {showActionReward && item._id === rewardItemSelected._id &&
                                                                 <div className="action-reward-container">
                                                                     {
@@ -247,26 +237,18 @@ class Reward extends React.Component {
                                         />
                                         : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                                 }
-                            </Panel>
-                            <Panel key="2"
-                                header={
-                                    <div className="header-panel-reward">
-                                        <div>ĐÃ NHẬN</div>
-                                        {listHistoryReward && <Avatar size="small" className="number-of-reward">{listHistoryReward.length}</Avatar>}
-                                    </div>
-                                }
-                                style={{ padding: 10 }}
-                            >
+                            </TabPane>
+                            <TabPane tab="Đã nhận" key="achieved">
                                 {(gettingListHistoryReward && !gotListHistoryReward)
                                     ? renderSpin()
                                     : (listHistoryReward && listHistoryReward.length > 0)
                                         ? <List
-                                            pagination={{ pageSize: 4 }}
+                                            pagination={{ pageSize: 5, size: 'small' }}
                                             dataSource={listHistoryReward}
                                             renderItem={item => (
                                                 <List.Item >
                                                     <div className="reward-item-container" style={{ justifyContent: 'space-between' }}>
-                                                        <div style={{ width: '80%' }}>
+                                                        <div className="reward__achieved-info">
                                                             <div className="name-reward-item-received">{item.name}</div>
                                                             <div style={{ color: '#daa520' }}>Lúc: {moment(item.date).format('llll')}</div>
                                                         </div>
@@ -282,7 +264,7 @@ class Reward extends React.Component {
                                                                 ))
                                                             }
                                                         </div>
-                                                        <div style={{ fontSize: 16 }}> <StarOutlined className="icon-star-reward" /> {item.points} điểm</div>
+                                                        <div className="reward__point"> <StarOutlined className="icon-star-reward" /> {item.points} điểm</div>
                                                     </div>
                                                 </List.Item>
                                             )}
@@ -293,8 +275,35 @@ class Reward extends React.Component {
                                         </List>
                                         : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                                 }
+                            </TabPane>
+                        </Tabs>
+
+                        {/* <Collapse accordion bordered={false} className="second-row-reward-content-container" defaultActiveKey={["1"]}
+                            expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                        >
+                            <Panel key="1"
+                                header={
+                                    <div className="header-panel-reward">
+                                        <div>PHẦN THƯỞNG</div>
+                                        {listRewards && <Avatar size="small" className="number-of-reward">{listRewards.length}</Avatar>}
+                                    </div>
+                                }
+                                style={{ padding: 10 }}
+                            >
+
                             </Panel>
-                        </Collapse>
+                            <Panel key="2"
+                                header={
+                                    <div className="header-panel-reward">
+                                        <div>ĐÃ NHẬN</div>
+                                        {listHistoryReward && <Avatar size="small" className="number-of-reward">{listHistoryReward.length}</Avatar>}
+                                    </div>
+                                }
+                                style={{ padding: 10 }}
+                            >
+
+                            </Panel>
+                        </Collapse> */}
                     </Content>
                 </Layout>
             </Layout >
