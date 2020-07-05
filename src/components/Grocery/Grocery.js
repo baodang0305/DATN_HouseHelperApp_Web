@@ -1,9 +1,9 @@
 import React from "react";
 import './Grocery.css';
 import { Link } from "react-router-dom";
-import { Layout, Avatar, Row, Col, Input, Button, Tabs, Collapse, Modal, Select, Popover, Spin, List, Divider, Tooltip } from "antd";
+import { Layout, Avatar, Row, Col, Input, Button, Tabs, Collapse, Modal, Select, Popover, Spin, List, Tooltip } from "antd";
 import { connect } from 'react-redux';
-import { RedoOutlined, ExclamationCircleOutlined, LoadingOutlined, ProfileOutlined, FieldTimeOutlined, CaretRightOutlined, BellOutlined, SolutionOutlined, MoreOutlined, DeleteOutlined, EditOutlined, PaperClipOutlined } from '@ant-design/icons';
+import { RedoOutlined, ExclamationCircleOutlined, LoadingOutlined, CloseOutlined, FieldTimeOutlined, CaretRightOutlined, BellOutlined, SolutionOutlined, MoreOutlined, DeleteOutlined, EditOutlined, PaperClipOutlined } from '@ant-design/icons';
 
 import { familyActions } from "../../actions/family.actions";
 import { groceryActions } from "../../actions/grocery.actions";
@@ -19,13 +19,15 @@ const { Search } = Input;
 const { Header, Content, Footer } = Layout;
 const { confirm } = Modal;
 const { TabPane } = Tabs;
+const { Option } = Select;
 let socket;
 
 class Grocery extends React.Component {
     state = {
         allGroceriesState: null,
-        quickFilter: 'all',
-        tabMode: 'todo'
+        quickFilter: { mem: 'all', time: 'newest', bill: 'none' },
+        tabMode: 'todo',
+        visiblePopover: false
     }
 
     getData() {
@@ -34,6 +36,10 @@ class Grocery extends React.Component {
         getAllGroceries();
         getAllGroceryTypes();
 
+    }
+
+    hidePopover = () => {
+        this.setState({ visiblePopover: false });
     }
 
     componentDidMount() {
@@ -70,9 +76,10 @@ class Grocery extends React.Component {
                     break;
             }
         });
-
-
     }
+
+
+
     componentWillUnmount() {
         socket && socket.connected && socket.close();
     }
@@ -118,26 +125,31 @@ class Grocery extends React.Component {
 
     }
 
-    handleClickQuickFilter = (quickFilterMode) => {
-        const { quickFilter } = this.state;
-        const { user, allGroceries } = this.props;
-        if (quickFilterMode === 'all') {
-            this.setState({ quickFilter: quickFilterMode, allGroceriesState: allGroceries });
-        } else if (quickFilterMode === 'recentUser') {
-            this.setState({ quickFilter: quickFilterMode, allGroceriesState: allGroceries.filter(item => item.assign && item.assign._id === user._id) })
-        }
 
-    }
     handleOnChangeTabMode = (activeKey) => {
         this.setState({ tabMode: activeKey });
     }
 
+    onChangeSelectMember = (value) => {
+        const { quickFilter } = this.state;
+        const { user, allGroceries } = this.props;
+        if (value === 'all') {
+            this.setState({ quickFilter: { ...quickFilter, mem: value }, allGroceriesState: allGroceries });
+        } else if (value === 'recentUser') {
+            this.setState({ quickFilter: { ...quickFilter, mem: value }, allGroceriesState: allGroceries.filter(item => item.assign && item.assign._id === user._id) })
+        }
+    }
+
+    handleVisiblePopoverChange = visiblePopover => {
+        this.setState({ visiblePopover });
+    };
+
     render() {
         const { listMembers, allGroceryTypes, allGroceries, user } = this.props;
-        const { allGroceriesState, quickFilter, tabMode } = this.state;
-        console.log(allGroceriesState);
+        const { allGroceriesState, quickFilter, tabMode, visiblePopover } = this.state;
+        console.log(quickFilter);
         let dataGroceries = allGroceriesState ? allGroceriesState : allGroceries;
-        console.log(dataGroceries);
+
 
         return (
             <Layout style={{
@@ -170,15 +182,50 @@ class Grocery extends React.Component {
                                         <Tabs defaultActiveKey="1" className="grocery__tab-data" onChange={this.handleOnChangeTabMode}
                                             tabBarExtraContent={
                                                 <div className="quick-filter">
-                                                    <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
+                                                    {/* <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
                                                         onClick={() => { this.handleClickQuickFilter('recentUser') }} >
                                                         Được giao
                                                     </div>
                                                     <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
                                                         onClick={() => { this.handleClickQuickFilter('all') }}>
                                                         Tất cả
+                                                    </div> */}
+                                                    <div className="quick-filter__tablet-pc">
+                                                        <Select onChange={this.onChangeSelectMember} defaultValue="all" allowClear className="quick-filter__item" placeholder="Thành viên">
+                                                            <Option value="all">Tất cả thành viên</Option>
+                                                            <Option value="recentUser">Được giao</Option>
+                                                        </Select>
+                                                        <Select allowClear defaultValue="newest" placeholder="Thời gian" className="quick-filter__item">
+                                                            <Option value="newest">Mới nhất</Option>
+                                                            <Option value="oldest">Cũ nhất</Option>
+                                                        </Select>
+                                                        {tabMode === 'todo' ? null : <Select allowClear placeholder="Lọc hóa đơn" className="quick-filter__item">
+                                                            <Option value="increaseCost">Giá cao nhất</Option>
+                                                            <Option value="increaseCost">Giá thấp nhất</Option>
+                                                        </Select>}
                                                     </div>
-
+                                                    <Popover trigger="click"
+                                                        visible={visiblePopover} onVisibleChange={this.handleVisiblePopoverChange}
+                                                        className="quick-filter__mobile" placement="bottomRight"
+                                                        content={<div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <Select size="small" onChange={this.onChangeSelectMember} defaultValue="all" allowClear className="quick-filter__item" placeholder="Thành viên">
+                                                                <Option value="all">Tất cả thành viên</Option>
+                                                                <Option value="recentUser">Được giao</Option>
+                                                            </Select>
+                                                            <Select size="small" allowClear defaultValue="newest" placeholder="Thời gian" className="quick-filter__item">
+                                                                <Option value="newest">Mới nhất</Option>
+                                                                <Option value="oldest">Cũ nhất</Option>
+                                                            </Select>
+                                                            {tabMode === 'todo' ? null : <Select size="small" allowClear placeholder="Lọc hóa đơn" className="quick-filter__item">
+                                                                <Option value="increaseCost">Giá cao nhất</Option>
+                                                                <Option value="increaseCost">Giá thấp nhất</Option>
+                                                            </Select>}
+                                                            <Button size="small" type="primary" ghost className="quick-filter__item"
+                                                                onClick={this.hidePopover} icon={<CloseOutlined />}></Button>
+                                                        </div>
+                                                        }>
+                                                        <Button size="small" type="primary" ghost>Tùy chọn lọc</Button>
+                                                    </Popover>
                                                 </div>
 
                                             }>

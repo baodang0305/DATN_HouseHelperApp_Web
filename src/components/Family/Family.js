@@ -160,7 +160,7 @@ class Family extends React.Component {
                             }
                         </div>
                     </Header>
-                    <Content >
+                    <Content className="app-content">
                         <div className="first-row-family-content-container" >
                             <Divider orientation="left" style={{ padding: "10px 20px", margin: 0 }}>
                                 <div className="family__title-section-container">

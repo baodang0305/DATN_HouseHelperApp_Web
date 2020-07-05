@@ -128,6 +128,10 @@
 }
 
 @media all and (min-width: 320px) and (max-width: 599px) {
+    .app-content {
+        padding-bottom: 50px;
+    }
+
     .icon-header-family {
         font-size: 15px;
     }
@@ -168,7 +172,11 @@
     }
 }
 
-@media all and (min-width: 600px) and (max-width: 1023px) {
+@media all and (min-width: 600px) and (max-width: 767px) {
+    .app-content {
+        padding-bottom: 50px;
+    }
+
     .first-col-content-list-item-family {
         margin-right: 10px;
     }
@@ -182,8 +190,20 @@
     }
 }
 
-@media all and (min-width: 1024px) {
+@media all and (min-width: 768px) and (max-width: 1023px) {
+    .first-col-content-list-item-family {
+        margin-right: 10px;
+    }
+
+    .name-task {
+        font-size: 15px;
+    }
+
+    .date-task {
+        font-size: 13px;
+    }
 }
 
-@media all and (min-width: 1280px) {
-}
+@media all and (min-width: 1024px) {}
+
+@media all and (min-width: 1280px) {}

@@ -258,13 +258,14 @@ class TaskList extends React.Component {
                                                                 </Tooltip>
                                                                 {item.assign.isAll === true ? <div hidden={recentIndex === (item.assign.mAssigns.length - 1) ? true : false} className="line-connect-all-member"></div> : null}
                                                             </div>)
-                                                            : <div className="task__action-item" hidden={item._id === index ? !hiddenActionsList : false}
+                                                            : (item.state === completed ? null : < div className="task__action-item" hidden={item._id === index ? !hiddenActionsList : false}
                                                                 onClick={(e) => {
                                                                     this.setState({ visibleAssignTask: true, hiddenActionsList: !this.state.hiddenActionsList })
                                                                 }}>
                                                                 <StarTwoTone className="icon-action-task" />
                                                                 <div className="task__action-title">Đăng ký</div>
-                                                            </div>}
+                                                            </div>)
+                                                        }
                                                     </div>
 
                                                     <div className="task-point">
@@ -278,7 +279,8 @@ class TaskList extends React.Component {
                                     </div>
                                 </Skeleton>
                             </List.Item>
-                        )}
+                        )
+                        }
                     />
                     : <div className="spin-get-list-members"><Spin tip="Đang tải..." /> </div>}
 
@@ -324,7 +326,7 @@ class TaskList extends React.Component {
                     onCancel={() => this.setState({ visibleAssignTask: false })}>
                     <AssignTaskForm idTask={dataTemp.idTask} nameTask={dataTemp.nameTask} />
                 </Modal>
-            </div>
+            </div >
         );
     }
 }

@@ -1,0 +1,122 @@
+.filter-slider-right {
+    position: fixed;
+    z-index: 1;
+    min-width: 30px;
+    height: 50px;
+    background-color: rgba(11, 48, 117, 0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: 10px;
+}
+
+.filter-slider-left {
+    position: absolute;
+    z-index: 1;
+    min-width: 30px;
+    height: 50px;
+    background-color: rgba(11, 48, 117, 0.08);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: -10px;
+}
+
+.list-task-filter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+    width: max-content;
+}
+
+.list-task-filter:hover {
+    cursor: pointer;
+}
+
+.filter__name-cate {
+    width: max-content;
+}
+
+.chosen-task-filter {
+    border: 2px solid #2985ff;
+}
+
+.task-filter:hover {
+    cursor: pointer;
+    border: 1.5px solid #2985ff;
+}
+
+.filter-popover {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-popover-item {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.chosen-filter-popover-item {
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    color: #2985ff;
+}
+
+.filter-popover-item:hover {
+    text-decoration: underline;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.hide-popover {
+    font-size: 14px;
+    color: #2985ff;
+    cursor: pointer;
+}
+
+.filter-list-task {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    max-height: max-content;
+    width: 100%;
+    margin: 0px 0 15px;
+    transition: transform 300ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.ant-popover-title {
+    min-width: fit-content;
+}
+
+.ant-popover-inner-content {
+    padding: 5px 10px;
+}
+
+@media only screen and (min-width: 1025px) {}
+
+/* small tablet - medium tablet */
+@media only screen and (min-width: 600px) and (max-width: 1024px) {}
+
+/* Mobile */
+@media only screen and (min-width: 320px) and (max-width: 599px) {
+    .filter__name-cate {
+        font-size: 13px;
+    }
+
+    .chosen-task-filter,
+    .task-filter {
+        width: 30px;
+        height: 30px;
+    }
+
+    .filter-slider-left {
+        left: 0px;
+    }
+
+    .filter-slider-right {
+        right: 0px;
+    }
+}
