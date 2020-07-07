@@ -1,20 +1,21 @@
 .body-register-account {
     height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+
 }
 
 .register-account-container {
+    flex-basis: 45%;
+    height: 100%;
     margin: auto;
-    width: 400px;
-    border: groove thin;
-    border-radius: 5px;
-    background-color: #f7f7f7;
-    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+    display: flex;
+    border-right: 1px solid #eeeeee;
 }
 
 .form-register-account {
-    width: 100%;
+    margin: auto;
+    width: 400px;
     padding: 20px 30px;
 }
 
@@ -70,3 +71,29 @@
     width: 48%;
     margin-top: 20px;
 }
+
+.register-account__banner {
+    width: 100%;
+    flex-basis: 55%;
+    background-image: url('../../../assets/image-home-page/3876651.jpg');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+@media screen and (max-width: 992px) {
+    .form-register-account {
+        width: 400px;
+    }
+
+    .register-account__banner {
+        display: none;
+    }
+
+    .register-account-container {
+        border: none;
+    }
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 600px) {}

@@ -93,6 +93,7 @@ class RegisterAccount extends React.Component {
         return (
             <div className="body-register-account">
                 <div className="register-account-container">
+
                     <Form
                         onFinish={this.handleSubmit} className="form-register-account"
                         size="large" initialValues={{ remember: true }}
@@ -171,6 +172,7 @@ class RegisterAccount extends React.Component {
                         </Form.Item>
                     </Form>
                 </div>
+                <div className="register-account__banner"> </div>
             </div>
         );
     }

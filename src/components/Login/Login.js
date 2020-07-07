@@ -7,7 +7,13 @@ import { Form, Input, Button, Modal, Spin } from 'antd';
 
 import './Login.css';
 import { memberActions } from '../../actions/member.actions';
-
+const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+};
+const tailLayout = {
+    wrapperCol: { offset: 8, span: 16 },
+};
 class Login extends React.Component {
 
     constructor(props) {
@@ -47,55 +53,122 @@ class Login extends React.Component {
     render() {
         const { email, password, emailResetPass, visibleModal, isSubmitForgotForm } = this.state;
         return (
+
             <div className="container-login">
-                <div className="title-login">  Đăng Nhập </div>
-                <Form onFinish={this.handleSubmit} >
-                    <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]} >
-                        <Input
-                            name="email" value={email} onChange={this.handleChangeInput}
-                            prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" type="text"
-                        />
-                    </Form.Item>
-                    <Form.Item name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]} >
-                        <Input
-                            name="password" value={password} onChange={this.handleChangeInput}
-                            prefix={<LockOutlined className="site-form-item-icon" />}
-                            type="password" placeholder="Mật khẩu" size="large"
-                        />
-                    </Form.Item>
-                    <Form.Item>
-                        <div onClick={() => this.setState({ visibleModal: true })} className="text-forgot"> Quên mật khẩu? </div>
-                        <Modal title={null} footer={null} closable={false} visible={visibleModal} width={400}>
-                            <div className="title-forgot-form" >
-                                <ExclamationCircleOutlined style={{ color: '#1890ff' }} />
-                                &nbsp;
-                                Please input email to reset password!
+                <div className="login__form-container">
+
+                    <div className="login__form">
+                        <div className="logo__home-page">
+                            <div >
+                                <Link style={{ fontSize: 25, fontFamily: 'Roboto, sans-serif', fontWeight: 500 }} to="/"><span style={{ color: '#40a9ff' }}>SMART</span><span style={{ color: '#444444' }}>FAMILY</span></Link>
                             </div>
-                            <Form onFinish={this.handleSend}>
-                                <div className="email-input-container">
-                                    <Input
-                                        name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
-                                        prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
-                                    />
-                                    {isSubmitForgotForm && emailResetPass === "" && <div className="error-text-forgot-form">Vui lòng nhập email</div>}
-                                </div>
-                                <div className="button-forgot-form-container">
-                                    <Button onClick={() => this.setState({ visibleModal: false })} className="button-item-forgot-form"> Đóng </Button>
-                                    <Button htmlType="submit" type="primary" className="button-item-forgot-form"> Gửi </Button>
-                                </div>
-                            </Form>
-                        </Modal>
-                    </Form.Item>
-                    <Form.Item style={{ textAlign: "center" }}>
-                        <Button type="primary" htmlType="submit" className="login-form-button" size="large" ghost> Đăng nhập </Button>
-                        {this.props.loggingIn && !this.props.loggedIn &&
-                            <Spin tip="Loading..." />
-                        }
-                    </Form.Item>
-                    <FormItem className="register-link">
-                        <Link to="/create-family">Tạo gia đình!</Link>
-                    </FormItem>
-                </Form>
+                        </div>
+                        <div className="title-login">Đăng nhập <span style={{ color: '#40a9ff' }}>SMART</span>FAMILY </div>
+                        <Form className="login__form-data"
+                            name="basic"
+                            initialValues={{ remember: true }}
+                            onFinish={this.handleSubmit}>
+                            <Form.Item
+                                name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+                            >
+                                <Input
+                                    name="email" value={email} onChange={this.handleChangeInput}
+                                    prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" type="text"
+                                />
+                            </Form.Item>
+                            <Form.Item style={{ paddingTop: 16 }}
+                                name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+                            >
+                                <Input.Password
+                                    name="password" value={password} onChange={this.handleChangeInput}
+                                    prefix={<LockOutlined className="site-form-item-icon" />}
+                                    placeholder="Mật khẩu" size="large"
+                                />
+                            </Form.Item>
+                            <Form.Item>
+                                <div onClick={() => this.setState({ visibleModal: true })} className="text-forgot"> Bạn quên mật khẩu? </div>
+                                <Modal title={null} footer={null} closable={false} visible={visibleModal} width={400}>
+                                    <div className="title-forgot-form" >
+                                        <ExclamationCircleOutlined style={{ color: '#1890ff' }} />
+                                &nbsp;
+                                Hãy nhập đúng email mà bạn đã đăng ký!
+                                    </div>
+                                    <Form onFinish={this.handleSend}>
+                                        <div className="email-input-container">
+                                            <Input
+                                                name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
+                                                prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
+                                            />
+                                            {isSubmitForgotForm && emailResetPass === "" && <div className="error-text-forgot-form">Vui lòng nhập email</div>}
+                                        </div>
+                                        <div className="button-forgot-form-container">
+                                            <Button onClick={() => this.setState({ visibleModal: false })} className="button-item-forgot-form"> Đóng </Button>
+                                            <Button htmlType="submit" type="primary" className="button-item-forgot-form"> Gửi </Button>
+                                        </div>
+                                    </Form>
+                                </Modal>
+                            </Form.Item>
+                            <Form.Item style={{ textAlign: "center" }}>
+                                <Button type="primary" htmlType="submit" className="login-form-button" size="large" loading={this.props.loggingIn && !this.props.loggedIn}> Đăng nhập </Button>
+
+                            </Form.Item>
+                            <FormItem >
+                                <Link className="register-link" to="/create-family">Bạn muốn tạo gia đình?</Link>
+                            </FormItem>
+                        </Form>
+
+                        {/* <Form onFinish={this.handleSubmit}>
+                            <Form.Item className="login__form-item" name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]} >
+                                <Input
+                                    name="email" value={email} onChange={this.handleChangeInput}
+                                    prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" size="large" type="text"
+                                />
+                            </Form.Item>
+                            <Form.Item name="password" rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]} >
+                                <Input
+                                    name="password" value={password} onChange={this.handleChangeInput}
+                                    prefix={<LockOutlined className="site-form-item-icon" />}
+                                    type="password" placeholder="Mật khẩu" size="large"
+                                />
+                            </Form.Item>
+                            <Form.Item>
+                                <div onClick={() => this.setState({ visibleModal: true })} className="text-forgot"> Bạn quên mật khẩu? </div>
+                                <Modal title={null} footer={null} closable={false} visible={visibleModal} width={400}>
+                                    <div className="title-forgot-form" >
+                                        <ExclamationCircleOutlined style={{ color: '#1890ff' }} />
+                                &nbsp;
+                                Hãy nhập đúng email mà bạn đã đăng ký!
+                            </div>
+                                    <Form onFinish={this.handleSend}>
+                                        <div className="email-input-container">
+                                            <Input
+                                                name="emailResetPass" value={emailResetPass} onChange={this.handleChangeInput}
+                                                prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" size="large" type="email"
+                                            />
+                                            {isSubmitForgotForm && emailResetPass === "" && <div className="error-text-forgot-form">Vui lòng nhập email</div>}
+                                        </div>
+                                        <div className="button-forgot-form-container">
+                                            <Button onClick={() => this.setState({ visibleModal: false })} className="button-item-forgot-form"> Đóng </Button>
+                                            <Button htmlType="submit" type="primary" className="button-item-forgot-form"> Gửi </Button>
+                                        </div>
+                                    </Form>
+                                </Modal>
+                            </Form.Item>
+                            <Form.Item style={{ textAlign: "center" }}>
+                                <Button type="primary" htmlType="submit" className="login-form-button" size="large"> Đăng nhập </Button>
+                                {this.props.loggingIn && !this.props.loggedIn &&
+                                    <Spin tip="Loading..." />
+                                }
+                            </Form.Item>
+                            <FormItem className="register-link">
+                                <Link to="/create-family">Bạn muốn tạo gia đình?</Link>
+                            </FormItem>
+                        </Form> */}
+                    </div>
+                </div>
+                <div className="login__banner">
+
+                </div>
             </div>
         );
     }

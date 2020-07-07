@@ -1,5 +1,5 @@
 .container-login {
-	position: absolute;
+  /* position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
@@ -12,58 +12,139 @@
 	border: groove thin;
 	border-radius: 5px;
 	background-color: #f7f7f7;
-	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2); */
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
 }
+
+.login__form-container {
+  flex-basis: 45%;
+  display: flex;
+  border-right: 1px solid #eeeeee;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 400px;
+  height: 100%;
+  margin: auto;
+  position: relative;
+}
+
+.logo__home-page {
+  position: absolute;
+  top: 30px;
+  font-family: 'Roboto';
+}
+
+.login__banner {
+  flex-basis: 55%;
+  background-image: url(../../assets/image-home-page/2661180.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
 .title-login {
-	font-size: 25px;
-	margin-bottom: 20px;
+  font-size: 25px;
+  margin-bottom: 30px;
+  font-family: 'Roboto', sans-serif;
+  color: #444444;
 }
+
 button.login-form-button {
-	margin-right: 10px;
-	width: 100%;
-	margin-bottom: 20px;
-	font-size: 20px;
-	line-height: 28px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 300px;
-	height: 44px;
-	border-radius: 2px;
+  margin-right: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 20px;
+  line-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 44px;
+  border-radius: 5px;
 }
+
 .register-link {
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%, -50%);
+  cursor: pointer;
+  color: #247ec9;
+  font-size: 15px;
 }
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
 button.login-form-button:hover {
-	box-shadow: 0 2px 6px 0 rgba(32, 33, 36, 0.28);
+  box-shadow: 0 2px 6px 0 rgba(32, 33, 36, 0.28);
 }
+
 .text-forgot {
-	float: right;
-	cursor: pointer;
-	color: #40a9ff;
+  float: right;
+  cursor: pointer;
+  color: #247ec9;
+  font-size: 15px;
 }
+
+.text-forgot:hover {
+  text-decoration: underline;
+  transition: all 300ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
 .forgot-form-container {
-	width: 100px;
+  width: 100px;
 }
+
 .error-text-forgot-form {
-	color: #ff4d4f;
-	font-size: 12px;
+  color: #ff4d4f;
+  font-size: 12px;
 }
+
 .title-forgot-form {
-	font-size: 16px;
-	margin-bottom: 30px;
+  font-size: 16px;
+  margin-bottom: 30px;
 }
+
 .email-input-container {
-	margin: 10px 0px;
+  margin: 10px 0px 20px 0px;
 }
 
 .button-forgot-form-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
+
 .button-item-forgot-form {
-	margin-left: 5px;
+  margin-left: 5px;
+}
+
+.login__form-item {
+  margin-bottom: 30px;
+}
+
+@media screen and (max-width: 992px) {
+  .login__banner {
+    display: none;
+  }
+
+  .login__form-container {
+    flex-basis: 100%;
+    border-right: none;
+    padding: 0 30px;
+  }
+
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 600px) {
+  .login__form-container {
+    flex-basis: 100%;
+    border-right: none;
+    padding: 0 30px;
+  }
 }
