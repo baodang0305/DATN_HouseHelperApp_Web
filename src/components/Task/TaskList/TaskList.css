@@ -22,7 +22,7 @@
 
 .name-task {
 	font-size: 16px;
-	color: #0f0f0f;
+	color: #444444;
 }
 
 .note-task {
@@ -30,7 +30,7 @@
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: center;
-	color: #161616;
+	color: #444444;
 }
 
 .time-task {
@@ -85,7 +85,7 @@
 }
 
 .icon-avatar-member-completed {
-	border: 1px solid rgb(21, 255, 0);
+	border: 1px solid rgb(17, 189, 1);
 }
 
 .task-point {
@@ -135,12 +135,6 @@
 .icon-action-task {
 	color: #2985ff;
 	font-size: 21px;
-}
-
-.icon-action-task:hover,
-.task__action-item:hover>.icon-action-task {
-	font-size: 26px;
-	transition-duration: 0.2s, 0.2s;
 }
 
 .image-task {

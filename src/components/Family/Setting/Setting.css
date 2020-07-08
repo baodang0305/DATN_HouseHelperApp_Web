@@ -11,7 +11,7 @@
 
 .panel-container {
     background-color: white;
-    color: rgb(112, 124, 143);
+    color: #555555;
     margin: 10px 10px;
     border-radius: 5px;
     height: 50px;
@@ -36,11 +36,11 @@
     padding-right: 15px;
     right: 0;
     font-size: 15px;
-    color: #d7d7d7;
+    color: #555555;
 }
 
 .custom-icon {
-    color: #bbb9b9;
+    color: #555555;
     margin: 0px 10px;
 }
 

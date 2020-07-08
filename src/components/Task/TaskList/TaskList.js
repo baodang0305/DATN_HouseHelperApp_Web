@@ -14,7 +14,7 @@ import {
     AlertOutlined,
     StarOutlined, StarTwoTone, StarFilled,
     SnippetsOutlined,
-    ArrowUpOutlined, SolutionOutlined, LoadingOutlined
+    ArrowUpOutlined, SolutionOutlined, LoadingOutlined, MinusCircleOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
 
@@ -151,9 +151,8 @@ class TaskList extends React.Component {
                                                                 this.setState({ visibleAssignTask: true, })
                                                             }}>
                                                             <SolutionOutlined className="icon-action-task" />
-                                                            <div className="task__action-title">Nhận việc</div>
+                                                            <div className="task__action-title" style={{ color: "#2985ff" }}>Nhận việc</div>
                                                         </div> : null}
-
 
                                                     <div className="task__action-item"
                                                         onClick={() => (this.setState({ visibleCompleteTask: true }))}>
@@ -262,8 +261,8 @@ class TaskList extends React.Component {
                                                                 onClick={(e) => {
                                                                     this.setState({ visibleAssignTask: true, hiddenActionsList: !this.state.hiddenActionsList })
                                                                 }}>
-                                                                <StarTwoTone className="icon-action-task" />
-                                                                <div className="task__action-title">Đăng ký</div>
+                                                                <SolutionOutlined className="icon-action-task" />
+                                                                <div className="task__action-title" style={{ color: "#2985ff" }}>Nhận việc</div>
                                                             </div>)
                                                         }
                                                     </div>
@@ -282,7 +281,7 @@ class TaskList extends React.Component {
                         )
                         }
                     />
-                    : <div className="spin-get-list-members"><Spin tip="Đang tải..." /> </div>}
+                    : <div className="spin-get-list-members  loading-data-grocery"><Spin tip="Đang tải..." /> </div>}
 
                 <Modal className="task__modal"
                     visible={visibleCompleteTask}

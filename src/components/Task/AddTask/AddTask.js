@@ -36,7 +36,7 @@ import {
     ClockCircleOutlined,
     StarOutlined,
     SnippetsOutlined,
-    FrownOutlined, RetweetOutlined, UploadOutlined
+    FrownOutlined, RetweetOutlined, UploadOutlined, MinusCircleOutlined
 } from '@ant-design/icons';
 
 import moment from 'moment';
@@ -49,6 +49,7 @@ import { indexConstants } from '../../../constants/index.constants';
 import { storage } from '../../../helpers/firebaseConfig';
 
 import BasicRepeatModal from "../../Common/RepeatModal/RepeatModalBasic";
+import { Link } from 'react-router-dom';
 
 const { Option } = Select;
 const { Header, Content } = Layout;
@@ -96,7 +97,7 @@ function translateDataRepeat(dataRepeat) {
 class FormCreateTask extends Component {
     constructor(props) {
         super(props);
-        const { idCommonTaskCate } = this.props;
+
         this.state = {
             itemsHowLong: [5, 10, 15, 20],
             itemsPoints: [5, 10, 15, 20],
@@ -110,21 +111,22 @@ class FormCreateTask extends Component {
             photoTask: null,
             timeTask: 0,
             pointsTask: 0,
-            tcIDTask: idCommonTaskCate,
+            tcIDTask: null,
             notesTask: '',
             penaltyTask: 0,
             repeatTask: null,
             textRepeat: null,
             typeRepeatTask: null,
             startRepeatTask: null,
-            keyTaskCate: [idCommonTaskCate],
+            keyTaskCate: [],
             currentUrlImg: indexConstants.UPLOAD_IMG,
             dataAddHowLong: '',
             dataAddPoint: '',
             dataAddRemindTime: '',
             onChangedData: false,
             enableRepeatModal: false,
-            imageRecentToUpload: null
+            imageRecentToUpload: null,
+            idTaskNeedEdit: null,
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -153,6 +155,7 @@ class FormCreateTask extends Component {
         if (type === 'edit') {
             const { taskNeedEdit } = history.location.state;
             this.setState({
+                idTaskNeedEdit: taskNeedEdit._id,
                 textRepeat: translateDataRepeat(taskNeedEdit.repeat),
                 keyMember:
                     taskNeedEdit.assign !== null
@@ -335,7 +338,6 @@ class FormCreateTask extends Component {
 
     }
     handleSubmit = () => {
-        const { taskNeedEdit } = history.location.state;
         const {
             nameTask,
             assignMemberTask,
@@ -348,7 +350,8 @@ class FormCreateTask extends Component {
             penaltyTask,
             repeatTask,
             remindTimeTask, enableRepeatModal,
-            imageRecentToUpload
+            imageRecentToUpload,
+            idTaskNeedEdit
         } = this.state;
 
         const { addTask, editTask, type } = this.props;
@@ -395,7 +398,7 @@ class FormCreateTask extends Component {
                                 remindTimeTask
                             )
                             : editTask(
-                                taskNeedEdit._id,
+                                idTaskNeedEdit,
                                 nameTask,
                                 timeTask,
                                 pointsTask,
@@ -427,7 +430,7 @@ class FormCreateTask extends Component {
                     remindTimeTask
                 )
                 : editTask(
-                    taskNeedEdit._id,
+                    idTaskNeedEdit,
                     nameTask,
                     timeTask,
                     pointsTask,
@@ -451,10 +454,10 @@ class FormCreateTask extends Component {
             .filter(item => item.state === 'todo' || item.state === 'upcoming')
             .map(item => item.name.trim().toLowerCase())
             .indexOf(taskName.trim().toLowerCase());
-        if (
-            onChangedData &&
-            (checkExist !== -1 || taskName === '' || taskName.trim() === '')
+        if (onChangedData && (checkExist !== -1 || !taskName || taskName.trim() === '')
         ) {
+            return false;
+        } else if (!taskName) {
             return false;
         }
         return true;
@@ -480,7 +483,7 @@ class FormCreateTask extends Component {
             pointsTask,
             tcIDTask,
             notesTask,
-            keyTaskCate, enableRepeatModal, textRepeat
+            keyTaskCate, enableRepeatModal, textRepeat, onChangedData
         } = this.state;
 
         const { type, listMembers, allTaskCates, loading } = this.props;
@@ -508,7 +511,7 @@ class FormCreateTask extends Component {
                 <Layout className="site-layout add-task__layout">
                     <Header
                         className="site-layout-background header-container"
-                        style={{ padding: 0 }}
+                        style={{ padding: '0 10px' }}
                     >
                         <div className="add-task__header">
                             <div
@@ -550,8 +553,8 @@ class FormCreateTask extends Component {
                                         placeholder="Tên công việc"
                                     />
                                 </Form.Item>
-                                {this.allowTaskName(nameTask) === false ? (
-                                    <Alert
+                                {this.allowTaskName(nameTask) === false && onChangedData ? (
+                                    <Alert style={{ marginBottom: 5 }}
                                         message="Tên công việc không đúng hoặc đã tồn tại"
                                         type="error"
                                         showIcon
@@ -560,17 +563,14 @@ class FormCreateTask extends Component {
                                 ) : null}
                                 {/* Set up time and point*/}
 
-
                                 <Form.Item
                                     style={{ padding: 0, margin: '0px 0' }}
                                     rules={[
                                         { required: true, message: 'Please input your username!' }
-                                    ]}
-                                >
+                                    ]}>
                                     <Row
                                         gutter={[10, 0]}
-                                        style={{ backgroundColor: 'transparent' }}
-                                    >
+                                        style={{ backgroundColor: 'transparent' }}>
                                         <Col span={12}>
                                             <div className="custom-select-add-task">
                                                 <div className="present-select-add-task">
@@ -695,7 +695,7 @@ class FormCreateTask extends Component {
                                     label={
                                         <div
                                             className="add-task__label-form-item"
-                                            style={{ color: keyTaskCate.length ? '#2295FF' : null }}>
+                                            style={{ color: keyTaskCate.length ? '#2295FF' : "#444444" }}>
                                             <AppstoreOutlined style={{ fontSize: 17 }} />
                                                     &nbsp;Loại công việc
                                             </div>}>
@@ -704,37 +704,42 @@ class FormCreateTask extends Component {
                                             ? allTaskCates.map(item => (
                                                 <div
                                                     key={item._id || null}
-                                                    className="task-cate-item"
-                                                >
+                                                    className="task-cate-item">
                                                     <div
                                                         className="avatar-task-cate"
                                                         onClick={e => {
                                                             this.handledChangeCate(item._id);
-                                                        }}
-                                                    >
+                                                        }} >
                                                         <Avatar
                                                             src={item.image}
                                                             className={
                                                                 keyTaskCate.indexOf(item._id) !== -1
                                                                     ? 'icon-avatar-task-cate-checked'
-                                                                    : 'icon-avatar-task-cate'
-                                                            }
-                                                        ></Avatar>
+                                                                    : 'icon-avatar-task-cate'} />
                                                         <CheckOutlined
                                                             className="icon-check-assign-task-cate"
                                                             hidden={
                                                                 keyTaskCate.indexOf(item._id) !== -1
                                                                     ? false
-                                                                    : true
-                                                            }
-                                                        />
+                                                                    : true} />
                                                     </div>
                                                     <div className="add-task__label-cate">
                                                         {item.name}
                                                     </div>
                                                 </div>
+
                                             ))
                                             : null}
+
+                                        <div className="task-cate-item">
+                                            <div className="form-task__icon-add-more">
+                                                <Avatar className='icon-avatar-task-cate' style={{ backgroundColor: 'white' }} />
+                                                <PlusOutlined className="icon-check-assign-task-cate" style={{ color: '#444444' }} />
+                                            </div>
+                                            <div className="add-task__label-cate">
+                                                <Link to="/add-task-category" className="add-task__label-cate">Thêm mới</Link>
+                                            </div>
+                                        </div>
                                     </div>
                                 </Form.Item>
 
@@ -796,6 +801,15 @@ class FormCreateTask extends Component {
                                                 </div>
                                             ))
                                             : null}
+                                        <div className="container-avatar-member">
+                                            <div className="form-task__icon-add-more">
+                                                <Avatar className='icon-avatar-task-cate' style={{ backgroundColor: 'white' }} />
+                                                <PlusOutlined className="icon-check-assign-task-cate" style={{ color: '#444444' }} />
+                                            </div>
+                                            <div className="name-avatar-member">
+                                                <Link to="/family/add-member" className="name-avatar-member">Thêm mới</Link>
+                                            </div>
+                                        </div>
                                     </div>
                                 </Form.Item>
 
@@ -810,7 +824,7 @@ class FormCreateTask extends Component {
                                                         <div className="present-select-date-add-task">
                                                             <div
                                                                 className="add-task__label-form-item"
-                                                                style={{ color: repeatTask ? '#2985ff' : null }}>
+                                                                style={{ color: repeatTask ? '#2985ff' : "#444444" }}>
                                                                 <RetweetOutlined style={{ fontSize: 17 }} />
                                                                  &nbsp;Lặp lại
                                                                 </div>
@@ -839,7 +853,7 @@ class FormCreateTask extends Component {
                                                         <div className="present-select-date-add-task">
                                                             <div
                                                                 className="add-task__label-form-item"
-                                                                style={{ color: dueDateTask ? '#2985ff' : null }}                                                                >
+                                                                style={{ color: dueDateTask ? '#2985ff' : "#444444" }}                                                                >
                                                                 <ScheduleOutlined style={{ fontSize: 17 }} />
                                                                         &nbsp;Hạn công việc
                                                                 </div>
@@ -871,7 +885,7 @@ class FormCreateTask extends Component {
                                                             <div className="present-select-date-add-task">
                                                                 <div
                                                                     className="add-task__label-form-item"
-                                                                    style={{ color: remindTimeTask ? '#2985ff' : null }}>
+                                                                    style={{ color: remindTimeTask ? '#2985ff' : "#444444" }}>
                                                                     <AlertOutlined style={{ fontSize: 17 }} />
                                                                     &nbsp;Nhắc nhở
                                                                     </div>
@@ -948,8 +962,8 @@ class FormCreateTask extends Component {
                                                         <div className="present-select-date-add-task">
                                                             <div
                                                                 className="add-task__label-form-item"
-                                                                style={{ color: penaltyTask ? '#2985ff' : null }}>
-                                                                <FrownOutlined style={{ fontSize: 17 }} />
+                                                                style={{ color: penaltyTask ? '#2985ff' : "#444444" }}>
+                                                                <MinusCircleOutlined style={{ fontSize: 17 }} />
                                                                 &nbsp;Điểm phạt
                                                                 </div>
                                                         </div>
@@ -1049,7 +1063,7 @@ class FormCreateTask extends Component {
                                             disabled={!this.allowTaskName(nameTask)}
                                             loading={loading}
                                         >
-                                            {type === 'add' ? 'Thêm' : 'Cập nhật'}
+                                            {type === 'add' ? 'Thêm công việc' : 'Cập nhật'}
                                         </Button>
                                     </div>
                                 </Form.Item>

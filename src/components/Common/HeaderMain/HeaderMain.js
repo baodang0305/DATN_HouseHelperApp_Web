@@ -17,7 +17,7 @@ import {
     PlusOutlined,
     HomeOutlined,
     CaretRightOutlined,
-    BellOutlined, SearchOutlined, ArrowLeftOutlined
+    BellOutlined, SearchOutlined, ArrowLeftOutlined, LeftOutlined, CloseOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -94,13 +94,22 @@ class HeaderMain extends Component {
     }
 
     onSearch = (value) => {
-        const { tabData, handleSearchData } = this.props;
+        const { tabData, handleSearchData, tab } = this.props;
+
         if (value) {
-            var dataFilter = tabData.filter(item => nonAccentVietnamese(item.name).indexOf(nonAccentVietnamese(value)) !== -1);
-            this.setState({ dataFilter });
-            handleSearchData(dataFilter);
-        }
-        else handleSearchData(tabData);
+            if (tab === 'groceryType') {
+                var dataFilter = tabData.filter(item => nonAccentVietnamese(item.groceryType.name).indexOf(nonAccentVietnamese(value)) !== -1)
+                handleSearchData(dataFilter);
+            }
+            else if (tab === 'taskCategory') {
+                var dataFilter = tabData.filter(item => nonAccentVietnamese(item.taskCategory.name).indexOf(nonAccentVietnamese(value)) !== -1)
+                handleSearchData(dataFilter);
+            }
+            else {
+                var dataFilter = tabData.filter(item => nonAccentVietnamese(item.name).indexOf(nonAccentVietnamese(value)) !== -1)
+                handleSearchData(dataFilter);
+            }
+        } else handleSearchData(tabData);
     }
 
     hidePopover = () => {
@@ -119,13 +128,25 @@ class HeaderMain extends Component {
         return (
             <div className="task__header-container">
                 <div className="header-part-left">
-                    <Link to="/family" style={{ marginRight: 10 }} className="header__btn-link">
-                        <HomeOutlined className="task__header-icon" />
-                    </Link>
+                    {tab === 'taskCategory'
+                        ?
+                        <Link to="/family/setting" style={{ marginRight: 10 }} className="header__btn-link">
+                            <LeftOutlined className="task__header-icon" />
+                        </Link> :
+                        tab === 'groceryType'
+                            ? <Link to="/family/setting" style={{ marginRight: 10 }} className="header__btn-link">
+                                <LeftOutlined className="task__header-icon" />
+                            </Link>
+                            : <Link to="/family" style={{ marginRight: 10 }} className="header__btn-link">
+                                <HomeOutlined className="task__header-icon" />
+                            </Link>
+                    }
+
+
                     <Search className="header-search__tablet-pc"
                         prefix={
                             <Tooltip placement="bottom" title="Đóng tìm kiếm">
-                                <ArrowLeftOutlined onClick={() => this.setState({ enableInputSearch: !enableInputSearch })} />
+                                <CloseOutlined onClick={() => this.setState({ enableInputSearch: !enableInputSearch })} />
                             </Tooltip>}
                         allowClear
                         placeholder="Nhập từ khóa"
@@ -141,7 +162,7 @@ class HeaderMain extends Component {
                             <Search
                                 allowClear
                                 prefix={
-                                    <ArrowLeftOutlined onClick={this.hidePopover} />}
+                                    <CloseOutlined onClick={this.hidePopover} />}
                                 placeholder="Nhập từ khóa"
                                 onSearch={this.onSearch}
                                 style={{

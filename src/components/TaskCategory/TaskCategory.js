@@ -20,19 +20,19 @@ class TaskCategory extends Component {
         numberTasks: [],
         recentItem: null,
         idChosenReplace: null,
-        hasChange: false
+        hasChange: false,
+        idClickedItem: null,
+        dataMain: null
     };
 
-    componentWillMount() {
+    componentDidMount() {
         const { getAllTasks, getListMembers, getAllTaskCates } = this.props;
+        const { numberTasks, hasChange } = this.state;
+        hasChange ? getAllTaskCates() : null;
+
         getAllTaskCates();
         getListMembers();
         getAllTasks();
-    }
-
-    componentDidMount() {
-        const { numberTasks, hasChange } = this.state;
-        hasChange ? getAllTaskCates() : null
     }
 
     handleChooseReplaceCate = (idReplace) => {
@@ -73,18 +73,36 @@ class TaskCategory extends Component {
         return temp;
     }
 
+    handleClickAItemInList = (idItem) => {
+        const { idClickedItem } = this.state;
+        if (idItem === idClickedItem) {
+            this.setState({ idClickedItem: null })
+        }
+        else {
+            this.setState({ idClickedItem: idItem })
+        }
+    }
+
+    handleSearchData = (dataSearched) => {
+        this.setState({ dataMain: dataSearched, isChanged: true })
+    }
+
     render() {
         const { allTaskCates, allTasks } = this.props;
-        const calculatedNumberTaskEachCate = this.calculateNumberTaskEachCate(allTaskCates, allTasks);
+        const { visibleFormDeleteTaskCate, recentItem, idChosenReplace, idClickedItem, dataMain } = this.state;
+        let calculatedNumberTaskEachCate = dataMain ? dataMain : this.calculateNumberTaskEachCate(allTaskCates, allTasks);
         console.log('Du lieu', calculatedNumberTaskEachCate);
-        const { visibleFormDeleteTaskCate, recentItem, idChosenReplace } = this.state;
+
         return (
             <div>
                 <Layout style={{ minHeight: '100vh', position: 'relative' }}>
                     <DashboardMenu menuItem="1" />
                     <Layout className="site-layout">
                         <Header className="header-container">
-                            <HeaderMain tab="taskCategory" title="Loại công việc" />
+                            <HeaderMain tab="taskCategory"
+                                title="Loại công việc"
+                                handleSearchData={this.handleSearchData}
+                                tabData={this.calculateNumberTaskEachCate(allTaskCates, allTasks)} />
                         </Header>
 
                         <Content className="task-cate__content">
@@ -98,9 +116,14 @@ class TaskCategory extends Component {
                                         </div>
                                         <List className="task-cate__list-container"
                                             size="large"
+                                            pagination={{
+                                                size: 'small',
+                                                pageSize: 6
+                                            }}
                                             dataSource={calculatedNumberTaskEachCate}
                                             renderItem={item =>
-                                                <List.Item style={{ padding: '10px 0', position: 'relative' }} key={item.taskCategory._id}>
+                                                <List.Item style={{ padding: '12px 0', position: 'relative' }} key={item.taskCategory._id}
+                                                    onClick={() => this.handleClickAItemInList(item.taskCategory._id)}>
                                                     <div className="task-cate__item-container">
                                                         {/* //information of task category contain image and task category's name */}
                                                         <div className="task-cate__infor-cate">
@@ -111,28 +134,32 @@ class TaskCategory extends Component {
                                                         </div>
 
                                                         {/* //information of task category contain number of task belong this one */}
-                                                        <div className="container-relative-infor-task-cate">
-                                                            {item.tasksEachCate.map(i =>
-                                                                <div className="relative-infor-task-cate">
-                                                                    <div style={{ backgroundColor: i.color }} className="number-task-of-cate">{i.numberTasks}</div>
-                                                                    <div className="label-type-of-task">{i.typeTask}</div>
-                                                                </div>
-                                                            )}
-                                                        </div>
 
-                                                        {/* //some action to task category */}
-                                                        <div className="actions-task-cate">
-                                                            <div className="action-item-task-cate">
-                                                                <EditOutlined className="icon-action-task-cate"
-                                                                    style={{ color: '#595959' }}
-                                                                    onClick={() => this.handleEditTaskCateAction(item.taskCategory)} />
-                                                                <div className="task-cate__title-action">Sửa</div>
-                                                            </div>
-                                                            <div className="action-item-task-cate" onClick={(e) => this.setState({ visibleFormDeleteTaskCate: true, recentItem: item.taskCategory })}>
-                                                                <DeleteOutlined className="icon-action-task-cate" style={{ color: '#f5222d' }} />
-                                                                <div className="task-cate__title-action">Xóa</div>
-                                                            </div>
-                                                        </div>
+                                                        {item.taskCategory._id === idClickedItem ?
+                                                            <div>
+                                                                <div className="container-relative-infor-task-cate">
+                                                                    {item.tasksEachCate.map(i =>
+                                                                        <div className="relative-infor-task-cate">
+                                                                            <div style={{ backgroundColor: i.color }} className="number-task-of-cate">{i.numberTasks}</div>
+                                                                            <div className="label-type-of-task">{i.typeTask}</div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* //some action to task category */}
+                                                                <div className="actions-task-cate">
+                                                                    <div className="action-item-task-cate" style={{ color: '#595959' }} onClick={() => this.handleEditTaskCateAction(item.taskCategory)}>
+                                                                        <EditOutlined className="icon-action-task-cate"
+
+                                                                        />
+                                                                        <div className="task-cate__title-action">Sửa</div>
+                                                                    </div>
+                                                                    <div className="action-item-task-cate" style={{ color: '#f5222d' }} onClick={(e) => this.setState({ visibleFormDeleteTaskCate: true, recentItem: item.taskCategory })}>
+                                                                        <DeleteOutlined className="icon-action-task-cate" />
+                                                                        <div className="task-cate__title-action">Xóa</div>
+                                                                    </div>
+                                                                </div> </div> : null}
+
                                                     </div>
                                                 </List.Item>}
                                         />

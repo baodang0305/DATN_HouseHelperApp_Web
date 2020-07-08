@@ -23,7 +23,8 @@ class GroceryType extends Component {
         recentItem: null,
         idChosenReplace: null,
         hasChange: false,
-        idClickedItem: null
+        idClickedItem: null,
+        dataMain: null, isChanged: false
     };
 
     getData = () => {
@@ -67,6 +68,7 @@ class GroceryType extends Component {
                     break;
             }
         });
+
     }
 
     componentWillUnmount() {
@@ -127,18 +129,26 @@ class GroceryType extends Component {
         }
     }
 
+    handleSearchData = (dataSearched) => {
+        this.setState({ dataMain: dataSearched, isChanged: true })
+    }
+
     render() {
-        const { allGroceryTypes, allGroceries, user } = this.props;
-        const calculateNumberGroceryListEachType = this.calculateNumberGroceryListEachType(allGroceryTypes, allGroceries);
-        console.log('Du lieu', calculateNumberGroceryListEachType);
-        const { visibleFormDeleteGroceryType, recentItem, idChosenReplace, idClickedItem } = this.state;
+        const { allGroceryTypes, allGroceries, user, } = this.props;
+        const { visibleFormDeleteGroceryType, recentItem, idChosenReplace, idClickedItem, isChanged, dataMain } = this.state;
+        let calculateNumberGroceryListEachType = dataMain ? dataMain : this.calculateNumberGroceryListEachType(allGroceryTypes, allGroceries);
+        console.log('Du lieu', dataMain);
+
         return (
             <div>
                 <Layout style={{ minHeight: '100vh', position: 'relative' }}>
                     <DashboardMenu menuItem="1" />
                     <Layout className="site-layout">
-                        <Header className="header-container">
-                            <HeaderMain tab="groceryType" title="Loại danh sách mua sắm" />
+                        <Header className="header-container" >
+                            <HeaderMain tab="groceryType"
+                                tabData={this.calculateNumberGroceryListEachType(allGroceryTypes, allGroceries)}
+                                title="Loại danh sách mua sắm"
+                                handleSearchData={this.handleSearchData} />
                         </Header>
 
                         <Content className="grocery-type__content">
@@ -159,8 +169,7 @@ class GroceryType extends Component {
                                             dataSource={calculateNumberGroceryListEachType}
                                             renderItem={item =>
                                                 <List.Item style={{ padding: '10px 0', position: 'relative' }}
-                                                    key={item.groceryType._id}
-                                                >
+                                                    key={item.groceryType._id}>
                                                     <div className="grocery-type__item-container" onClick={() => { this.handleClickAItemInList(item.groceryType._id) }}>
                                                         {/* //information of task category contain image and task category's name */}
                                                         <div className="grocery-type__infor-cate" >

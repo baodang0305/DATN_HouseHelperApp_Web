@@ -17,7 +17,7 @@
 
 .grocery-type__content {
     margin: 10px 15px;
-    min-height: 360px;
+    min-height: 370px;
 }
 
 .grocery-type__content-container {
@@ -240,6 +240,10 @@
 
 .grocery-type__title-action {
     font-size: 12px;
+}
+
+.label-type-of-task {
+    font-size: 14px;
 }
 
 @media all and (max-width: 599px) {
