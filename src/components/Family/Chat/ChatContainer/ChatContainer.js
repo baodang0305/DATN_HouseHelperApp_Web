@@ -741,57 +741,68 @@ class ChatContainer extends React.Component {
         );
 
         const showToolBar = () => {
-            return (
-                (activeTab === "active" && receiverActive) ||
+            if ((activeTab === "active" && receiverActive) ||
                 (activeTab === "recent" && receiverRecent) ||
                 (activeTab === "family-group" && familyGroup)
-            ) && toolBar()
+            ) { return toolBar(); }
         }
 
         const headerBodyMessage = () => {
-            return (
-                (activeTab === "active" && receiverActive) ||
+            if ((activeTab === "active" && receiverActive) ||
                 (activeTab === "recent" && receiverRecent)
-            )
-                ? <>
-                    <Avatar
-                        className="img-header-message"
-                        src={activeTab === "active" ? receiverActive.mAvatar.image : receiverRecent.mAvatar.image}
-                        style={{ backgroundColor: activeTab === "active" ? receiverActive.mAvatar.color : receiverRecent.mAvatar.color }}
-                    /> &emsp;
-                    <span>
-                        <div style={{ fontWeight: "bolder" }}>{activeTab === "active" ? receiverActive.mName : receiverRecent.mName}</div>
-                        {(activeTab === "active" || receiverRecent.mSocketID) &&
-                            <div className="active-container">
-                                <div className="circle-active" /> &nbsp; Active
+            ) {
+                return (
+                    <>
+                        <Avatar
+                            className="img-header-message"
+                            src={activeTab === "active" ? receiverActive.mAvatar.image : receiverRecent.mAvatar.image}
+                            style={{ backgroundColor: activeTab === "active" ? receiverActive.mAvatar.color : receiverRecent.mAvatar.color }}
+                        /> &emsp;
+                        <span>
+                            <div style={{ fontWeight: "bolder" }}>{activeTab === "active" ? receiverActive.mName : receiverRecent.mName}</div>
+                            {(activeTab === "active" || receiverRecent.mSocketID) &&
+                                <div className="active-container">
+                                    <div className="circle-active" /> &nbsp; Active
                             </div>
-                        }
-                    </span>
-                </>
-                : (activeTab === "family-group" && familyGroup)
-                    ? <>
+                            }
+                        </span>
+                    </>
+                )
+            } else if (activeTab === "family-group" && familyGroup) {
+                return (
+                    <>
                         <Avatar className="img-header-message" src={familyGroup.fImage} /> &emsp;
                         <div style={{ fontWeight: "bold" }}>{familyGroup.fName}</div>
                     </>
-                    : null
+                )
+            }
 
         }
 
         const showMessages = () => {
-            return (
-                (activeTab === "active" && receiverActive) ||
-                (activeTab === "recent" && receiverRecent)
-            )
-                ? <Messages
-                    messages={activeTab === "recent" ? receiverRecent.messages : receiverActive.messages}
-                    userIsEntering={userIsEnteringSingle ? userIsEnteringSingle : null} mID={user._id}
-                />
-                : (activeTab === "family-group" && familyGroup)
-                    ? <Messages
+            if (activeTab === "active" && receiverActive) {
+                return (
+                    <Messages
+                        messages={receiverActive.messages}
+                        userIsEntering={(userIsEnteringSingle && userIsEnteringSingle.mID === receiverActive.mID) ? userIsEnteringSingle : null} mID={user._id}
+                    />
+                )
+            }
+            else if (activeTab === "recent" && receiverRecent) {
+                return (
+                    <Messages
+                        messages={receiverRecent.messages}
+                        userIsEntering={(userIsEnteringSingle && userIsEnteringSingle.mID === receiverRecent.mID) ? userIsEnteringSingle : null} mID={user._id}
+                    />
+                )
+            } else if (activeTab === "family-group" && familyGroup) {
+                return (
+                    <Messages
                         messages={familyGroup.messages}
                         userIsEntering={(userIsEnteringGroup && userIsEnteringGroup.mID !== user._id) ? userIsEnteringGroup : null} mID={user._id}
                     />
-                    : null
+                )
+            }
         }
 
         return (
@@ -1109,7 +1120,7 @@ class ChatContainer extends React.Component {
                         </Tabs>
                     </Content>
                 </Layout>
-            </Layout>
+            </Layout >
         );
     }
 }
