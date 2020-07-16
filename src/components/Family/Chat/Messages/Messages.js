@@ -38,7 +38,6 @@ const Messages = ({ messages, userIsEntering, mID }) => {
 
         });
     }
-
     return (
         <ScrollToBottom className="scroll-messages">
             {listMessages}

@@ -173,14 +173,14 @@ class Family extends React.Component {
                                 <div className="spin-get-list-members"><Spin tip="Loading..." /> </div>
                             }
                             <div className="list-members-container">
-                                {listMembers && listMembers.map((member, id) =>
+                                {listMembers && listMembers.map((member, id) => (
                                     <div className="member-item-container" key={id} onClick={() => this.handleChooseMember(member)}>
-                                        <Badge count={10} overflowCount={10000}>
+                                        <Badge count={member.mPoints} overflowCount={10000}>
                                             <Avatar src={member.mAvatar.image} style={{ backgroundColor: member.mAvatar.color }} shape="circle" className="family__avatar-member" />
                                         </Badge>
                                         <div className="size-member-name"> {member.mName} </div>
                                     </div>
-                                )}
+                                ))}
                             </div>
                         </div>
                         <div className="second-row-family-content-container" >

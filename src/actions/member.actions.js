@@ -127,7 +127,7 @@ const editMember = ({ mName, mEmail, mAge, mRole, mIsAdmin, mAvatar, isSetPass, 
     } else {
         if (!isSetPass) {
             return dispatch => {
-                dispatch(alertActions.error("No changes have been made"));
+                dispatch(alertActions.error("Không có gì thay đổi cần cập nhật"));
             }
         } else {
             return dispatch => {

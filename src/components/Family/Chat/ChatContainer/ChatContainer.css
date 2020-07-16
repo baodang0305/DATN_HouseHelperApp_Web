@@ -253,7 +253,7 @@
 
     .tool-bar-container {
         padding: 0px 10px;
-        width: 100%;
+        width: 100%; 
     }
 
     .chat__content {
@@ -263,7 +263,7 @@
     .chat-mobile__content {
         display: block;
         margin: 10px 0px;
-        padding: 10px;
+        padding: 50px 10px;
     }
 
     .header-chat-list-container {
@@ -307,7 +307,7 @@
     .chat-mobile__content {
         display: block;
         margin: 10px 0px;
-        padding: 10px;
+        padding: 50px 10px;
     }
 
     .header-chat-list-container {
