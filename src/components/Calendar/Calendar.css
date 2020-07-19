@@ -98,7 +98,7 @@
 }
 
 .border-avatar-calendar {
-    border: groove thin #2985ff;
+    border: 1px solid #2985ff;
 }
 
 .event-tag {

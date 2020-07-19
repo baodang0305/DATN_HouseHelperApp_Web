@@ -148,7 +148,7 @@ class TaskCategory extends Component {
 
                                                                 {/* //some action to task category */}
                                                                 <div className="actions-task-cate">
-                                                                    <div className="action-item-task-cate" style={{ color: '#595959' }} onClick={() => this.handleEditTaskCateAction(item.taskCategory)}>
+                                                                    <div className="action-item-task-cate" style={{ color: '#08979c' }} onClick={() => this.handleEditTaskCateAction(item.taskCategory)}>
                                                                         <EditOutlined className="icon-action-task-cate"
 
                                                                         />

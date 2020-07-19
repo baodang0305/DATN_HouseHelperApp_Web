@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Dropdown, Menu, Button } from "antd";
 import { DownOutlined } from '@ant-design/icons';
 
+import logoImg from '../../assets/logo.png';
 import "./home.css";
 import "antd/dist/antd.css";
 
@@ -11,8 +12,8 @@ export default class Home extends Component {
     return (
       <div className="landing-landing">
         <header className="landing-header">
-          <div className="logo">
-            <img src=""></img>
+          <div style={{ marginTop: 30 }}>
+            <img src={logoImg} className="logo-img"></img>
           </div>
           <div className="landing-header__menu-list">
             <div className="landing-header__menu-item">Góp ý</div>

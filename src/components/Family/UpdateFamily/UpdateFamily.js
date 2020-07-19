@@ -107,7 +107,7 @@ class UpdateFamily extends React.Component {
                                 <LeftOutlined className="header__icon-btn" />
                             </div>
                         </div>
-                        <div className="center-header-update-family-container"> Tài Khoản Gia Đình </div>
+                        <div className="center-header-update-family-container"> Tài khoản gia đình </div>
                         <div style={{ width: "20%" }}></div>
                     </Header>
                     <Content className="content-update-family">

@@ -37,12 +37,18 @@
 .logo__home-page {
   position: absolute;
   top: 30px;
-  font-family: 'Roboto';
+  font-family: "Roboto";
+}
+
+.logo-img {
+  height: 50px;
+  object-position: center;
+  object-fit: cover;
 }
 
 .login__banner {
   flex-basis: 55%;
-  background-image: url(../../assets/image-home-page/2661180.jpg);
+  background-image: url(../../assets/image-home-page/5556.jpg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
@@ -51,7 +57,7 @@
 .title-login {
   font-size: 25px;
   margin-bottom: 30px;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   color: #444444;
 }
 
@@ -137,7 +143,6 @@ button.login-form-button:hover {
     border-right: none;
     padding: 0 30px;
   }
-
 }
 
 /* On screens that are 600px or less, set the background color to olive */

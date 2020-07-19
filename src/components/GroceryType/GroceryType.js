@@ -198,7 +198,7 @@ class GroceryType extends Component {
                                                     <div className="grocery-type">
                                                         {item.groceryType._id === idClickedItem && user.mIsAdmin
                                                             ? (<div className="actions-grocery-type">
-                                                                <div className="action-item-grocery-type" style={{ color: '#595959' }} onClick={() => this.handleEditGroceryTypeAction(item.groceryType)} >
+                                                                <div className="action-item-grocery-type" style={{ color: '#08979c' }} onClick={() => this.handleEditGroceryTypeAction(item.groceryType)} >
                                                                     <EditOutlined className="icon-action-grocery-type" />
                                                                     <div className="grocery-type__title-action">Sửa</div>
                                                                 </div>

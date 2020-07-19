@@ -242,7 +242,7 @@ class AddReward extends React.Component {
                             </Form.Item>
                             <Form.Item className="form-item-point-reward" >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                    <div style={{ position: 'relative', flexBasis: '49.5%', boxSizing: 'border-box' }}>
+                                    <div style={{ position: 'relative', flexBasis: '100%', boxSizing: 'border-box' }}>
                                         <div className="point-input-fake-add-reward">
                                             <StarOutlined /> &nbsp; {points == 0 ? "Điểm thưởng" : `${points} Điểm`}
                                         </div>
@@ -269,30 +269,7 @@ class AddReward extends React.Component {
                                             {pointItems.map(item => <Option key={item}>{item} điểm</Option>)}
                                         </Select>
                                     </div>
-                                    <div style={{ flexBasis: '49.5%', position: 'relative', boxSizing: 'border-box' }}>
-                                        <div className="point-input-fake-add-reward">
-                                            <AppstoreAddOutlined /> &nbsp; {quantity === 0 ? "Số lượng" : ` Số lượng: ${quantity}`}
-                                        </div>
-                                        <Select
-                                            className="point-input-add-reward"
-                                            onChange={(value) => this.setState({ quantity: value })}
-                                            dropdownRender={menu => (
-                                                <div>
-                                                    {menu}
-                                                    <Divider />
-                                                    <div style={{ display: 'flex', flexWrap: 'nowrap', padding: 8 }}>
-                                                        <Input style={{ flex: 'auto' }} type="number" value={quantityItem} onChange={this.handleQuantityItemChange} />
-                                                        <a
-                                                            style={{ flex: 'none', padding: '1px 4px', display: 'block', cursor: 'pointer' }}
-                                                            onClick={this.addQuantityItem}>
-                                                            <PlusOutlined /> Thêm</a>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        >
-                                            {quantityItems.map(item => <Option key={item}>Số lượng: {item}</Option>)}
-                                        </Select>
-                                    </div>
+
                                 </div>
                             </Form.Item>
                             <Form.Item className="form-item-add-reward">

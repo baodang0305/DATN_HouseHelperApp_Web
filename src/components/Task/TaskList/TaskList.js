@@ -174,8 +174,8 @@ class TaskList extends React.Component {
 
                                                     {user.mIsAdmin === true ? <div className="task__action-item"
                                                         onClick={() => history.push("/tasks/edit-task", { taskNeedEdit: item })}>
-                                                        <EditOutlined style={{ color: '#756f6d' }} className="icon-action-task" />
-                                                        <div style={{ color: '#756f6d' }} className="task__action-title">Sửa</div>
+                                                        <EditOutlined style={{ color: '#08979c' }} className="icon-action-task" />
+                                                        <div style={{ color: '#08979c' }} className="task__action-title">Sửa</div>
                                                     </div> : null
                                                     }
                                                     {user.mIsAdmin === true ? <div className="task__action-item"
@@ -228,7 +228,7 @@ class TaskList extends React.Component {
                                                         </div>}
 
                                                     <div className="time-task">
-                                                        {item.dueDate === null ? `${'Không gia hạn thời gian'}` : moment(`${item.dueDate}`).format('DD-MM-YYYY, HH:mm a')}
+                                                        {item.dueDate === null ? `${'Không gia hạn thời gian'}` : moment(`${item.dueDate}`).format('llll')}
                                                     </div>
                                                 </div>
                                             </Col>
@@ -268,8 +268,8 @@ class TaskList extends React.Component {
                                                     </div>
 
                                                     <div className="task-point">
+                                                        <StarOutlined />
                                                         <div className="point">&nbsp;{item.points} điểm</div>
-
                                                     </div>
                                                 </div>
                                             </Col>

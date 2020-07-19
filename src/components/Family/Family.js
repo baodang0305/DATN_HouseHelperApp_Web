@@ -14,7 +14,7 @@ import moment from 'moment';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import socketIoClient from "socket.io-client";
-import { Layout, List, Avatar, Skeleton, Badge, Spin, Divider } from "antd";
+import { Layout, List, Avatar, Skeleton, Badge, Spin, Divider, Tooltip } from "antd";
 
 import "./Family.css";
 import history from "../../helpers/history";
@@ -23,6 +23,7 @@ import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import { indexActions } from "../../actions/index.actions";
 import { familyActions } from "../../actions/family.actions";
 import { memberActions } from "../../actions/member.actions";
+import 'moment/locale/vi';
 
 let socket;
 const { Header, Content, Footer } = Layout;
@@ -141,22 +142,30 @@ class Family extends React.Component {
                 <Layout className="site-layout">
                     <Header className="header-container">
                         <div className="left-header-family-container">
-                            <Link to="/family/setting" className="header__btn-link">
-                                <SettingOutlined className="icon-header-family" />
-                            </Link>
+                            <Tooltip title="Cài đặt gia đình" placement="bottomLeft">
+                                <Link to="/family/setting" className="header__btn-link">
+                                    <SettingOutlined className="icon-header-family" />
+                                </Link>
+                            </Tooltip>
+
                             &emsp;
-                            <Link to="/family/chat" className="header__btn-link">
-                                <Badge count={numberOfIncomingMessages}>
-                                    <MailOutlined className="icon-header-family" />
-                                </Badge>
-                            </Link>
+                            <Tooltip title="Trò chuyện" placement="bottom">
+                                <Link to="/family/chat" className="header__btn-link">
+                                    <Badge count={numberOfIncomingMessages}>
+                                        <MailOutlined className="icon-header-family" />
+                                    </Badge>
+                                </Link>
+                            </Tooltip>
+
                         </div>
-                        <div className="center-header-family-container" >Gia Đình</div>
+                        <div className="center-header-family-container" >Gia đình</div>
                         <div className="right-header-family-container">
                             {user.mIsAdmin &&
-                                <Link to="/family/add-member" className="header__btn-link">
-                                    <PlusOutlined className="icon-header-family" />
-                                </Link>
+                                <Tooltip title="Thêm thành viên" placement='bottomRight'>
+                                    <Link to="/family/add-member" className="header__btn-link">
+                                        <PlusOutlined className="icon-header-family" />
+                                    </Link>
+                                </Tooltip>
                             }
                         </div>
                     </Header>
@@ -164,8 +173,7 @@ class Family extends React.Component {
                         <div className="first-row-family-content-container" >
                             <Divider orientation="left" style={{ padding: "10px 20px", margin: 0 }}>
                                 <div className="family__title-section-container">
-                                    <TeamOutlined className="family__title-section-icon" />
-                                &nbsp;<div className="family__title-section-text">Thành viên gia đình</div>
+                                    <div className="family__title-section-text">Thành viên gia đình</div>
                                 </div>
 
                             </Divider>
@@ -186,9 +194,8 @@ class Family extends React.Component {
                         <div className="second-row-family-content-container" >
                             <Divider orientation="left" style={{ padding: "10px 20px", margin: 0 }}>
                                 <div className="family__title-section-container">
-                                    <AlertOutlined className="family__title-section-icon" />
-                                &nbsp;
-                                <div className="family__title-section-text">Bảng tin gia đình</div>
+
+                                    <div className="family__title-section-text">Bảng tin gia đình</div>
                                 </div>
 
                             </Divider>
@@ -211,11 +218,11 @@ class Family extends React.Component {
                                     dataSource={listNews}
                                     renderItem={item => (
                                         <List.Item className="family__news-item"
-                                            actions={[
-                                                <IconText icon={StarOutlined} text="0" key="list-vertical-star-o" />,
-                                                <IconText icon={LikeOutlined} text="0" key="list-vertical-like-o" />,
-                                                <IconText icon={MessageOutlined} text="0" key="list-vertical-message" />,
-                                            ]}
+                                        // actions={[
+                                        //     <IconText icon={StarOutlined} text="0" key="list-vertical-star-o" />,
+                                        //     <IconText icon={LikeOutlined} text="0" key="list-vertical-like-o" />,
+                                        //     <IconText icon={MessageOutlined} text="0" key="list-vertical-message" />,
+                                        // ]}
                                         >
                                             <Skeleton avatar title={false} loading={item.loading} active>
                                                 <div className="list-item-new-family-container" >
@@ -227,7 +234,7 @@ class Family extends React.Component {
                                                         <div>
                                                             <div className="state-task">{item.subject}</div>
                                                             <div className="name-task">{item.content}</div>
-                                                            {item.date && <div className="date-task">{moment(`${item.date}`).format('MMMM Do YYYY, h:mm:ss a')}</div>}
+                                                            {item.date && <div className="date-task">{moment(`${item.date}`).format('llll')}</div>}
                                                         </div>
                                                     </div>
                                                     <div className="right-list-item-family-container" onClick={() => this.handleClickDeleteNew(item)}>

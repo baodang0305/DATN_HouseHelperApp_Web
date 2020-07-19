@@ -1,17 +1,15 @@
-import './GroceryList.css';
 import React from "react";
-import numeral from "numeral";
-import { connect } from 'react-redux';
-import history from "../../../helpers/history";
+import { CaretRightOutlined, DeleteOutlined, DollarCircleOutlined, EditOutlined, ExclamationCircleOutlined, LoadingOutlined, QuestionCircleOutlined, RedoOutlined, SolutionOutlined, UploadOutlined } from '@ant-design/icons';
+import { Avatar, Col, Collapse, Form, Input, Layout, List, Modal, Row, Tooltip } from "antd";
 import firebase from "firebase";
-import { storage } from "../../../helpers/firebaseConfig";
+import numeral from "numeral";
 
-import { Link } from "react-router-dom";
-import { Layout, Avatar, Row, Col, Input, Button, Collapse, Modal, Select, Popover, Spin, List, Divider, Tooltip, Form } from "antd";
-
-import { RedoOutlined, ExclamationCircleOutlined, LoadingOutlined, DollarCircleOutlined, QuestionCircleOutlined, CaretRightOutlined, UploadOutlined, SolutionOutlined, MoreOutlined, DeleteOutlined, EditOutlined, PaperClipOutlined } from '@ant-design/icons';
-import { familyActions } from "../../../actions/family.actions";
+import { connect } from 'react-redux';
 import { groceryActions } from "../../../actions/grocery.actions";
+import { storage } from "../../../helpers/firebaseConfig";
+import history from "../../../helpers/history";
+import './GroceryList.css';
+
 
 
 const { Panel } = Collapse;
@@ -35,7 +33,14 @@ class GroceryList extends React.Component {
             arrayImgBill: [],
             groceryRecent: null,
             idClickedItemInList: null,
-            modeCompleteAddBill: false
+            modeCompleteAddBill: false,
+            visibleEditItemForm: false,
+            groceryClicked: null,
+            itemInListClicked: null,
+            nameOfItem: '',
+            noteOfItem: '',
+            indexItemInList: 0,
+
         }
         this.inputFile = React.createRef();
     }
@@ -66,6 +71,8 @@ class GroceryList extends React.Component {
 
     }
 
+
+    // Modal bill
     handleOkBillModal = () => {
         const { totalCostBill, arrayLinkImageBill, groceryRecent, modeCompleteAddBill } = this.state;
         const { checkBoughtItem, editGrocery } = this.props;
@@ -98,6 +105,48 @@ class GroceryList extends React.Component {
             checkBoughtItem(idClickedGrocery, idCheckBoughtItemOfGrocery);
         });
 
+    }
+
+    // Modal edit item
+    handleShowEditItemForm = (groceryClicked, itemClicked, indexItemInList) => {
+        this.setState({
+            groceryClicked: groceryClicked,
+            itemInListClicked: itemClicked,
+            nameOfItem: itemClicked.name,
+            noteOfItem: itemClicked.details,
+            indexItemInList,
+            visibleEditItemForm: true
+        });
+        console.log(groceryClicked, itemClicked);
+    }
+
+    handleOkEditItemModal = () => {
+        const { nameOfItem, noteOfItem, groceryClicked, itemClicked, indexItemInList } = this.state;
+        const { editGrocery } = this.props;
+
+        let listItemTemp = groceryClicked.listItems;
+        listItemTemp[indexItemInList].name = nameOfItem;
+        listItemTemp[indexItemInList].details = noteOfItem;
+
+
+        editGrocery(groceryClicked._id, groceryClicked.name,
+            groceryClicked.stID ? groceryClicked.stID._id : null,
+            groceryClicked.assign ? groceryClicked.assign._id : null,
+            groceryClicked.repeat, listItemTemp,
+            groceryClicked.total ? groceryClicked.total : null,
+            groceryClicked.bill ? groceryClicked.bill : null);
+    }
+
+    handleCancelEditItemModal = () => {
+        this.setState({ visibleEditItemForm: false })
+    }
+
+    onChangeInputNameEditItem = (e) => {
+        this.setState({ nameOfItem: e.target.value })
+    }
+
+    onChangeInputNoteEditItem = (e) => {
+        this.setState({ noteOfItem: e.target.value })
     }
 
     handleDeleteGrocery = (slID) => {
@@ -156,7 +205,12 @@ class GroceryList extends React.Component {
             afterUnCheckItem = afterUnCheckItem.map(item => {
                 return { isChecked: item.isChecked, name: item.name, details: item.details, photo: item.photo }
             })
-            editGrocery(groceryRecent._id, groceryRecent.name, groceryRecent.stID ? groceryRecent.stID._id : null, groceryRecent.assign ? groceryRecent.assign._id : null, groceryRecent.repeat, afterUnCheckItem, groceryRecent.total ? groceryRecent.total : null, groceryRecent.bill ? groceryRecent.bill : null);
+            editGrocery(groceryRecent._id, groceryRecent.name,
+                groceryRecent.stID ? groceryRecent.stID._id : null,
+                groceryRecent.assign ? groceryRecent.assign._id : null,
+                groceryRecent.repeat, afterUnCheckItem,
+                groceryRecent.total ? groceryRecent.total : null,
+                groceryRecent.bill ? groceryRecent.bill : null);
         } else {
 
             if (checkedTrueItemList.length === (listItemShopping.length - 1)) {
@@ -237,7 +291,16 @@ class GroceryList extends React.Component {
 
     render() {
         const { allGroceries, loadingCheckBought, user } = this.props;
-        const { idClickedItemInList, isActive, idClickedGrocery, idCheckBoughtItemOfGrocery, visibleBillModal, totalCostBill, arrayImgBill, arrayLinkImageBill } = this.state;
+        const { idClickedItemInList,
+            isActive,
+            idClickedGrocery,
+            idCheckBoughtItemOfGrocery,
+            visibleBillModal,
+            totalCostBill,
+            arrayImgBill,
+            arrayLinkImageBill,
+            visibleEditItemForm,
+            nameOfItem, noteOfItem } = this.state;
         console.log('Du lieu bill', arrayLinkImageBill, totalCostBill)
         return (
             <div>
@@ -303,7 +366,7 @@ class GroceryList extends React.Component {
                                                             <SolutionOutlined className="grocery__icon-action" />
                                                             <div className="grocery__title-action">Đăng ký</div>
                                                         </div>}
-                                                    <div className="grocery__action" style={{ color: '#595959' }} onClick={() => {
+                                                    <div className="grocery__action" style={{ color: '#08979c' }} onClick={() => {
                                                         this.handleEditGrocery(itemGrocery);
                                                     }}>
                                                         <EditOutlined className="grocery__icon-action" />
@@ -357,9 +420,11 @@ class GroceryList extends React.Component {
                                                     {idClickedItemInList === item._id && user.mIsAdmin ?
                                                         (item.isChecked ? null :
                                                             <div className="grocery__action-item">
-                                                                <div className="grocery__action" style={{ color: '#595959' }}>
+                                                                <div className="grocery__action"
+                                                                    onClick={() => this.handleShowEditItemForm(itemGrocery, item, index)}
+                                                                    style={{ color: '#08979c' }}>
                                                                     <EditOutlined className="grocery__icon-action" />
-                                                                    <div className="grocery__title-action" >Sửa</div>
+                                                                    <div className="grocery__title-action">Sửa</div>
                                                                 </div>
                                                                 <div className="grocery__action" style={{ color: '#f5222d' }}>
                                                                     <DeleteOutlined className="grocery__icon-action" />
@@ -429,6 +494,23 @@ class GroceryList extends React.Component {
                                     </div>
                                 </Col>
                             </Row>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+                <Modal title="Chỉnh sửa vật phẩm mua sắm"
+                    visible={visibleEditItemForm}
+                    okText="Lưu"
+                    cancelText="Hủy"
+                    onOk={this.handleOkEditItemModal}
+                    onCancel={this.handleCancelEditItemModal}
+                    okButtonProps={{ disabled: !nameOfItem }}
+                >
+                    <Form name="control-ref" layout="vertical">
+                        <Form.Item className="" label="Tên vật phẩm">
+                            <Input type="text" value={nameOfItem} onChange={this.onChangeInputNameEditItem}></Input>
+                        </Form.Item>
+                        <Form.Item className="" label="Ghi chú">
+                            <Input type="text" placeholder="Số lượng, khối lượng,..." value={noteOfItem} onChange={this.onChangeInputNoteEditItem}></Input>
                         </Form.Item>
                     </Form>
                 </Modal>

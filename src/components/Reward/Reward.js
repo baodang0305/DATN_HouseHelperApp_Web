@@ -217,8 +217,8 @@ class Reward extends React.Component {
                                                                         className="action-reward-item green-color-reward"
                                                                         onClick={() => history.push({ pathname: "/rewards/edit-reward", search: `?id=${item._id}`, state: { reward: item } })}
                                                                     >
-                                                                        <EditOutlined className="icon-action-reward" />
-                                                                        <div >Sửa</div>
+                                                                        <EditOutlined style={{ color: '#08979c' }} className="icon-action-reward" />
+                                                                        <div style={{ color: '#08979c' }} >Sửa</div>
                                                                     </div>
                                                                     <div
                                                                         className="action-reward-item red-color-reward"

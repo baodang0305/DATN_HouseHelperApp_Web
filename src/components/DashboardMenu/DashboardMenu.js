@@ -1,15 +1,20 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Dropdown } from 'antd';
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom';
-import { HomeOutlined, CalendarOutlined, CheckOutlined, GiftOutlined, ShoppingCartOutlined } from '@ant-design/icons';
-
+import { HomeOutlined, CalendarOutlined, CheckOutlined, GiftOutlined, ShoppingCartOutlined, DownOutlined } from '@ant-design/icons';
+import { memberActions } from "../../actions/member.actions";
+import history from "../../helpers/history";
 import './DashboardMenu.css';
 
 const { Sider } = Layout;
 
 class DashboardMenu extends React.Component {
-
+    handleClickLogout = () => {
+        const { logout } = this.props;
+        history.push("/login");
+        logout();
+    }
     render() {
 
         const { menuItem, user } = this.props;
@@ -21,13 +26,29 @@ class DashboardMenu extends React.Component {
                     <div className="container-infor-family">
                         <div> <img className="container-img-family" src={user.fImage} /> </div>
                         <div className="name-family"> {user.fName} </div>
+                        <div className="name-user">
+                            <Dropdown overlay={
+                                <Menu>
+                                    <Menu.Item>
+                                        <Link to={{ pathname: "/family/setting/my-account", state: { "fromSetting": true, "member": user } }}>Tài khoản của tôi</Link>
+                                    </Menu.Item>
+                                    <Menu.Item onClick={this.handleClickLogout}>
+                                        Đăng xuất
+                                </Menu.Item>
+                                </Menu>
+                            } placement="bottomCenter">
+                                <a style={{ color: 'white' }} onClick={e => e.preventDefault()}>
+                                    {user.mName} <DownOutlined />
+                                </a>
+                            </Dropdown>
+                        </div>
                     </div>
 
-                    <Menu theme="dark" defaultSelectedKeys={menuItem} mode="inline">
+                    <Menu defaultSelectedKeys={menuItem} mode="inline" className="main-menu">
 
                         <Menu.Item key="1" >
                             <HomeOutlined className="size-icon" />
-                            <Link to="/family">Gia Đình</Link>
+                            <Link to="/family">Gia đình</Link>
                         </Menu.Item>
 
                         <Menu.Item key="2">
@@ -37,17 +58,17 @@ class DashboardMenu extends React.Component {
 
                         <Menu.Item key="3">
                             <CheckOutlined className="size-icon" />
-                            <Link to="/tasks">Công Việc</Link>
+                            <Link to="/tasks">Công việc</Link>
                         </Menu.Item>
 
                         <Menu.Item key="4">
                             <GiftOutlined className="size-icon" />
-                            <Link to="/rewards">Phần Thưởng</Link>
+                            <Link to="/rewards">Phần thưởng</Link>
                         </Menu.Item>
 
                         <Menu.Item key="5">
                             <ShoppingCartOutlined className="size-icon" />
-                            <Link to="/grocery">Mua Sắm</Link>
+                            <Link to="/grocery">Mua sắm</Link>
                         </Menu.Item>
 
                     </Menu>
@@ -95,5 +116,8 @@ const mapStateToProps = (state) => {
         }
     }
 }
+const actionCreators = {
+    logout: memberActions.logout
+}
 
-export default connect(mapStateToProps)(DashboardMenu);
+export default connect(mapStateToProps, actionCreators)(DashboardMenu);

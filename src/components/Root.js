@@ -1,6 +1,8 @@
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { Router, Switch } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
+import vn from 'antd/es/locale/vi_VN';
 
 import Alert from './Alert';
 import Home from './Home/Home';
@@ -34,7 +36,7 @@ import DataFormGroceryType from './GroceryType/DataGroceryType/DataGroceryType';
 const Root = () => {
 
     return (
-        <div>
+        <ConfigProvider locale={vn}>
             <Alert />
             <Router history={history}>
                 <Switch>
@@ -112,7 +114,7 @@ const Root = () => {
 
             </Router>
             <ToastContainer />
-        </div>
+        </ConfigProvider>
     );
 }
 

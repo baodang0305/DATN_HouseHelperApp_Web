@@ -69,10 +69,7 @@ class Grocery extends React.Component {
                     this.getData();
                     break;
                 }
-                case 'checkBoughtShoppingList': {
-                    this.getData();
-                    break;
-                }
+
                 default:
                     break;
             }
@@ -186,27 +183,12 @@ class Grocery extends React.Component {
                                     <div className="grocery__filter">
                                         <FilterMain tab='shoppingList' allMembers={listMembers} allCates={allGroceryTypes} handleSelectFilter={this.handleSelectFilter} />
                                     </div>
-                                    {/* <div className="grocery__main-data">
-                                        <Divider orientation="center" className="grocery__divider">Cần mua</Divider>
-                                        <GroceryList allGroceries={allGroceries.filter(itemGrocery => !this.checkIsListComplete(itemGrocery.listItems))} />
-                                    </div>
-                                    <div className="grocery__main-data">
-                                        <Divider orientation="center" className="grocery__divider">Đã hoàn thành</Divider>
-                                        <GroceryList allGroceries={allGroceries.filter(itemGrocery => this.checkIsListComplete(itemGrocery.listItems))} />
-                                    </div> */}
 
                                     <div className="grocery__main-data" style={{ marginTop: '-10px' }}>
                                         <Tabs defaultActiveKey="1" className="grocery__tab-data" onChange={this.handleOnChangeTabMode}
                                             tabBarExtraContent={
                                                 <div className="quick-filter">
-                                                    {/* <div className={`quick-filter__item ${quickFilter !== 'all' ? 'quick-filter__chosen-item' : null}`}
-                                                        onClick={() => { this.handleClickQuickFilter('recentUser') }} >
-                                                        Được giao
-                                                    </div>
-                                                    <div className={`quick-filter__item ${quickFilter === 'all' ? 'quick-filter__chosen-item' : null}`}
-                                                        onClick={() => { this.handleClickQuickFilter('all') }}>
-                                                        Tất cả
-                                                    </div> */}
+
                                                     <div className="quick-filter__tablet-pc">
                                                         <Select onChange={this.onChangeSelectMember} defaultValue="all" allowClear className="quick-filter__item" placeholder="Thành viên">
                                                             <Option value="all">Tất cả thành viên</Option>

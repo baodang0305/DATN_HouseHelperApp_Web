@@ -162,6 +162,7 @@ class CalendarPage extends React.Component {
                             <Link to='/family' className="header__btn-link header__home-btn">
                                 <HomeOutlined className="icon-header-calendar" />
                             </Link>
+                            &ensp;
                             <Search
                                 size="small"
                                 className="header-search__tablet-pc"
@@ -209,7 +210,7 @@ class CalendarPage extends React.Component {
                                 </div>
                             </Popover>
                         </div>
-                        <div className="center-header-calendar-container"> Quản Lý Lịch </div>
+                        <div className="center-header-calendar-container"> Quản lý lịch </div>
                         <div className="right-header-calendar-container" >
                             <div style={{ marginRight: 10 }} className="header__btn-link">
                                 <BellOutlined className={!remindedEventNotification && remindingEventNotification ? "remind-event-bell" : ""} />

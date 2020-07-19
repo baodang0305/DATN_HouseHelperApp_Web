@@ -8,6 +8,7 @@ import history from "../../../helpers/history";
 import { storage } from "../../../helpers/firebaseConfig";
 import { indexConstants } from "../../../constants/index.constants";
 
+import logoImg from '../../../assets/logo.png';
 class RegisterFamily extends Component {
 
 	constructor(props) {
@@ -71,10 +72,12 @@ class RegisterFamily extends Component {
 					<div className="container-create-family">
 						<div className="logo-register__home-page">
 							<div >
-								<Link style={{ fontSize: 25, fontWeight: 500 }} to="/"><span style={{ color: '#40a9ff' }}>SMART</span><span style={{ color: '#444444' }}>FAMILY</span></Link>
+								<Link to="/">
+									<img src={logoImg} className="logo-img"></img>
+								</Link>
 							</div>
 						</div>
-						<div className="title-create-family-form">Đăng Kí Gia Đình</div>
+						<div className="title-create-family-form">Đăng kí gia đình</div>
 						<Form onFinish={this.handleSubmit} size="large" className="create-family-form" >
 							<div className="form-item-register-family">
 								<div className="container-family-img">

@@ -34,8 +34,7 @@ class DataFormGrocery extends Component {
             assignedMembersOfList: null,
             checkedGroceryType: null,
             repeatOfList: null,
-            listItemOfList: [{ name: 'Củ cải', details: 'Đi siêu thị mua chọn - mua 1 bó', photo: null },
-            { name: 'Xu hào', details: 'Đi siêu thị mua chọn đồ tươi - mua 1 ký', photo: null }],
+            listItemOfList: [],
             nameOfItem: null,
             noteOfItem: null,
             imgOfItem: null,
@@ -43,7 +42,10 @@ class DataFormGrocery extends Component {
             image: null,
             validateForm: null,
             currentUrlImg: "",
-            textRepeat: null
+            textRepeat: null,
+            isLoading: false,
+            isEditing: false,
+            indexEditing: 0,
         }
         this.inputFile = React.createRef();
     }
@@ -80,26 +82,21 @@ class DataFormGrocery extends Component {
         this.setState({ [name]: value });
     }
 
-    //Handle when click choose a member
-    // handleClickChooseMember = (idMember) => {
-    //     const { assignedMembersOfList } = this.state;
-    //     var indexOfIDMember = assignedMembersOfList.findIndex(member => member === idMember);
-
-    //     if (indexOfIDMember === -1) {
-    //         this.setState({ assignedMembersOfList: [...assignedMembersOfList, idMember] });
-    //     }
-    //     else {
-    //         assignedMembersOfList.splice(indexOfIDMember, 1);
-    //         this.setState({ assignedMembersOfList: [...assignedMembersOfList] })
-    //     }
-    // }
-
     handleClickChooseMember = (idMember) => {
         const { assignedMembersOfList } = this.state;
         this.setState({ assignedMembersOfList: idMember });
     }
 
-
+    //Handle click choose a item to edit
+    handleClickEditItem = (item, index) => {
+        this.setState({
+            nameOfItem: item.name,
+            noteOfItem: item.details,
+            imgOfItem: item.photo,
+            isEditing: true,
+            indexEditing: index
+        });
+    }
 
     //Handle when click check a shopping type
     handleClickChooseType = (idType) => {
@@ -112,12 +109,12 @@ class DataFormGrocery extends Component {
     }
 
     //handle when add a item into shopping item list 
-    handleAddAItem = async () => {
+    handleAddAItem = () => {
 
-        const { nameOfItem, noteOfItem, listItemOfList, currentUrlImg, image } = this.state;
+        const { nameOfItem, noteOfItem, listItemOfList, currentUrlImg, image, isEditing, indexEditing } = this.state;
         var indexOfItemInList = listItemOfList.findIndex(itemShopping => itemShopping.name === nameOfItem);
 
-        if (indexOfItemInList === -1) {
+        if (indexOfItemInList === -1 && !isEditing || isEditing) {
             if (image) {
                 const uploadTask = storage.ref().child(`images/${image.name}`).put(image);
                 uploadTask.on('state_changed', (snapshot) => {
@@ -136,17 +133,35 @@ class DataFormGrocery extends Component {
                 }, () => {
                     uploadTask.snapshot.ref.getDownloadURL().then((imgURL) => {
                         console.log('du lieu anh', imgURL);
-                        listItemOfList.push({ name: nameOfItem, details: noteOfItem, photo: imgURL })
-                        this.setState({ listItemOfList: listItemOfList });
+
+                        if (isEditing) {
+                            listItemOfList[indexEditing].name = nameOfItem;
+                            listItemOfList[indexEditing].details = noteOfItem;
+                            listItemOfList[indexEditing].photo = imgURL;
+                            this.setState({ listItemOfList: [...listItemOfList], isEditing: false });
+                        }
+                        else {
+                            listItemOfList.push({ name: nameOfItem, details: noteOfItem, photo: imgURL })
+                            this.setState({ listItemOfList: listItemOfList, isEditing: false });
+                        }
                         this.inputFile.current.value = "";
-                        this.setState({ nameOfItem: null, noteOfItem: null, currentUrlImg: "", image: null });
+                        this.setState({ nameOfItem: null, noteOfItem: null, currentUrlImg: "", image: null, isEditing: false });
                     });
                 });
             }
             else {
-                this.setState({ listItemOfList: [...listItemOfList, { name: nameOfItem, details: noteOfItem, photo: null }] });
+
+                if (isEditing) {
+                    listItemOfList[indexEditing].name = nameOfItem;
+                    listItemOfList[indexEditing].details = noteOfItem;
+                    listItemOfList[indexEditing].photo = '';
+                    this.setState({ listItemOfList: [...listItemOfList], isEditing: false });
+                } else {
+                    this.setState({ listItemOfList: [...listItemOfList, { name: nameOfItem, details: noteOfItem, photo: null }], isEditing: false });
+                }
                 this.inputFile.current.value = "";
-                this.setState({ nameOfItem: null, noteOfItem: null, currentUrlImg: "", image: null });
+
+                this.setState({ nameOfItem: null, noteOfItem: null, currentUrlImg: "", image: null, isEditing: false });
             }
         }
     }
@@ -242,14 +257,18 @@ class DataFormGrocery extends Component {
         const { addNewGrocery, type, editGrocery } = this.props;
         const { idEditItem, nameOfList, assignedMembersOfList, repeatOfList, checkedGroceryType, listItemOfList, } = this.state;
         type === 'add'
-            ? addNewGrocery(nameOfList, assignedMembersOfList, checkedGroceryType, repeatOfList, listItemOfList)
-            : editGrocery(idEditItem, nameOfList, checkedGroceryType, assignedMembersOfList, repeatOfList, listItemOfList);
+            ? this.setState({ isLoading: true }, () => {
+                addNewGrocery(nameOfList, assignedMembersOfList, checkedGroceryType, repeatOfList, listItemOfList)
+            })
+            : this.setState({ isLoading: true }, () => {
+                editGrocery(idEditItem, nameOfList, checkedGroceryType, assignedMembersOfList, repeatOfList, listItemOfList);
+            })
     }
     render() {
         const { type, listMembers, allGroceryTypes } = this.props;
         const { enableRepeatModal, nameOfList, assignedMembersOfList, repeatOfList, checkedGroceryType, listItemOfList,
             nameOfItem, noteOfItem, currentUrlImg, image,
-            validateForm, textRepeat
+            validateForm, textRepeat, isLoading, isEditing
         } = this.state;
 
         console.log(nameOfList, assignedMembersOfList, checkedGroceryType, repeatOfList, listItemOfList, currentUrlImg, image);
@@ -363,7 +382,7 @@ class DataFormGrocery extends Component {
                                             label={
                                                 <div className="grocery-form__form-item-label">
                                                     <AppstoreAddOutlined style={{ marginRight: 8 }} />
-                                                    <div>Thêm vật phẩm</div>
+                                                    <div>{isEditing ? 'Sửa vật phẩm' : 'Thêm vật phẩm'}</div>
                                                 </div>
                                             }>
                                             <div className="grocery-form__add-item-container">
@@ -403,7 +422,7 @@ class DataFormGrocery extends Component {
                                                             </div>
                                                         </Form.Item>
                                                         <Form.Item>
-                                                            <Button type="primary" ghost onClick={() => { this.handleAddAItem() }}>Thêm vật phẩm</Button>
+                                                            <Button disabled={!nameOfItem} type="primary" ghost onClick={() => { this.handleAddAItem() }}>{isEditing ? 'Lưu vật phẩm' : 'Thêm vật phẩm'}</Button>
                                                         </Form.Item>
                                                     </Col>
                                                 </Row>
@@ -437,7 +456,7 @@ class DataFormGrocery extends Component {
                                                             </div>
 
                                                             <div className="grocery-from__action-item">
-                                                                <div className="grocery-form__action" style={{ color: '#13c2c2' }}>
+                                                                <div className="grocery-form__action" style={{ color: '#08979c' }} onClick={() => this.handleClickEditItem(item, index)}>
                                                                     <EditOutlined className="grocery__icon-action" />
                                                                     <div className="grocery__title-action" >Sửa</div>
                                                                 </div>
@@ -457,7 +476,7 @@ class DataFormGrocery extends Component {
                                 <Form.Item>
                                     <div className="grocery-form__btn">
                                         <Button type="default" style={{ marginRight: '10px' }} onClick={this.handleClickBack}>Hủy</Button>
-                                        <Button htmlType="submit" type="primary" disabled={!this.checkValidateForm().isValidated}>Thêm danh sách</Button>
+                                        <Button htmlType="submit" type="primary" loading={isLoading} disabled={!this.checkValidateForm().isValidated}>Thêm danh sách</Button>
                                     </div>
                                 </Form.Item>
                             </Form.Item>

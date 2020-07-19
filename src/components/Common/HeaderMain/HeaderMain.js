@@ -130,16 +130,23 @@ class HeaderMain extends Component {
                 <div className="header-part-left">
                     {tab === 'taskCategory'
                         ?
-                        <Link to="/family/setting" style={{ marginRight: 10 }} className="header__btn-link">
-                            <LeftOutlined className="task__header-icon" />
-                        </Link> :
-                        tab === 'groceryType'
-                            ? <Link to="/family/setting" style={{ marginRight: 10 }} className="header__btn-link">
+                        <Tooltip title='Trang gia đình' placement='bottomLeft'>
+                            <Link to="/family/setting" style={{ marginRight: 10 }} className="header__btn-link">
                                 <LeftOutlined className="task__header-icon" />
                             </Link>
-                            : <Link to="/family" style={{ marginRight: 10 }} className="header__btn-link">
-                                <HomeOutlined className="task__header-icon" />
-                            </Link>
+                        </Tooltip> :
+                        tab === 'groceryType'
+                            ?
+                            <Tooltip placement='bottomLeft' title='Trang gia đình'>
+                                <Link to="/family/setting" style={{ marginRight: 10 }} className="header__btn-link">
+                                    <LeftOutlined className="task__header-icon" />
+                                </Link>
+                            </Tooltip>
+                            : <Tooltip placement='bottomLeft' title='Trang gia đình'>
+                                <Link to="/family" style={{ marginRight: 10 }} className="header__btn-link">
+                                    <HomeOutlined className="task__header-icon" />
+                                </Link>
+                            </Tooltip>
                     }
 
 
@@ -192,9 +199,11 @@ class HeaderMain extends Component {
                         <BellOutlined className="task__header-icon" />
                     </div>
                     {user.mIsAdmin === true ?
-                        <Link to={this.getKeyMainTabAddLink(tab)} className="header__btn-link">
-                            <PlusOutlined className="task__header-icon" />
-                        </Link>
+                        <Tooltip title="Thêm" placement="bottomRight">
+                            <Link to={this.getKeyMainTabAddLink(tab)} className="header__btn-link">
+                                <PlusOutlined className="task__header-icon" />
+                            </Link>
+                        </Tooltip>
                         : null
                     }
                 </div>

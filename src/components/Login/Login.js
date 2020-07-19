@@ -5,6 +5,7 @@ import FormItem from 'antd/lib/form/FormItem';
 import { UserOutlined, LockOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Form, Input, Button, Modal, Spin } from 'antd';
 
+import logoImg from '../../assets/logo.png'
 import './Login.css';
 import { memberActions } from '../../actions/member.actions';
 const layout = {
@@ -59,9 +60,10 @@ class Login extends React.Component {
 
                     <div className="login__form">
                         <div className="logo__home-page">
-                            <div >
-                                <Link style={{ fontSize: 25, fontFamily: 'Roboto, sans-serif', fontWeight: 500 }} to="/"><span style={{ color: '#40a9ff' }}>SMART</span><span style={{ color: '#444444' }}>FAMILY</span></Link>
-                            </div>
+                            <Link to="/">
+                                <img src={logoImg} className="logo-img"></img>
+                            </Link>
+
                         </div>
                         <div className="title-login">Đăng nhập <span style={{ color: '#40a9ff' }}>SMART</span>FAMILY </div>
                         <Form className="login__form-data"
