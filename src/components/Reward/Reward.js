@@ -117,7 +117,7 @@ class Reward extends React.Component {
                 <DashboardMenu menuItem="4" />
                 <Layout className="site-layout">
                     <Header className="header-container" >
-                        <HeaderMain tab="reward" title="Phần Thưởng" />
+                        <HeaderMain tab="reward" title="Phần thưởng" />
                     </Header>
                     <Content style={{ height: '100%' }}>
                         <div className="first-row-reward-content-container">

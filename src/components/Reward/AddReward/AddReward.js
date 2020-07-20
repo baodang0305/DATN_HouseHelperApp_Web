@@ -222,7 +222,7 @@ class AddReward extends React.Component {
                                 <LeftOutlined className="header__icon-btn" />
                             </div>
                         </div>
-                        <div className="center-header-add-reward-container"> {type === "add" ? "Thêm Phần Thưởng" : "Cập Nhật Phần Thưởng"} </div>
+                        <div className="center-header-add-reward-container"> {type === "add" ? "Thêm phần Thưởng" : "Cập nhật phần thưởng"} </div>
                         <div className="right-header-add-reward-container"></div>
                     </Header>
                     <Content>
