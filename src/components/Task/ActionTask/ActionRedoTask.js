@@ -33,7 +33,7 @@ class RedoTaskForm extends Component {
 
         const { checkedMembers } = this.state;
 
-        console.log('test', checkedMembers)
+
         const { idTask, user } = this.props;
         return (
             <div>
@@ -77,6 +77,7 @@ class RedoTaskForm extends Component {
                         </div>
                         <div className="action-task-detail-data">
                             <DatePicker
+                                format="YYYY-MM-DD HH:mm"
                                 showTime
                                 style={{ width: '100%' }}
                                 defaultValue={moment()} size="large" />

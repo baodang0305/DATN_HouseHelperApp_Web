@@ -76,7 +76,7 @@ class TaskList extends React.Component {
         const { completeTask, user, redoTask } = this.props;
         const { hiddenActionsList } = this.state;
         this.setState({ index: itemTask._id, dataTemp: { idTask: itemTask._id, nameTask: itemTask.name, memberUser: itemTask.assign } })
-        console.log(itemTask)
+
         if (itemTask.assign !== null && itemTask.state === 'todo') {
             let isAssigned = itemTask.assign.mAssigns.map(i => i.mID._id).indexOf(user._id);
             if (itemTask.assign.isAll === false && isAssigned !== -1) {

@@ -160,7 +160,7 @@ class Grocery extends React.Component {
     render() {
         const { listMembers, allGroceryTypes, allGroceries, user } = this.props;
         const { allGroceriesState, quickFilter, tabMode, visiblePopover } = this.state;
-        console.log(quickFilter);
+
         let dataGroceries = allGroceriesState ? allGroceriesState : allGroceries;
 
 

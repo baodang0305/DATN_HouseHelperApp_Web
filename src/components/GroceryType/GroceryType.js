@@ -137,7 +137,7 @@ class GroceryType extends Component {
         const { allGroceryTypes, allGroceries, user, } = this.props;
         const { visibleFormDeleteGroceryType, recentItem, idChosenReplace, idClickedItem, isChanged, dataMain } = this.state;
         let calculateNumberGroceryListEachType = dataMain ? dataMain : this.calculateNumberGroceryListEachType(allGroceryTypes, allGroceries);
-        console.log('Du lieu', dataMain);
+
 
         return (
             <div>

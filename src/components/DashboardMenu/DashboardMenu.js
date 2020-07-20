@@ -23,7 +23,7 @@ class DashboardMenu extends React.Component {
             <>
                 <Sider className="container-dashboard-menu">
 
-                    <div className="container-infor-family">
+                    <div className="container-infor-family" style={{ marginBottom: 50 }}>
                         <div> <img className="container-img-family" src={user.fImage} /> </div>
                         <div className="name-family"> {user.fName} </div>
                         <div className="name-user">

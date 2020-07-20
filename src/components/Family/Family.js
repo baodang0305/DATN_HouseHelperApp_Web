@@ -210,9 +210,7 @@ class Family extends React.Component {
                                     size="large"
                                     pagination={{
                                         style: { marginRight: 10 },
-                                        onChange: page => {
-                                            console.log(page);
-                                        },
+
                                         pageSize: 5,
                                     }}
                                     dataSource={listNews}

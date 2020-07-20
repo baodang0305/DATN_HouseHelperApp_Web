@@ -88,7 +88,7 @@ class DataFormGroceryType extends Component {
         const { type } = this.props;
         const { chosenTypeToEdit } = history.location.state || { chosenTypeToEdit: null };
         const { nameGroceryType, imageGroceryType, idChosenImage, listIconType, loading } = this.state;
-        console.log(nameGroceryType, imageGroceryType, idChosenImage);
+
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="6" />

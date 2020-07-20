@@ -16,12 +16,7 @@ class FilterMain extends Component {
             orderDateBy: 'decreaseDate',
             orderMoneyBy: 'decreaseMoney',
             visiblePopover: false,
-            slider: 0,
-            isOverflowed: false,
-            widthSlide: 0,
-            limit: 0,
-            numberTrans: 0,
-            recentNumberTrans: 0
+
         }
 
         this.Slider = React.createRef();
@@ -75,55 +70,21 @@ class FilterMain extends Component {
         this.setState({ orderMoneyBy: orderBy });
     }
 
-    handleFilterSliderLeft = () => {
-        const { slider, recentNumberTrans } = this.state;
-
-        this.setState({ slider: slider - 100, recentNumberTrans: recentNumberTrans + 1 });
-
-    }
-    handleFilterSliderRight = () => {
-        const { slider, recentNumberTrans } = this.state;
-
-        this.setState({ slider: slider + 100, recentNumberTrans: recentNumberTrans - 1 });
-    }
 
 
-    componentDidMount() {
-        const limit = this.Slider.current.offsetLeft + 200;
-        const widthSlide = this.containerSlide.current.domElement.clientWidth;
-        var numberTrans = Math.floor((limit - widthSlide) / 66) + 1;
-        this.setState(
-            {
-                widthSlide: widthSlide,
-                limit: limit,
-                numberTrans: numberTrans,
-                recentNumberTrans: numberTrans
-            }
-        );
 
-    }
 
     render() {
         const { allMembers, allCates, tab } = this.props;
-        const { idChosenCate, idChosenMember, filterBy, orderDateBy, orderMoneyBy, slider, isOverflowed, numberTrans, recentNumberTrans } = this.state;
+        const { idChosenCate, idChosenMember, filterBy, orderDateBy, orderMoneyBy } = this.state;
 
         return (
 
             <div style={{ position: 'relative' }}>
-                <div className="filter-slider-left" style={{ display: isOverflowed ? 'flex' : 'none', pointerEvents: recentNumberTrans === numberTrans ? 'none' : null }}
-                    onClick={this.handleFilterSliderLeft} >
-                    <LeftOutlined />
-                </div>
-                <div className="filter-slider-right" style={{ display: isOverflowed ? 'flex' : 'none', pointerEvents: recentNumberTrans === 0 ? 'none' : null }}
-                    onClick={this.handleFilterSliderRight}>
-                    <RightOutlined />
-                </div>
-                <div style={{ position: 'relative', overflowX: 'hidden' }}>
+
+                <div className="filter__container">
                     <OverflowDetector ref={this.containerSlide} onOverflowChange={this.handleOverflowChange}
-                        className="filter-list-task" style={{
-                            padding: isOverflowed ? '0 30px' : null
-                            , position: 'relative', left: isOverflowed ? `-${slider}px` : null,
-                        }}>
+                        className="filter-list-task" >
 
                         <div className="list-task-filter" onClick={(e) => {
                             filterBy === 'member' ? this.handleChangeSelectFilterMember('all') : this.handleChangeSelectFilterCate('all')
@@ -153,7 +114,6 @@ class FilterMain extends Component {
                                 <div className="filter-popover">
                                     <div className={filterBy === 'cate' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeFilterBy('cate')}>Loại công việc</div>
                                     <div className={filterBy === 'member' ? "chosen-filter-popover-item" : "filter-popover-item"} onClick={(e) => this.handleChangeFilterBy('member')}>Thành viên</div>
-
                                 </div>
                             }
                             title="Lọc theo:"

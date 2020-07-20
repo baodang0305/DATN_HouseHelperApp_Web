@@ -1,20 +1,14 @@
-import React from "react";
 import { CaretRightOutlined, DeleteOutlined, DollarCircleOutlined, EditOutlined, ExclamationCircleOutlined, LoadingOutlined, QuestionCircleOutlined, RedoOutlined, SolutionOutlined, UploadOutlined } from '@ant-design/icons';
 import { Avatar, Col, Collapse, Form, Input, Layout, List, Modal, Row, Tooltip } from "antd";
 import firebase from "firebase";
 import numeral from "numeral";
-
+import React from "react";
 import { connect } from 'react-redux';
 import { groceryActions } from "../../../actions/grocery.actions";
 import { storage } from "../../../helpers/firebaseConfig";
 import history from "../../../helpers/history";
 import './GroceryList.css';
 
-
-
-const { Panel } = Collapse;
-const { Search } = Input;
-const { Header, Content, Footer } = Layout;
 const { confirm } = Modal;
 
 class GroceryList extends React.Component {
@@ -198,8 +192,9 @@ class GroceryList extends React.Component {
         const { checkBoughtItem, editGrocery } = this.props;
         const { groceryRecent } = this.state;
         var checkedTrueItemList = listItemShopping.filter(item => item.isChecked === true);
-        console.log(checkedTrueItemList.length, listItemShopping.length);
-        if (isCheckedItem === true) {
+
+        if (isCheckedItem === true) {//item is checked and user want uncheck
+            console.log('1');
             var afterUnCheckItem = [...listItemShopping];
             afterUnCheckItem[indexItemWantCheck].isChecked = false;
             afterUnCheckItem = afterUnCheckItem.map(item => {
@@ -214,9 +209,12 @@ class GroceryList extends React.Component {
         } else {
 
             if (checkedTrueItemList.length === (listItemShopping.length - 1)) {
+                console.log('2');
                 this.setState({ idCheckBoughtItemOfGrocery: islID, idClickedGrocery: slID, visibleBillModal: true })
+
             }
             else if (checkedTrueItemList.length < (listItemShopping.length - 1)) {
+                console.log('3');
                 this.setState({ idCheckBoughtItemOfGrocery: islID }, () => {
                     checkBoughtItem(slID, islID);
                 })
@@ -298,10 +296,9 @@ class GroceryList extends React.Component {
             visibleBillModal,
             totalCostBill,
             arrayImgBill,
-            arrayLinkImageBill,
             visibleEditItemForm,
             nameOfItem, noteOfItem } = this.state;
-        console.log('Du lieu bill', arrayLinkImageBill, totalCostBill)
+
         return (
             <div>
 
@@ -394,10 +391,12 @@ class GroceryList extends React.Component {
                                                     {loadingCheckBought && item._id === idCheckBoughtItemOfGrocery ?
                                                         <LoadingOutlined style={{ fontSize: 28, color: '#2985ff' }} />
                                                         : <div className="grocery__quick-check">
-                                                            <input checked={item.isChecked ? true : false}
+                                                            <input disabled={itemGrocery.assign._id !== user._id} checked={item.isChecked ? true : false}
                                                                 onChange={(e) => {
                                                                     this.setState({ groceryRecent: itemGrocery }, () => {
-                                                                        this.handleCheckBoughtItem(itemGrocery._id, item._id, item.isChecked, index, itemGrocery.listItems)
+                                                                        if (itemGrocery.assign && itemGrocery.assign._id === user._id)
+                                                                            this.handleCheckBoughtItem(itemGrocery._id, item._id, item.isChecked, index, itemGrocery.listItems)
+
                                                                     });
 
                                                                 }}
@@ -433,7 +432,6 @@ class GroceryList extends React.Component {
                                                             </div>) : null
                                                     }
                                                 </div>
-
                                             </List.Item>
                                         } />
                                 </div>

@@ -1,55 +1,104 @@
-import React, { Component } from 'react';
-
-import './AddTask.css';
-import firebase from 'firebase';
-
 import {
-    Form,
-    Input,
-    Button,
-    Checkbox,
-    DatePicker,
-    Radio,
-    Switch,
-    TimePicker,
-    Row,
-    Col,
-    Select,
-    Avatar,
-    Divider,
-    Layout,
-    Tooltip,
-    Alert,
-} from 'antd';
-import { connect } from 'react-redux';
-import DashboardMenu from '../../DashboardMenu/DashboardMenu';
-import {
-    PlusOutlined,
-    TeamOutlined,
-    LeftOutlined,
-    ScheduleOutlined,
-    RedoOutlined,
     AlertOutlined,
-    CloseCircleOutlined,
-    CheckOutlined,
-    AppstoreOutlined,
-    ClockCircleOutlined,
-    StarOutlined,
-    SnippetsOutlined,
-    FrownOutlined, RetweetOutlined, UploadOutlined, MinusCircleOutlined
+
+
+    AppstoreOutlined, CheckOutlined,
+
+    ClockCircleOutlined, LeftOutlined,
+
+
+
+
+
+
+
+
+
+    MinusCircleOutlined, PlusOutlined,
+
+
+
+
+
+
+
+
+
+
+
+    RetweetOutlined, ScheduleOutlined,
+
+
+
+
+
+
+
+    SnippetsOutlined, StarOutlined, TeamOutlined,
+
+
+
+
+
+
+
+
+
+
+    UploadOutlined
 } from '@ant-design/icons';
+import {
+    Alert, Avatar, Button,
 
+
+
+
+
+
+    Col, DatePicker,
+
+
+
+
+
+
+
+    Divider, Form,
+    Input,
+
+
+
+
+
+
+
+
+
+
+
+    Layout, Row,
+
+    Select, Switch
+} from 'antd';
+import firebase from 'firebase';
 import moment from 'moment';
-import history from '../../../helpers/history';
-
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { familyActions } from '../../../actions/family.actions';
 import { taskActions } from '../../../actions/task.actions';
 import { taskCateActions } from '../../../actions/task.cate.actions';
-import { familyActions } from '../../../actions/family.actions';
 import { indexConstants } from '../../../constants/index.constants';
 import { storage } from '../../../helpers/firebaseConfig';
-
+import history from '../../../helpers/history';
 import BasicRepeatModal from "../../Common/RepeatModal/RepeatModalBasic";
-import { Link } from 'react-router-dom';
+import DashboardMenu from '../../DashboardMenu/DashboardMenu';
+import './AddTask.css';
+
+
+
+
+
 
 const { Option } = Select;
 const { Header, Content } = Layout;
@@ -382,7 +431,7 @@ class FormCreateTask extends Component {
                 function () {
                     uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
                         const photoTaskTemp = downloadURL;
-                        console.log('photo', photoTaskTemp, downloadURL);
+
                         type === 'add'
                             ? addTask(
                                 nameTask,
@@ -487,19 +536,7 @@ class FormCreateTask extends Component {
         } = this.state;
 
         const { type, listMembers, allTaskCates, loading } = this.props;
-        console.log(
-            nameTask,
-            assignMemberTask,
-            dueDateTask,
-            photoTask,
-            timeTask,
-            pointsTask,
-            tcIDTask,
-            notesTask,
-            penaltyTask,
-            repeatTask,
-            remindTimeTask
-        );
+
 
         let classNameForAssignMember = ['icon-avatar-member'];
         if (!this.state.hiddenCheckAssign) {

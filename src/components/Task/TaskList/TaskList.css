@@ -124,6 +124,8 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
+	transform-origin: right;
+	animation: blowOut 0.3s ease-out;
 }
 
 .task__action-item {
@@ -176,11 +178,11 @@
 	border: 1px solid #ccc;
 	border-radius: 50%;
 	cursor: pointer;
-	height: 28px;
+	height: 30px;
 	left: 0;
 	position: absolute;
 	top: 0;
-	width: 28px;
+	width: 30px;
 }
 
 .round label:hover {
@@ -413,5 +415,15 @@
 
 	.task__list-task-container>.ant-list-pagination {
 		margin-top: 12px;
+	}
+}
+
+@keyframes blowOut {
+	from {
+		transform: scaleX(0.3);
+	}
+
+	to {
+		transform: scaleX(1);
 	}
 }

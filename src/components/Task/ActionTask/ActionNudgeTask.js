@@ -41,9 +41,8 @@ class NudgeTaskForm extends Component {
         const { idTask } = this.props;
 
         DataCheckedMembers = checkedMembers;
-        console.log('test', idTask)
+
         const { assignedMembers } = this.props;
-        console.log(checkedMembers)
 
         return (
 

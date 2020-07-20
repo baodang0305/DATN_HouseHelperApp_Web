@@ -3,7 +3,7 @@
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    background-color: white;
+    background-color: #e6f7ff;
 }
 
 .container-infor-family {
@@ -17,25 +17,26 @@
 }
 
 .container-dashboard-menu {
-    background: #232526; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #313233, #232526); /* Chrome 10-25, Safari 5.1-6 */
+    background: #141e30; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #243b55, #141e30); /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(
         to left,
-        #313233,
-        #232526
+        #243b55,
+        #141e30
     ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .main-menu {
     border: none;
-    background: #232526; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #313233, #232526); /* Chrome 10-25, Safari 5.1-6 */
+    background: #141e30; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to left, #243b55, #141e30); /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(
         to left,
-        #313233,
-        #232526
+        #243b55,
+        #141e30
     ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+
 .main-menu li {
     color: white;
 }
@@ -59,13 +60,14 @@
 }
 
 .ant-menu-item-selected {
-    background-color: white;
+    background-color: #e6f7ff;
 }
 
 .ant-menu-item-selected > a,
 .ant-menu-item-selected > span {
     color: #1890ff;
 }
+
 .mobile__container-dashboard-menu {
     width: 100%;
     position: fixed;

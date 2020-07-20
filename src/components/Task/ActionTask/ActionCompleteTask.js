@@ -31,10 +31,8 @@ class CompleteTaskForm extends Component {
         completeTask(idTask, checkedMembers[0]);
     }
     render() {
-
         const { checkedMembers } = this.state;
 
-        console.log('test', checkedMembers)
         const { assignedMembers, idTask, nameTask } = this.props;
         return (
             <div>
@@ -69,6 +67,7 @@ class CompleteTaskForm extends Component {
                         </div>
                         <div className="action-task-detail-data">
                             <DatePicker
+                                format="YYYY-MM-DD HH:mm"
                                 showTime
                                 style={{ width: '100%' }}
                                 defaultValue={moment()} size="large" />

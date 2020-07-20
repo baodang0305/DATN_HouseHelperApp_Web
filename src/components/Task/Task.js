@@ -72,7 +72,7 @@ class Task extends React.Component {
 
         //Change data of Task
         socket.on("Task", data => {
-            console.log(' DU lieu socket', data);
+
             if (data) {
                 const { getAllTasks } = this.props;
                 getAllTasks();
@@ -80,14 +80,14 @@ class Task extends React.Component {
         });
 
         socket.on("reminder", data => {
-            console.log(data);
+
             this.setState({ message: data.name });
             const { remindTaskNotification } = this.props;
             remindTaskNotification(data);
         });
 
         socket.on("nudge", data => {
-            console.log(data);
+
             this.setState({ n: data.message });
             const { getAndSetNotificationTask, nudgeTaskNotification } = this.props;
             getAndSetNotificationTask(data);

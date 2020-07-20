@@ -77,6 +77,7 @@ class AssignTaskForm extends Component {
                         </div>
                         <div className="action-task-detail-data">
                             <DatePicker
+                                format="YYYY-MM-DD HH:mm"
                                 showTime
                                 style={{ width: '100%' }}
                                 defaultValue={moment()} size="large" />

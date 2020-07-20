@@ -59,7 +59,7 @@ class DataFormGrocery extends Component {
         const { type } = this.props;
         if (type === 'edit') {
             const { editItem } = history.location.state;
-            console.log('edit Item ', editItem);
+
             this.setState({
                 idEditItem: editItem._id,
                 nameOfList: editItem.name,

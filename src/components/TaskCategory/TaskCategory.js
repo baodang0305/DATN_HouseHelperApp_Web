@@ -91,7 +91,7 @@ class TaskCategory extends Component {
         const { allTaskCates, allTasks } = this.props;
         const { visibleFormDeleteTaskCate, recentItem, idChosenReplace, idClickedItem, dataMain } = this.state;
         let calculatedNumberTaskEachCate = dataMain ? dataMain : this.calculateNumberTaskEachCate(allTaskCates, allTasks);
-        console.log('Du lieu', calculatedNumberTaskEachCate);
+
 
         return (
             <div>

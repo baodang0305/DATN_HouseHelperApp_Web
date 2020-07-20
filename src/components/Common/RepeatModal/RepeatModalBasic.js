@@ -121,6 +121,7 @@ class BasicRepeatModal extends Component {
                                 <div className="repeat-modal__form-item--label">Thời gian bắt đầu</div>
                                 <div className="repeat-modal__form-item--group">
                                     <DatePicker
+                                        format="YYYY-MM-DD HH:mm"
                                         disabledDate={disabledDate}
                                         placeholder="Ngày bắt đầu"
                                         className="repeat-modal__form-item--input"

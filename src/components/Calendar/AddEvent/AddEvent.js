@@ -214,7 +214,7 @@ class AddEvent extends React.Component {
         const { name, assign, dateTime, reminder, image, notes, currentUrlImg,
             repeatTypeOfMonth, repeatTypeOfYear, repeat, endRepeatType } = this.state;
         let newRepeat = repeat;
-        console.log(newRepeat)
+
 
         if ((name && name.replace(/\s/g, '').length > 0) &&
             // (assign.length !== 0) &&
@@ -654,9 +654,11 @@ class AddEvent extends React.Component {
                                             value={dateTime.start ? moment(dateTime.start) : null}
                                             onChange={this.handleSelectStartDate}
                                             showTime placeholder="Bắt đầu" showTime
+                                            format="YYYY-MM-DD HH:mm"
                                         />
                                         <ArrowRightOutlined style={{ width: '20%' }} />
                                         <DatePicker
+                                            format="YYYY-MM-DD HH:mm"
                                             style={{ width: '40%' }}
                                             showTime onChange={this.handleSelectEndDate} placeholder="Kết thúc"
                                             value={dateTime.end ? moment(dateTime.end) : null}
@@ -729,9 +731,10 @@ class AddEvent extends React.Component {
                                                         ? (
                                                             <DatePicker
                                                                 style={{ width: '80%' }}
-                                                                value={repeat.end ? moment(repeat.end) : null}
+                                                                value={repeat.end ? moment(repeat.end, 'YYYY-MM-DD HH:mm') : null}
                                                                 onChange={this.handleSelectEndtDateRepeat}
                                                                 placeholder="Ngày kết thúc"
+                                                                format="YYYY-MM-DD HH:mm"
                                                             />
                                                         ) : (
                                                             <Input

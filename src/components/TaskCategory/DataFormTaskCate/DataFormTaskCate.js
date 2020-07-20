@@ -85,7 +85,7 @@ class DataFormTaskCate extends Component {
         const { type } = this.props;
         const { chosenCateToEdit } = history.location.state || { chosenCateToEdit: null };
         const { nameTaskCate, imageTaskCate, idChosenImage, listIconCate, loading } = this.state;
-        console.log(nameTaskCate, imageTaskCate, idChosenImage);
+
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <DashboardMenu menuItem="6" />

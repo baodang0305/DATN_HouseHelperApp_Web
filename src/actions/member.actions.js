@@ -257,7 +257,7 @@ const updateInforFamilyOfUser = () => {
         })
             .then(response => response.json()
                 .then(data => {
-                    console.log(data)
+
                     if (data.status === "success") {
                         localStorage.removeItem("inforLogin");
                         inforLogin.user = { ...inforLogin.user, "fName": data.familyInfo.fName, "fImage": data.familyInfo.fImage }
@@ -272,7 +272,7 @@ const updateInforFamilyOfUser = () => {
 
 const deleteNew = ({ nID }) => {
     const inforLogin = JSON.parse(localStorage.getItem("inforLogin"));
-    console.log(nID)
+
     return dispatch => {
         return fetch(`${apiUrlTypes.heroku}/delete-news`, {
             method: "POST",

@@ -197,7 +197,9 @@ class Reward extends React.Component {
                                                             }
                                                         </div>
                                                         <div className="flex-row-reward">
-                                                            <div className="reward__point"> <StarOutlined className="icon-star-reward" /> {item.points} điểm</div>
+                                                            <div className="reward__point">
+                                                                <StarOutlined className="icon-star-reward" /> {item.points} điểm
+                                                                </div>
                                                             {showActionReward && item._id === rewardItemSelected._id &&
                                                                 <div className="action-reward-container">
                                                                     {

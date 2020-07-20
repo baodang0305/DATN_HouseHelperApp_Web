@@ -119,10 +119,10 @@ class RegisterAccount extends React.Component {
                                 type="text" placeholder="Tên" prefix={<i className="fa fa-user" aria-hidden="true"></i>}
                             />
                         </Form.Item>
-                        <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
+                        <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email hoặc username!' }]}>
                             <Input
                                 name="mEmail" value={mEmail} onChange={this.handleInputChange}
-                                type="email" placeholder="Email" prefix={<i className="fa fa-envelope" aria-hidden="true"></i>}
+                                type="text" placeholder="Email hoặc username" prefix={<i className="fa fa-envelope" aria-hidden="true"></i>}
                             />
                         </Form.Item>
                         <Form.Item name="age" rules={[{ required: true, message: 'Vui lòng nhập tuổi!' }]}>

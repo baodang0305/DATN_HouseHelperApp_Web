@@ -68,7 +68,7 @@ class Member extends React.Component {
                         <div className="second-row-member-content-container" >
                             <List className="member__list"
                                 dataSource={listTasks}
-                                pagination={{ onChange: page => { console.log(page); }, pageSize: 5 }}
+                                pagination={{ pageSize: 5, size: 'small' }}
                                 style={{ width: "100%" }} itemLayout="vertical" size="large"
                                 renderItem={item => (
                                     <List.Item className="member__list-item"

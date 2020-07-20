@@ -1,25 +1,11 @@
-.filter-slider-right {
-    position: fixed;
-    z-index: 99;
-    min-width: 30px;
-    height: 50px;
-    background-color: rgba(11, 48, 117, 0.08);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    right: 10px;
+.filter__container {
+    position: relative;
+    overflow-x: scroll;
+
 }
 
-.filter-slider-left {
-    position: absolute;
-    z-index: 99;
-    min-width: 30px;
-    height: 50px;
-    background-color: rgba(11, 48, 117, 0.08);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    left: -10px;
+.filter__container::-webkit-scrollbar {
+    display: none;
 }
 
 .list-task-filter {

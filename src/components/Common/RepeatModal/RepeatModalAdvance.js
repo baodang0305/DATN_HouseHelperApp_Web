@@ -406,6 +406,7 @@ class RepeatModal extends Component {
                     {repeat.type === "no-repeat"
                         ? null
                         : <DatePicker
+                            format="YYYY-MM-DD HH:mm"
                             style={{ width: '80%' }}
                             value={repeat.end ? moment(repeat.end) : null}
                             onChange={this.handleSelectEndtDateRepeat}

@@ -84,6 +84,8 @@
 .grocery__list-item-container {
   background-color: #f9f9f9;
   margin: 0 20px;
+  transform-origin: top;
+  animation: blowDown 0.3s linear;
 }
 
 .grocery__item-container {
@@ -96,6 +98,7 @@
   cursor: pointer;
   min-height: 44px;
   width: 100%;
+
 }
 
 .grocery__item-container:hover {
@@ -370,3 +373,13 @@
 @media all and (min-width: 1024px) {}
 
 @media all and (min-width: 1280px) {}
+
+@keyframes blowDown {
+  from {
+    transform: scaleY(0.2);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
