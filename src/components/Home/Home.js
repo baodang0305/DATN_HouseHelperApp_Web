@@ -70,9 +70,9 @@ export default class Home extends Component {
               overlay={
                 <Menu>
                   <Menu.Item key="android-landing">
-                    Tải bản Android - CH Play
+                    Tải bản Android - Đang cập nhật
                 </Menu.Item>
-                  <Menu.Item key="ios-landing">Tải bản IOS - App Store</Menu.Item>
+
                 </Menu>
               }
             >
