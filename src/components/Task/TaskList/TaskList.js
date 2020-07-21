@@ -72,7 +72,6 @@ class TaskList extends React.Component {
     }
 
     checkCompleteByCheckBox(itemTask) {
-
         const { completeTask, user, redoTask } = this.props;
         const { hiddenActionsList } = this.state;
         this.setState({ index: itemTask._id, dataTemp: { idTask: itemTask._id, nameTask: itemTask.name, memberUser: itemTask.assign } })
@@ -93,6 +92,7 @@ class TaskList extends React.Component {
         }
 
     }
+
     render() {
 
         const { hiddenActionsList,
@@ -104,7 +104,7 @@ class TaskList extends React.Component {
             visibleDeleteTask, dataTemp
         } = this.state;
 
-        const { dataTasks, actionTask, user, loadingTask } = this.props;
+        const { dataTasks, actionTask, user, loadingTask, type } = this.props;
 
 
         return (
@@ -112,7 +112,6 @@ class TaskList extends React.Component {
                 {this.shouldComponentRender()
                     ? <List className="task__list-task-container"
                         itemLayout="horizontal"
-
                         pagination={{
                             size: 'small',
                             pageSize: 6
@@ -144,6 +143,7 @@ class TaskList extends React.Component {
                                                         <div className="task__action-title">Đóng</div>
                                                     </div>
                                                 </div>
+
                                                 <div className="task__action-right-part">
                                                     {item.assign === null
                                                         ? <div className="task__action-item"
@@ -154,37 +154,39 @@ class TaskList extends React.Component {
                                                             <div className="task__action-title" style={{ color: "#2985ff" }}>Nhận việc</div>
                                                         </div> : null}
 
-                                                    <div className="task__action-item"
-                                                        onClick={() => (this.setState({ visibleCompleteTask: true }))}>
+                                                    {type === 'upcoming' ? null :
+                                                        <><div className="task__action-item"
+                                                            onClick={() => (this.setState({ visibleCompleteTask: true }))}>
 
-                                                        <CheckOutlined style={{ color: '#09ed37' }} className="icon-action-task" />
-                                                        <div style={{ color: '#09ed37' }} className="task__action-title">Hoàn thành</div>
-                                                    </div>
-                                                    {checkAccession(item, user) === true ? <div className="task__action-item"
-                                                        onClick={() => (this.setState({ visibleDismissTask: true }))}>
-                                                        <StopOutlined style={{ color: '#F8DA74' }} className="icon-action-task" />
-                                                        <div style={{ color: '#F8DA74' }} className="task__action-title">Bỏ qua</div>
-                                                    </div> : false}
+                                                            <CheckOutlined style={{ color: '#09ed37' }} className="icon-action-task" />
+                                                            <div style={{ color: '#09ed37' }} className="task__action-title">Hoàn thành</div>
+                                                        </div>
+                                                            {checkAccession(item, user) === true ? <div className="task__action-item"
+                                                                onClick={() => (this.setState({ visibleDismissTask: true }))}>
+                                                                <StopOutlined style={{ color: '#F8DA74' }} className="icon-action-task" />
+                                                                <div style={{ color: '#F8DA74' }} className="task__action-title">Bỏ qua</div>
+                                                            </div> : false}
 
-                                                    {item.assign ? <div className="task__action-item"
-                                                        onClick={() => (this.setState({ visibleRemindTask: true }))}>
-                                                        <AlertOutlined style={{ color: 'orange' }} className="icon-action-task" />
-                                                        <div style={{ color: 'orange' }} className="task__action-title">Nhắc nhở</div>
-                                                    </div> : null}
+                                                            {item.assign ? <div className="task__action-item"
+                                                                onClick={() => (this.setState({ visibleRemindTask: true }))}>
+                                                                <AlertOutlined style={{ color: 'orange' }} className="icon-action-task" />
+                                                                <div style={{ color: 'orange' }} className="task__action-title">Nhắc nhở</div>
+                                                            </div> : null}
 
-                                                    {user.mIsAdmin === true ? <div className="task__action-item"
-                                                        onClick={() => history.push("/tasks/edit-task", { taskNeedEdit: item })}>
-                                                        <EditOutlined style={{ color: '#08979c' }} className="icon-action-task" />
-                                                        <div style={{ color: '#08979c' }} className="task__action-title">Sửa</div>
-                                                    </div> : null
-                                                    }
-                                                    {user.mIsAdmin === true ? <div className="task__action-item"
-                                                        onClick={(e) => {
-                                                            this.setState({ visibleDeleteTask: true, })
-                                                        }}>
-                                                        <DeleteOutlined style={{ color: '#EC6764' }} className="icon-action-task" />
-                                                        <div style={{ color: '#EC6764' }} className="task__action-title">Xóa bỏ</div>
-                                                    </div> : null}
+                                                            {user.mIsAdmin === true ? <div className="task__action-item"
+                                                                onClick={() => history.push("/tasks/edit-task", { taskNeedEdit: item })}>
+                                                                <EditOutlined style={{ color: '#08979c' }} className="icon-action-task" />
+                                                                <div style={{ color: '#08979c' }} className="task__action-title">Sửa</div>
+                                                            </div> : null
+                                                            }
+                                                            {user.mIsAdmin === true ? <div className="task__action-item"
+                                                                onClick={(e) => {
+                                                                    this.setState({ visibleDeleteTask: true, })
+                                                                }}>
+                                                                <DeleteOutlined style={{ color: '#EC6764' }} className="icon-action-task" />
+                                                                <div style={{ color: '#EC6764' }} className="task__action-title">Xóa bỏ</div>
+                                                            </div> : null}</>}
+
                                                 </div>
                                             </div>
                                         ] : [
@@ -220,7 +222,9 @@ class TaskList extends React.Component {
 
                                             <Col xs={18} sm={16} md={16} lg={14} xl={12} >
                                                 <div className="infor-task">
-                                                    <div className="name-task">{item.name}</div>
+                                                    <div className="name-task">{item.name}
+
+                                                    </div>
                                                     {item.notes === "" ? null :
                                                         <div className="note-task">
                                                             <SnippetsOutlined style={{ fontSize: 16, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: 4 }} />
@@ -228,11 +232,22 @@ class TaskList extends React.Component {
                                                         </div>}
 
                                                     <div className="time-task">
-                                                        {item.dueDate === null ? `${'Không gia hạn thời gian'}` : moment(`${item.dueDate}`).format('llll')}
+                                                        {type === 'today' || type === 'done' || type === 'late' ?
+                                                            <div>
+                                                                {item.repeat ? moment(`${item.repeat.start}`).format('llll') :
+                                                                    item.dueDate ? moment(`${item.dueDate}`).format('llll') : `${'Không gia hạn thời gian'}`}
+                                                            </div>
+                                                            :
+                                                            <div>
+                                                                {item.repeat ? moment(`${item.repeat.end}`).format('llll') : `${'Không gia hạn thời gian'}`}
+                                                            </div>
+                                                        }
                                                     </div>
                                                 </div>
                                             </Col>
                                             <Col xs={0} sm={0} md={0} lg={4} xl={4} className="show-image-task" hidden={item._id === index ? (hiddenActionsList === true ? false : true) : false}>
+                                                <div className="doingTime">Thực hiện: {item.time} phút</div>
+
                                                 <img className="image-task" src={item.photo} alt="" hidden={item.photo === null ? true : false} />
                                             </Col>
                                             <Col xs={6} sm={8} md={8} lg={6} xl={8} className="show-assign-action-task" style={{ display: item._id === index ? (hiddenActionsList === true ? null : 'none') : null }}>

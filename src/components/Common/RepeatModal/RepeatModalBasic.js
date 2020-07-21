@@ -121,14 +121,14 @@ class BasicRepeatModal extends Component {
                                 <div className="repeat-modal__form-item--label">Thời gian bắt đầu</div>
                                 <div className="repeat-modal__form-item--group">
                                     <DatePicker
-                                        format="YYYY-MM-DD HH:mm"
+
                                         disabledDate={disabledDate}
                                         placeholder="Ngày bắt đầu"
                                         className="repeat-modal__form-item--input"
                                         onChange={this.onChangeChooseDatePicker} />
                                     <TimePicker className="repeat-modal__form-item--input"
                                         onChange={this.onChangeChooseTimePicker}
-                                        use12Hours format="h:mm A"
+                                        use12Hours format="HH:mm"
                                         placeholder="Thời gian"
                                     />
                                 </div>

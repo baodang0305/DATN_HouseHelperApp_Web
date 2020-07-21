@@ -2,6 +2,7 @@ import React from "react";
 import './Task.css';
 import DashboardMenu from "../DashboardMenu/DashboardMenu";
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 import TaskList from './TaskList/TaskList'
 import { Layout, Avatar, Row, Col, Input, Button, Tabs, Collapse, Modal, Select, Popover, Spin } from "antd";
@@ -192,6 +193,42 @@ class Task extends React.Component {
         }
 
     }
+
+    // filterTodoTaskToday = (listTask) => {
+    //     let resultTodoTaskToday = [];
+
+    //     resultTodoTaskToday = listTask.filter(itemTask => {
+    //         if (itemTask.state === 'todo') {
+    //             return true
+    //         }
+    //         else if (itemTask.state === 'upcoming') {
+    //             let today = moment().endOf('day');
+    //             if (moment(itemTask.repeat.start) < today) {
+    //                 return true
+    //             }
+    //         }
+    //         return false;
+    //     })
+
+    //     //list task with dueDate (todo) or start time (upcoming)
+    //     let listTaskWithDueDate = resultTodoTaskToday.map(itemTask => {
+    //         if (itemTask.state === 'todo') {
+    //             return { ...itemTask, timeStart: itemTask.dueDate }
+    //         }
+    //         else if (itemTask.state === 'upcoming') {
+    //             let today = moment().endOf('day');
+    //             if (moment(itemTask.repeat.start) < today) {
+    //                 return { ...itemTask, timeStart: itemTask.repeat.start }
+    //             }
+    //         }
+    //     })
+
+    //     // sort list item todo task by increase time
+    //     return listTaskWithDueDate.sort(function (a, b) {
+    //         return moment(a.timeStart) - moment(b.timeStart);
+    //     })
+    // }
+
     render() {
         const { dataListTask,
             isChanged,
@@ -207,7 +244,7 @@ class Task extends React.Component {
         const dataTodoTasks = tempDataTask.filter(item => item.state === 'todo') || [];
         const dataCompletedTasks = tempDataTask.filter(item => item.state === 'completed') || [];
         const dataUpcomingTasks = tempDataTask.filter(item => item.state === 'upcoming') || [];
-
+        const dataLateTasks = tempDataTask.filter(item => item.state === 'late') || [];
         return (
             <div>
                 <Layout style={{ minHeight: '100vh', position: 'relative' }}>
@@ -270,14 +307,18 @@ class Task extends React.Component {
 
                                 }>
                                     <TabPane tab="CẦN LÀM" key="todo">
-                                        <TaskList key="p1" dataTasks={dataTodoTasks} />
-                                    </TabPane>
-                                    <TabPane tab="ĐÃ XONG" key="completed">
-                                        <TaskList key="p3" dataTasks={dataCompletedTasks} />
+                                        <TaskList key="p1" dataTasks={dataTodoTasks} type="today" />
                                     </TabPane>
                                     <TabPane tab="SẮP TỚI" key="upcoming">
-                                        <TaskList key="p2" dataTasks={dataUpcomingTasks} />
+                                        <TaskList key="p2" dataTasks={dataUpcomingTasks} type="upcoming" />
                                     </TabPane>
+                                    <TabPane tab="ĐÃ XONG" key="completed">
+                                        <TaskList key="p3" dataTasks={dataCompletedTasks.reverse()} type="done" />
+                                    </TabPane>
+                                    <TabPane tab="BỊ TRỄ" key="late">
+                                        <TaskList key="p4" dataTasks={dataLateTasks.reverse()} type="late" />
+                                    </TabPane>
+
                                 </Tabs>
                             </div>
                             <Modal title="Add task" style={{ maxWidth: 600, top: '10px' }}

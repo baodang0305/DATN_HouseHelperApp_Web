@@ -1,83 +1,20 @@
 import {
     AlertOutlined,
-
-
     AppstoreOutlined, CheckOutlined,
-
     ClockCircleOutlined, LeftOutlined,
-
-
-
-
-
-
-
-
-
     MinusCircleOutlined, PlusOutlined,
-
-
-
-
-
-
-
-
-
-
-
     RetweetOutlined, ScheduleOutlined,
-
-
-
-
-
-
-
     SnippetsOutlined, StarOutlined, TeamOutlined,
-
-
-
-
-
-
-
-
 
 
     UploadOutlined
 } from '@ant-design/icons';
 import {
     Alert, Avatar, Button,
-
-
-
-
-
-
     Col, DatePicker,
-
-
-
-
-
-
-
     Divider, Form,
     Input,
-
-
-
-
-
-
-
-
-
-
-
     Layout, Row,
-
     Select, Switch
 } from 'antd';
 import firebase from 'firebase';
@@ -892,8 +829,8 @@ class FormCreateTask extends Component {
                                                                 className="add-task__label-form-item"
                                                                 style={{ color: dueDateTask ? '#2985ff' : "#444444" }}                                                                >
                                                                 <ScheduleOutlined style={{ fontSize: 17 }} />
-                                                                        &nbsp;Hạn công việc
-                                                                </div>
+                                                            &nbsp;{repeatTask ? 'Kết thúc lặp' : 'Hạn công việc'}
+                                                            </div>
                                                         </div>
                                                     </Col>
                                                     <Col xs={16} sm={16} md={16} lg={14} xl={14}>
