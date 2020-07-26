@@ -48,7 +48,6 @@
   height: 80px;
   border-radius: 50%;
   position: relative;
-  border: groove thin;
 }
 
 button.upload-container:hover,
@@ -96,8 +95,6 @@ button.upload-container:hover::after {
   }
 }
 
-@media all and (min-width: 1024px) {
-}
+@media all and (min-width: 1024px) {}
 
-@media all and (min-width: 1280px) {
-}
+@media all and (min-width: 1280px) {}

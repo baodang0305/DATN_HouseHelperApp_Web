@@ -152,7 +152,6 @@
 .upload-img-ui-add-reward {
     position: relative;
     cursor: pointer;
-    border: groove thin;
     display: flex;
     justify-content: center;
     align-items: center;

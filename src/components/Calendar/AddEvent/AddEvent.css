@@ -109,7 +109,6 @@
 .upload-img-ui-add-canlendar {
     position: relative;
     cursor: pointer;
-    border: groove thin;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -131,7 +130,6 @@
     margin-top: 5px;
     width: 150px;
     height: 35px;
-    border: groove thin;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -408,11 +406,8 @@
     }
 }
 
-@media all and (min-width: 600px) and (max-width: 1023px) {
-}
+@media all and (min-width: 600px) and (max-width: 1023px) {}
 
-@media all and (min-width: 1024px) {
-}
+@media all and (min-width: 1024px) {}
 
-@media all and (min-width: 1280px) {
-}
+@media all and (min-width: 1280px) {}

@@ -34,7 +34,6 @@
     height: 80px;
     border-radius: 50%;
     position: relative;
-    border: groove thin;
 }
 
 .input-img-account {
@@ -71,8 +70,7 @@
     font-size: 18px;
 }
 
-@media all and (min-width: 320px) and (max-width: 599px) {
-}
+@media all and (min-width: 320px) and (max-width: 599px) {}
 
 @media all and (min-width: 600px) and (max-width: 1023px) {
     .my-account-form {

@@ -84,7 +84,6 @@
 .action-reward-container {
   display: flex;
   flex-direction: row;
-  border-left: groove thin;
   margin-left: 20px;
 
   transform-origin: right center;
