@@ -592,7 +592,7 @@ class AddEvent extends React.Component {
                                 <LeftOutlined className="header__icon-btn" />
                             </div>
                         </div>
-                        <div className="center-header-add-calendar-container"> {type === "add" ? "Thêm Sự Kiện" : "Cập Nhật Sự Kiện"} </div>
+                        <div className="center-header-add-calendar-container"> {type === "add" ? "Thêm sự kiện" : "Cập nhật sự kiện"} </div>
                         <div className="right-header-add-calendar-container"></div>
                     </Header>
                     <Content style={{ position: 'relative' }}>

@@ -25,7 +25,6 @@
     margin: 6px;
     border-radius: 2px;
     background-color: hsl(0, 0%, 100%);
-
 }
 
 .form-item-input-name-add-event {
@@ -78,7 +77,6 @@
 .avatar-add-event {
     width: 45px;
     height: 45px;
-    border: groove thin;
 }
 
 .check-asign-add-event {
@@ -99,7 +97,7 @@
     background-color: #f2f3f5;
     color: #385898;
     padding: 5px 10px;
-    font-weight: 600;
+    font-weight: 500;
     border-radius: 10px;
 }
 
@@ -410,8 +408,11 @@
     }
 }
 
-@media all and (min-width: 600px) and (max-width: 1023px) {}
+@media all and (min-width: 600px) and (max-width: 1023px) {
+}
 
-@media all and (min-width: 1024px) {}
+@media all and (min-width: 1024px) {
+}
 
-@media all and (min-width: 1280px) {}
+@media all and (min-width: 1280px) {
+}

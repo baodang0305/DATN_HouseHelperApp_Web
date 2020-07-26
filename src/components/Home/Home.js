@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown, Menu, Button, Input } from "antd";
-import { DownOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { CloseOutlined, DownOutlined, ArrowRightOutlined, MenuOutlined } from '@ant-design/icons';
 
 import logoImg from '../../assets/logo.png';
 import "./home.css";
@@ -15,6 +15,7 @@ import ui5 from '../../assets/image-home-page/IMG5.png';
 
 export default class Home extends Component {
   state = {
+    enableHumberMenu: false,
     idFeatureRecent: 1,
     imgRecent: ui1,
     featureList: [
@@ -54,8 +55,13 @@ export default class Home extends Component {
 
     this.setState({ idFeatureRecent: id, imgRecent: imgRecent })
   }
+
+  showHamburMenu = () => {
+    const { enableHumberMenu } = this.state;
+    this.setState({ enableHumberMenu: !enableHumberMenu })
+  }
   render() {
-    const { featureList, idFeatureRecent, imgRecent } = this.state;
+    const { enableHumberMenu, featureList, idFeatureRecent, imgRecent } = this.state;
     return (
       <div className="landing-landing">
         <header className="landing-header">
@@ -72,7 +78,6 @@ export default class Home extends Component {
                   <Menu.Item key="android-landing">
                     Tải bản Android - Đang cập nhật
                 </Menu.Item>
-
                 </Menu>
               }
             >
@@ -86,7 +91,25 @@ export default class Home extends Component {
             <div className="landing-header__menu-item"><Link to="/login">Đăng nhập</Link></div>
             <div className="landing-header__menu-item"> <Link to="/create-family">Đăng ký</Link></div>
           </div>
+
+          <div className="hambur-menu">
+            {enableHumberMenu === false
+              ? <MenuOutlined className="hambur__icon" onClick={this.showHamburMenu} />
+              : <CloseOutlined className="hambur__icon" onClick={this.showHamburMenu} />}
+            {enableHumberMenu ? <> <div className="ham__overlay"></div>
+              <ul className="hambur__list">
+                <li className="hambur__menu-item"><Link to="/login">Đăng nhập</Link></li>
+                <li className="hambur__menu-item"><Link to="/create-family">Đăng ký</Link></li>
+                <li className="hambur__menu-item">Web app</li>
+                <li className="hambur__menu-item">Mobile app</li>
+                <li className="hambur__menu-item">Tính năng</li>
+                <li className="hambur__menu-item">Liên hệ</li>
+                <li className="hambur__menu-item">Góp ý</li>
+              </ul></> : null}
+          </div>
         </header>
+
+
         <div className="landing-body">
           {/* Banner */}
           <div className="grid home-body">
@@ -147,7 +170,6 @@ export default class Home extends Component {
                 </div>
               </div>
               <div className="landing-body__intro--image">
-
               </div>
 
             </div>
