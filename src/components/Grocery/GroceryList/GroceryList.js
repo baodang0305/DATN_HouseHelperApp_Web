@@ -391,7 +391,7 @@ class GroceryList extends React.Component {
                                                     {loadingCheckBought && item._id === idCheckBoughtItemOfGrocery ?
                                                         <LoadingOutlined style={{ fontSize: 28, color: '#2985ff' }} />
                                                         : <div className="grocery__quick-check">
-                                                            <input disabled={itemGrocery.assign._id !== user._id} checked={item.isChecked ? true : false}
+                                                            <input disabled={itemGrocery.assign && (itemGrocery.assign._id !== user._id)} checked={item.isChecked ? true : false}
                                                                 onChange={(e) => {
                                                                     this.setState({ groceryRecent: itemGrocery }, () => {
                                                                         if (itemGrocery.assign && itemGrocery.assign._id === user._id)

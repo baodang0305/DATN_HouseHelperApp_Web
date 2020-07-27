@@ -85,8 +85,8 @@ class FormCreateTask extends Component {
         super(props);
 
         this.state = {
-            itemsHowLong: [5, 10, 15, 20],
-            itemsPoints: [5, 10, 15, 20],
+            itemsHowLong: [10, 30, 50],
+            itemsPoints: [10, 20, 30],
             itemsRemindTime: [20, 30, 40],
             dueTime: null,
             keyMember: [],
@@ -575,7 +575,7 @@ class FormCreateTask extends Component {
                                                                     value={dataAddHowLong}
                                                                     type="number"
                                                                     size="middle"
-                                                                    placeholder="Number for minutes"
+                                                                    placeholder="Nhập thời gian"
                                                                     onChange={this.onAddHowLongChange}
                                                                 />
                                                                 <a
@@ -635,7 +635,7 @@ class FormCreateTask extends Component {
                                                                     value={dataAddPoint}
                                                                     type="number"
                                                                     onChange={this.onAddPointChange}
-                                                                    placeholder="Number for points" />
+                                                                    placeholder="Nhập điểm thưởng" />
                                                                 <a
                                                                     className={
                                                                         checkDataInput(dataAddPoint)
@@ -948,7 +948,7 @@ class FormCreateTask extends Component {
                                                             name="penaltyTask"
                                                             defaultValue={
                                                                 type === 'edit'
-                                                                    ? penaltyTask + ' %'
+                                                                    ? penaltyTask
                                                                     : undefined
                                                             }
                                                             placeholder="Chọn số điểm trừ"
@@ -960,10 +960,10 @@ class FormCreateTask extends Component {
                                                                 Không trừ điểm
                                                                 </Option>
                                                             <Option key="10" value="10">
-                                                                Trừ 10%
+                                                                Trừ 10
                                                              </Option>
                                                             <Option key="20" value="20">
-                                                                Trừ 20%
+                                                                Trừ 20
                                                              </Option>
                                                         </Select>
                                                     </Col>

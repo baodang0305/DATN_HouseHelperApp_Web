@@ -226,8 +226,8 @@ class Family extends React.Component {
                                                 <div className="list-item-new-family-container" >
                                                     <div className="left-list-item-family-container">
                                                         <div className="first-col-content-list-item-family">
-                                                            <Avatar src={item.mID.mAvatar.image} style={{ marginBottom: 5, backgroundColor: item.mID.mAvatar.color }} />
-                                                            <div className="family__name-avatar">{item.mID.mName}</div>
+                                                            <Avatar src={item.mID && item.mID.mAvatar.image} style={{ marginBottom: 5, backgroundColor: item.mID && item.mID.mAvatar.color }} />
+                                                            <div className="family__name-avatar">{item.mID && item.mID.mName}</div>
                                                         </div>
                                                         <div>
                                                             <div className="state-task">{item.subject}</div>

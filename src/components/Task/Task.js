@@ -211,17 +211,7 @@ class Task extends React.Component {
     //     })
 
     //     //list task with dueDate (todo) or start time (upcoming)
-    //     let listTaskWithDueDate = resultTodoTaskToday.map(itemTask => {
-    //         if (itemTask.state === 'todo') {
-    //             return { ...itemTask, timeStart: itemTask.dueDate }
-    //         }
-    //         else if (itemTask.state === 'upcoming') {
-    //             let today = moment().endOf('day');
-    //             if (moment(itemTask.repeat.start) < today) {
-    //                 return { ...itemTask, timeStart: itemTask.repeat.start }
-    //             }
-    //         }
-    //     })
+
 
     //     // sort list item todo task by increase time
     //     return listTaskWithDueDate.sort(function (a, b) {

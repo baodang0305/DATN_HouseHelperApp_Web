@@ -147,9 +147,9 @@ class AddMember extends React.Component {
                                 />
                             </Form.Item>
 
-                            <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập email!' }]}>
+                            <Form.Item name="email" rules={[{ required: true, message: 'Vui lòng nhập username hoặc email!' }]}>
                                 <Input
-                                    type="email" placeholder="Username or Email"
+                                    type="text" placeholder="Username or Email"
                                     name="mEmail" value={mEmail} onChange={this.handleInputChange}
                                     prefix={<i className="fa fa-envelope" aria-hidden="true" style={{ paddingRight: 5 }}></i>}
                                 />
