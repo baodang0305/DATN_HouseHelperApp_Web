@@ -48,7 +48,7 @@
     "@fortawesome/react-fontawesome": "^0.1.9",
     "ant-design-pro": "^2.3.2",
     "antd": "^4.0.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "emoji-mart": "^3.0.0",
     "firebase": "^7.14.3",
     "history": "^4.10.1",
